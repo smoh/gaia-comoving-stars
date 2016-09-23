@@ -31,17 +31,21 @@
 % define macros for math
 \newcommand{\given}{\,|\,}
 \newcommand{\dd}{\mathrm{d}}
-\newcommand{\transpose}[1]{{#1}^{\mathsf{T}}}
+\newcommand{\transp}[1]{{#1}^{\mathsf{T}}}
 \newcommand{\inv}[1]{{#1}^{-1}}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
+\newcommand{\vperp}{\bs{v}^\perp}
+\newcommand{\propm}{\bs{\mu}}
+\newcommand{\matrx}[1]{\mathbf{#1}}
+\newcommand{\kms}{\rm km~s^{-1}}
 
 % TODO
 \newcommand{\todo}[1]{{\color{red}TODO: #1}}
 
 \begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing % trust me
 
-\title{}
-\author{}
+\title{Wide binaries in Gaia DR1}
+\author{People}
 
 % Affiliations
 % \newcommand{\pu}{1}
@@ -66,6 +70,7 @@
 % \altaffiltext{\sagan}{Sagan Fellow}
 
 \begin{abstract}
+Blerg.
 % Context
 % Aims
 % Methods
@@ -80,6 +85,47 @@
 
 \section{Introduction} \label{sec:intro}
 
+\section{Methods} \label{sec:methods}
+
+We want to evaluate the likelihood ratio
+\begin{equation}
+  \frac{p(\propm_1, \propm_2)_{\vperp_1 = \vperp_2}}
+  {p(\propm_1, \propm_2)_{\vperp_1 \neq \vperp_2}}
+\end{equation}
+where
+\begin{multline}
+  p(\propm_1, \propm_2)_{\vperp_1 = \vperp_2} =
+    \int \, \dd d_1 \, \dd d_2 \, \dd \vperp \,
+    p(\propm_1 \given d_1, \vperp, \matrx{C}_{\mu,1}) \,
+    p(\propm_2 \given d_2, \vperp, \matrx{C}_{\mu,2}) \\
+    p(d_1 \given \varpi_1, \sigma_{\varpi_1}) \,
+    p(d_2 \given \varpi_2, \sigma_{\varpi_2}) \,
+    p(\vperp)
+\end{multline}
+and
+\begin{multline}
+  p(\propm_1, \propm_2)_{\vperp_1 \neq \vperp_2} =
+    \int \, \dd d_1 \, \dd d_2 \, \dd \vperp_1 \, \dd \vperp_2 \,
+    p(\propm_1 \given d_1, \vperp_1, \matrx{C}_{\mu,1}) \,
+    p(\propm_2 \given d_2, \vperp_2, \matrx{C}_{\mu,2}) \\
+    p(d_1 \given \varpi_1, \sigma_{\varpi_1}) \,
+    p(d_2 \given \varpi_2, \sigma_{\varpi_2}) \,
+    p(\vperp_1) \, p(\vperp_2)
+\end{multline}
+We'll assume the sky positions $(\alpha, \delta)$ are known perfectly, and that
+the uncertainties in proper motion components, $\propm=(\mu_\alpha,
+\mu_\delta)$, are Gaussian with known covariance matrix $\matrx{C}_\mu$ so that
+\begin{equation}
+  p(\propm \given d, \vperp, \matrx{C}) = \left[\det\left(\frac{\matrx{C}_\mu^{-1}}{2\pi}\right)\right]^{1/2} \, \exp \left[ -\frac{1}{2} \transp{\left(\propm - \frac{\vperp}{d}\right)} \, \matrx{C}_\mu^{-1} \, \left(\propm - \frac{\vperp}{d}\right) \right]
+\end{equation}
+
+Our distance posterior pdfs, $p(d \given \varpi, \sigma_\varpi)$, will come from
+Coryn Bailer-Jones.
+
+Our priors on tangential velocity components, $i$, will be something like:
+\begin{equation}
+  p(v^\perp_i) = \mathcal{N}(0, 30) \, \kms
+\end{equation}
 
 \acknowledgements
 
