@@ -1,0 +1,112 @@
+\documentclass[manuscript, letterpaper]{aastex6}
+
+% to-do list
+% ----------
+
+% style notes
+% -----------
+% - This file generates by Makefile; don't be typing ``pdflatex'' or some bullshit.
+% - Line break between sentences to make the git diffs readable.
+% - Use \, as a multiply operator.
+% - Reserve () for function arguments; use [] or {} for outer shit.
+% - Use \sectionname not Section, \figname not Figure, \documentname not Article or Paper or paper.
+
+\include{gitstuff}
+\include{aastexmods}
+
+% packages
+\definecolor{cbblue}{HTML}{3182bd}
+\usepackage{microtype}  % ALWAYS!
+\usepackage{amsmath}
+\hypersetup{backref,breaklinks,colorlinks,urlcolor=cbblue,linkcolor=cbblue,citecolor=black}
+
+% define macros for text
+\newcommand{\project}[1]{\textsl{#1}}
+\newcommand{\acronym}[1]{{\small{#1}}}
+\newcommand{\gaia}{\project{Gaia}}
+\newcommand{\documentname}{\textsl{Article}}
+\newcommand{\sectionname}{Section}
+\newcommand{\figname}{Figure}
+
+% define macros for math
+\newcommand{\given}{\,|\,}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\transpose}[1]{{#1}^{\mathsf{T}}}
+\newcommand{\inv}[1]{{#1}^{-1}}
+\newcommand{\bs}[1]{\boldsymbol{#1}}
+
+% TODO
+\newcommand{\todo}[1]{{\color{red}TODO: #1}}
+
+\begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing % trust me
+
+\title{}
+\author{}
+
+% Affiliations
+% \newcommand{\pu}{1}
+% \newcommand{\adrn}{2}
+% \newcommand{\ccpp}{3}
+% \newcommand{\mpia}{4}
+% \newcommand{\uw}{5}
+% \newcommand{\sagan}{6}
+
+% \altaffiltext{\pu}{Department of Astrophysical Sciences,
+%                    Princeton University, Princeton, NJ 08544, USA}
+% \altaffiltext{\adrn}{To whom correspondence should be addressed:
+%                      \texttt{adrn@princeton.edu}}
+% \altaffiltext{\ccpp}{Center for Cosmology and Particle Physics,
+%                      Department of Physics,
+%                      New York University, 4 Washington Place,
+%                      New York, NY 10003, USA}
+% \altaffiltext{\mpia}{Max-Planck-Institut f\"ur Astronomie,
+%                      K\"onigstuhl 17, D-69117 Heidelberg, Germany}
+% \altaffiltext{\uw}{Astronomy Department, University of Washington,
+%                    Seattle, WA 98195, USA}
+% \altaffiltext{\sagan}{Sagan Fellow}
+
+\begin{abstract}
+% Context
+% Aims
+% Methods
+% Results
+\end{abstract}
+
+\keywords{
+  methods: data analysis
+  ---
+  methods: statistical
+}
+
+\section{Introduction} \label{sec:intro}
+
+
+\acknowledgements
+
+This research was partially supported by the \acronym{NSF} (grants
+  \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
+  \acronym{NASA} (grant \acronym{NNX12AI50G}),
+  and the Moore-Sloan Data Science Environment at \acronym{NYU}. The data
+analysis presented in this article was partially performed on computational
+resources supported by the Princeton Institute for Computational Science and
+Engineering (PICSciE) and the Office of Information Technology's High
+Performance Computing Center and Visualization Laboratory at Princeton
+University.
+
+\software{The code used in this project is available from
+\url{https://github.com/smoh/gaia-wide-binaries} under the MIT open-source
+software license. This version was generated at git commit
+\texttt{\githash\,(\gitdate)}.
+This research additionally utilized:
+    \texttt{Astropy} (\citealt{Astropy-Collaboration:2013}),
+    %\texttt{emcee} (\citealt{Foreman-Mackey:2013}),
+    \texttt{IPython} (\citealt{Perez:2007}),
+    \texttt{matplotlib} (\citealt{Hunter:2007}),
+    and \texttt{numpy} (\citealt{Van-der-Walt:2011}).}
+
+% \facility{\sdssiii, \apogee}
+
+\bibliographystyle{aasjournal}
+\bibliography{refs}
+
+\end{document}

@@ -1,0 +1,70 @@
+% ----------------------------------- %
+% start of AASTeX mods by DWH and DFM %
+% ----------------------------------- %
+
+\setlength{\voffset}{0in}
+\setlength{\hoffset}{0in}
+\setlength{\textwidth}{6in}
+\setlength{\textheight}{9in}
+\setlength{\headheight}{0ex}
+\setlength{\headsep}{\baselinestretch\baselineskip} % this is 2 lines in ``manuscript''
+\setlength{\footnotesep}{0in}
+\setlength{\topmargin}{-\headsep}
+\setlength{\oddsidemargin}{0.25in}
+\setlength{\evensidemargin}{0.25in}
+
+\linespread{0.54} % close to 10/13 spacing in ``manuscript''
+\setlength{\parindent}{0.54\baselineskip}
+\hypersetup{colorlinks = false}
+\makeatletter % you know you are living your life wrong when you need to do this
+\long\def\frontmatter@title@above{
+\vspace*{-\headsep}\vspace*{\headheight}
+\noindent\footnotesize
+{\noindent\footnotesize\textsc{\@journalinfo}}\par
+{\noindent\scriptsize Preprint typeset using \LaTeX\ style AASTeX6
+with modifications by DWH and DFM.
+}\par\vspace*{-\baselineskip}\vspace*{0.625in}
+}%
+\long\def\frontmatter@abstractheading{%
+\makeaffils
+  \vspace*{-\baselineskip}\vspace*{1.5pt}
+  \vspace*{0.13189in}
+ \begingroup
+  \centering
+  \abstractname
+  \vskip 1mm
+  \par
+ \endgroup
+ \everypar{\rightskip=0.0in\leftskip=\rightskip}\par
+}%
+\def\frontmatter@keys@format{\vspace*{0.5mm}%
+  \settowidth{\keys@width}{\normalsize\@keys@name}%
+  \rightskip=0.0in\leftskip=\rightskip\parindent=0pt%
+    \hangindent=\keys@width\hangafter=1\normalsize\raggedright}%
+\def\twodigits#1{\ifnum#1<10 0\fi\the#1}
+\def\mydate{\leavevmode\hbox{\the\year-\twodigits\month-\twodigits\day}}
+\makeatother
+\renewcommand{\today}{\mydate}
+
+% Section spacing:
+\makeatletter
+\let\origsection\section
+\renewcommand\section{\@ifstar{\starsection}{\nostarsection}}
+\newcommand\nostarsection[1]{\sectionprelude\origsection{#1}}
+\newcommand\starsection[1]{\sectionprelude\origsection*{#1}}
+\newcommand\sectionprelude{\vspace{1em}}
+\let\origsubsection\subsection
+\renewcommand\subsection{\@ifstar{\starsubsection}{\nostarsubsection}}
+\newcommand\nostarsubsection[1]{\subsectionprelude\origsubsection{#1}}
+\newcommand\starsubsection[1]{\subsectionprelude\origsubsection*{#1}}
+\newcommand\subsectionprelude{\vspace{1em}}
+\makeatother
+
+\widowpenalty=10000
+\clubpenalty=10000
+
+\sloppy\sloppypar
+
+% ------------------ %
+% end of AASTeX mods %
+% ------------------ %
