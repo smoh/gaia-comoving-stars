@@ -87,45 +87,47 @@ Blerg.
 
 \section{Methods} \label{sec:methods}
 
-We want to evaluate the likelihood ratio
+For a pair of stars $(i,j)$, we want to ratio the fully marginalized
+likelihood (FML) of the stars having the same tangential velocity (numerator)
+compared to the FML of the stars having different tangential velocities:
 \begin{equation}
-  \frac{p(\propm_1, \propm_2)_{\vperp_1 = \vperp_2}}
-  {p(\propm_1, \propm_2)_{\vperp_1 \neq \vperp_2}}
+  \frac{p(\propm_i, \propm_j)_{\vperp_i = \vperp_j}}
+  {p(\propm_i, \propm_j)_{\vperp_i \neq \vperp_j}}.
+\end{equation}
+When this ratio is large, the pair is a candidate binary star. These likelihood
+expressions are marginalized over true tangential velocity and distance for each
+star in the pair. For the numerator,
+\begin{equation}
+  p(\propm_i, \propm_j)_{\vperp_i = \vperp_j} =
+    \int \, \dd \vperp \, \dd d_i \, \dd d_j \,
+    p(\propm_i, \varpi_i, \vperp, d_i, \matrx{C}_i) \,
+    p(\propm_j, \varpi_j, \vperp, d_j, \matrx{C}_j)
 \end{equation}
 where
-\begin{multline}
-  p(\propm_1, \propm_2)_{\vperp_1 = \vperp_2} =
-    \int \, \dd d_1 \, \dd d_2 \, \dd \vperp \,
-    p(\propm_1 \given d_1, \vperp, \matrx{C}_{\mu,1}) \,
-    p(\propm_2 \given d_2, \vperp, \matrx{C}_{\mu,2}) \\
-    p(d_1 \given \varpi_1, \sigma_{\varpi_1}) \,
-    p(d_2 \given \varpi_2, \sigma_{\varpi_2}) \,
-    p(\vperp)
-\end{multline}
-and
-\begin{multline}
-  p(\propm_1, \propm_2)_{\vperp_1 \neq \vperp_2} =
-    \int \, \dd d_1 \, \dd d_2 \, \dd \vperp_1 \, \dd \vperp_2 \,
-    p(\propm_1 \given d_1, \vperp_1, \matrx{C}_{\mu,1}) \,
-    p(\propm_2 \given d_2, \vperp_2, \matrx{C}_{\mu,2}) \\
-    p(d_1 \given \varpi_1, \sigma_{\varpi_1}) \,
-    p(d_2 \given \varpi_2, \sigma_{\varpi_2}) \,
-    p(\vperp_1) \, p(\vperp_2)
-\end{multline}
-We'll assume the sky positions $(\alpha, \delta)$ are known perfectly, and that
-the uncertainties in proper motion components, $\propm=(\mu_\alpha,
-\mu_\delta)$, are Gaussian with known covariance matrix $\matrx{C}_\mu$ so that
+\begin{align}
+  p(\propm, \varpi, \vperp, d, \matrx{C}) &=
+    p(\propm, \varpi \given \vperp, d, \matrx{C}) \, p(\vperp) \, p(d) \\
+  p(\propm, \varpi \given \vperp, d, \matrx{C}) &=
+    \left[\det\left(\frac{\matrx{C}^{-1}}{2\pi}\right)\right]^{1/2} \,
+    \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
+    \matrx{C}^{-1} \,
+    \left(\bs{x} - \bs{x}_\theta \right) \right] \\
+  \bs{x} &= \transp{\left(\varpi, \mu_\alpha, \mu_\delta\right)} \\
+  \bs{x}_\theta &= \transp{\left(\frac{1}{d}, \frac{v^\perp_\alpha}{d}, \frac{v^\perp_\delta}{d}\right)}
+\end{align}
+and we assume Gaussian priors on the tangential velocity components, $\vperp=(v^\perp_\alpha,v^\perp_\delta)$, and take the ``Milky Way distance prior'' from Coryn Bailer-Jones
+\begin{align}
+  p(v^\perp_\alpha,v^\perp_\alpha) = \mathcal{N}(0,25~\kms) \, \mathcal{N}(0,25~\kms)
+\end{align}
+
+For the denominator of the likelihood ratio,
 \begin{equation}
-  p(\propm \given d, \vperp, \matrx{C}) = \left[\det\left(\frac{\matrx{C}_\mu^{-1}}{2\pi}\right)\right]^{1/2} \, \exp \left[ -\frac{1}{2} \transp{\left(\propm - \frac{\vperp}{d}\right)} \, \matrx{C}_\mu^{-1} \, \left(\propm - \frac{\vperp}{d}\right) \right]
+  p(\propm_i, \propm_j)_{\vperp_i \neq \vperp_j} =
+    \int \, \dd \vperp_i \, \dd \vperp_j \, \dd d_i \, \dd d_j \,
+    p(\propm_i, \varpi_i, \vperp_i, d_i, \matrx{C}_i) \,
+    p(\propm_j, \varpi_j, \vperp_j, d_j, \matrx{C}_j)
 \end{equation}
 
-Our distance posterior pdfs, $p(d \given \varpi, \sigma_\varpi)$, will come from
-Coryn Bailer-Jones.
-
-Our priors on tangential velocity components, $i$, will be something like:
-\begin{equation}
-  p(v^\perp_i) = \mathcal{N}(0, 30) \, \kms
-\end{equation}
 
 \acknowledgements
 
