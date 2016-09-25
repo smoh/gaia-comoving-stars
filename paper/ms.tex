@@ -24,6 +24,8 @@
 \newcommand{\project}[1]{\textsl{#1}}
 \newcommand{\acronym}[1]{{\small{#1}}}
 \newcommand{\gaia}{\project{Gaia}}
+\newcommand{\rave}{\project{\acronym{RAVE}}}
+\newcommand{\apogee}{\project{\acronym{APOGEE}}}
 \newcommand{\documentname}{\textsl{Article}}
 \newcommand{\sectionname}{Section}
 \newcommand{\figname}{Figure}
@@ -87,26 +89,33 @@ Blerg.
 
 \section{Methods} \label{sec:methods}
 
-For a pair of stars $(i,j)$, we want to ratio the fully marginalized
-likelihood (FML) of the stars having the same tangential velocity (numerator)
-compared to the FML of the stars having different tangential velocities:
+For a pair of stars $(i,j)$, we want to ratio the fully marginalized likelihood
+(FML) of the stars having the same 3-space velocity, $\bs{v}=(v^\perp_\alpha,
+v^\perp_\delta, v_r)$, compared to the FML of the stars having different 3-space
+velocities:
 \begin{equation}
-  \frac{p(\propm_i, \propm_j)_{\vperp_i = \vperp_j}}
-  {p(\propm_i, \propm_j)_{\vperp_i \neq \vperp_j}}.
+  \frac{p(\propm_i, \varpi_i, \matrx{C}_i, \propm_j, \varpi_j, \matrx{C}_j)_{\bs{v}_i = \bs{v}_j}}
+  {p(\propm_i, \varpi_i, \matrx{C}_i, \propm_j, \varpi_j, \matrx{C}_j)_{\bs{v}_i \neq \bs{v}_j}}.
 \end{equation}
-When this ratio is large, the pair is a candidate binary star. These likelihood
-expressions are marginalized over true tangential velocity and distance for each
-star in the pair. For the numerator,
+When this ratio is large---that is, the likelihood that the stars have the same
+3-space velocity is large and the the likelihood that the stars have different
+3-space velicities is small---the pair is a candidate binary star. For \gaia\
+DR1, we only observe a parallax, $\varpi$, and two proper motion components,
+$\propm = (\mu_\alpha, \mu_\delta)$. Where there is overlap with \rave\ or
+\apogee, some number of observed radial velocities, $\tilde{v}_r$, with observed
+variances $\sigma^2_{v_r}$ (independent of the \gaia\ data) may also be
+available. The likelihood expressions above are marginalized over true 3-space
+velocity and distance for each star in the pair. For the numerator,
 \begin{equation}
-  p(\propm_i, \propm_j)_{\vperp_i = \vperp_j} =
-    \int \, \dd \vperp \, \dd d_i \, \dd d_j \,
-    p(\propm_i, \varpi_i, \vperp, d_i, \matrx{C}_i) \,
-    p(\propm_j, \varpi_j, \vperp, d_j, \matrx{C}_j)
+  p(\propm_i, \varpi_i, \matrx{C}_i, \propm_j, \varpi_j, \matrx{C}_j)_{\bs{v}_i = \bs{v}_j} =
+    \int \, \dd \bs{v} \, \dd d_i \, \dd d_j \,
+    p(\propm_i, \varpi_i, \bs{v}, d_i, \matrx{C}_i) \,
+    p(\propm_j, \varpi_j, \bs{v}, d_j, \matrx{C}_j)
 \end{equation}
 where
 \begin{align}
-  p(\propm, \varpi, \vperp, d, \matrx{C}) &=
-    p(\propm, \varpi \given \vperp, d, \matrx{C}) \, p(\vperp) \, p(d) \\
+  p(\propm, \varpi, \bs{v}, d, \matrx{C}) &=
+    p(\propm, \varpi \given \vperp, d, \matrx{C}) \, p(\vperp, v_r) \, p(\tilde{v}_r \given v_r, \sigma^2_{v_r}) \, p(d \given l,b) \\
   p(\propm, \varpi \given \vperp, d, \matrx{C}) &=
     \left[\det\left(\frac{\matrx{C}^{-1}}{2\pi}\right)\right]^{1/2} \,
     \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
@@ -115,18 +124,20 @@ where
   \bs{x} &= \transp{\left(\varpi, \mu_\alpha, \mu_\delta\right)} \\
   \bs{x}_\theta &= \transp{\left(\frac{1}{d}, \frac{v^\perp_\alpha}{d}, \frac{v^\perp_\delta}{d}\right)}
 \end{align}
-and we assume Gaussian priors on the tangential velocity components, $\vperp=(v^\perp_\alpha,v^\perp_\delta)$, and take the ``Milky Way distance prior'' from Coryn Bailer-Jones
+
+We assume Gaussian priors on the true velocity components
 \begin{align}
-  p(v^\perp_\alpha,v^\perp_\alpha) = \mathcal{N}(0,25~\kms) \, \mathcal{N}(0,25~\kms)
+  p(\bs{v}) = \mathcal{N}(0,25)~\kms
 \end{align}
+and take one of the distance priors from Coryn Bailer-Jones,
 
 For the denominator of the likelihood ratio,
-\begin{equation}
-  p(\propm_i, \propm_j)_{\vperp_i \neq \vperp_j} =
-    \int \, \dd \vperp_i \, \dd \vperp_j \, \dd d_i \, \dd d_j \,
-    p(\propm_i, \varpi_i, \vperp_i, d_i, \matrx{C}_i) \,
-    p(\propm_j, \varpi_j, \vperp_j, d_j, \matrx{C}_j)
-\end{equation}
+\begin{multline}
+  p(\propm_i, \varpi_i, \matrx{C}_i, \propm_j, \varpi_j, \matrx{C}_j)_{\bs{v}_i \neq \bs{v}_j} = \\
+    \int \, \dd \bs{v}_i \, \dd \bs{v}_j \, \dd d_i \, \dd d_j \,
+    p(\propm_i, \varpi_i, \bs{v}_i, d_i, \matrx{C}_i) \,
+    p(\propm_j, \varpi_j, \bs{v}_j, d_j, \matrx{C}_j)
+\end{multline}
 
 
 \acknowledgements
