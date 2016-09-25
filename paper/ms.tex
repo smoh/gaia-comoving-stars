@@ -24,6 +24,8 @@
 \newcommand{\project}[1]{\textsl{#1}}
 \newcommand{\acronym}[1]{{\small{#1}}}
 \newcommand{\gaia}{\project{Gaia}}
+\newcommand{\rave}{\project{\acronym{RAVE}}}
+\newcommand{\apogee}{\project{\acronym{APOGEE}}}
 \newcommand{\documentname}{\textsl{Article}}
 \newcommand{\sectionname}{Section}
 \newcommand{\figname}{Figure}
@@ -87,45 +89,57 @@ Blerg.
 
 \section{Methods} \label{sec:methods}
 
-For a pair of stars $(i,j)$, we want to ratio the fully marginalized
-likelihood (FML) of the stars having the same tangential velocity (numerator)
-compared to the FML of the stars having different tangential velocities:
-\begin{equation}
-  \frac{p(\propm_i, \propm_j)_{\vperp_i = \vperp_j}}
-  {p(\propm_i, \propm_j)_{\vperp_i \neq \vperp_j}}.
-\end{equation}
-When this ratio is large, the pair is a candidate binary star. These likelihood
-expressions are marginalized over true tangential velocity and distance for each
-star in the pair. For the numerator,
-\begin{equation}
-  p(\propm_i, \propm_j)_{\vperp_i = \vperp_j} =
-    \int \, \dd \vperp \, \dd d_i \, \dd d_j \,
-    p(\propm_i, \varpi_i, \vperp, d_i, \matrx{C}_i) \,
-    p(\propm_j, \varpi_j, \vperp, d_j, \matrx{C}_j)
-\end{equation}
+For a pair of stars $(i,j)$, we want to ratio the fully marginalized likelihood
+(FML) of the stars having the same 3-space velocity (hypothesis 1,
+$\mathcal{L}_1$) over the FML of the stars having different 3-space velocities
+(hypothesis 2, $\mathcal{L}_2$). When this ratio is large, the pair is a
+candidate binary star. For \gaia\ DR1, we only observe parallax, $\varpi$, and
+two proper motion components, $\propm = (\mu_\alpha, \mu_\delta)$ for each star.
+Where there is overlap with \rave\ or \apogee, some number of observed radial
+velocities, $v_r$, with observed variances $\sigma^2_{v_r}$ (independent of the
+\gaia\ data) may also be available. We assume that the uncertainties in these
+observed quantites are known with covariance matrix $\matrx{C}$. The likelihoods
+$\mathcal{L}_1, \mathcal{L}_2$ are marginalized over true 3-space velocity and
+distance for each star in the pair.
+\begin{align}
+  \mathcal{L}_1 &=
+    \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v} \,
+    L_i(\bs{v}, d_i) \,
+    L_j(\bs{v}, d_j) \,
+    p(\bs{v}) \, p(d_i) \, p(d_j) \\
+  \mathcal{L}_2 &=
+    \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v}_i \, \dd^3 \bs{v}_j \,
+    L_i(\bs{v}_i, d_i) \,
+    L_j(\bs{v}_j, d_j) \,
+    p(\bs{v}_i) \, p(\bs{v}_j) \, p(d_i) \, p(d_j) \\
+\end{align}
 where
 \begin{align}
-  p(\propm, \varpi, \vperp, d, \matrx{C}) &=
-    p(\propm, \varpi \given \vperp, d, \matrx{C}) \, p(\vperp) \, p(d) \\
-  p(\propm, \varpi \given \vperp, d, \matrx{C}) &=
+  L(\bs{v}, d) &=
     \left[\det\left(\frac{\matrx{C}^{-1}}{2\pi}\right)\right]^{1/2} \,
     \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
     \matrx{C}^{-1} \,
     \left(\bs{x} - \bs{x}_\theta \right) \right] \\
-  \bs{x} &= \transp{\left(\varpi, \mu_\alpha, \mu_\delta\right)} \\
-  \bs{x}_\theta &= \transp{\left(\frac{1}{d}, \frac{v^\perp_\alpha}{d}, \frac{v^\perp_\delta}{d}\right)}
+  \bs{x} &= \transp{\left(\varpi, \mu_\alpha, \mu_\delta, v_r \right)} \\
+  \bs{x}_\theta &= \transp{\left(\frac{1}{d}, \frac{v_\alpha}{d},
+    \frac{v_\delta}{d}, \tilde{v}_r \right)}
 \end{align}
-and we assume Gaussian priors on the tangential velocity components, $\vperp=(v^\perp_\alpha,v^\perp_\delta)$, and take the ``Milky Way distance prior'' from Coryn Bailer-Jones
+We assume Gaussian priors on the true velocity components and use a \todo{which
+one will we use?} distance prior \citep{Astraatmadja:2016} on heliocentric
+distance
 \begin{align}
-  p(v^\perp_\alpha,v^\perp_\alpha) = \mathcal{N}(0,25~\kms) \, \mathcal{N}(0,25~\kms)
+  p(\bs{v}) &= \mathcal{N}(0,25)~\kms \\
+  p(d) &= \frac{r^2}{2\,L^3} \, \exp\left(-r/L\right)
 \end{align}
 
-For the denominator of the likelihood ratio,
+For hypothesis 1, the integral over velocity is non-trivial because the same
+``true'' 3-space velocity vector projects into tangential velocity components
+differently depending on sky position when the sky separation is appreciable
+($v_\alpha = v_\alpha(\bs{v}, \alpha, \delta)$). For hypothesis 2, the integral
+can be split into two the product of two simpler integrals $\mathcal{L}_2 = Q_i
+\, Q_j$ where
 \begin{equation}
-  p(\propm_i, \propm_j)_{\vperp_i \neq \vperp_j} =
-    \int \, \dd \vperp_i \, \dd \vperp_j \, \dd d_i \, \dd d_j \,
-    p(\propm_i, \varpi_i, \vperp_i, d_i, \matrx{C}_i) \,
-    p(\propm_j, \varpi_j, \vperp_j, d_j, \matrx{C}_j)
+  Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d) \, p(\bs{v}) \, p(d)
 \end{equation}
 
 
