@@ -1,5 +1,5 @@
 import numpy as np
-from numpy as sqrt, exp, pi, inf
+from numpy import sqrt, exp, pi, inf
 from scipy import integrate
 
 
@@ -90,11 +90,11 @@ def likelihood(d1, d2, v_ra, v_dec, p1, p2, sigp1, sigp2, mu1, mu2, C1, C2):
     # d1,d2 : scalars
     v = np.array([v_ra, v_dec])
     Pmu1 = likelihood_gaussian(v/d1/4.74, mu1, C1)
-    Pmu2 = likelihood_gaussian(v/d2/4.74, mu1, C2)
+    Pmu2 = likelihood_gaussian(v/d2/4.74, mu2, C2)
     Pd1 = post_distance(d1, p1, sigp1)
     Pd2 = post_distance(d2, p2, sigp2)
     Pv = prior_velocity_gaussian(v_ra, v_dec)
-    return Pmu1*Pmu2*Pv*Pd1*Pd2
+    return Pd1*Pd2*Pmu1*Pmu2*Pv
 
 def likelihood_null(d1, d2, v1_ra, v1_dec, v2_ra, v2_dec, p1, p2, sigp1, sigp2, mu1, mu2, C1, C2):
     # mu: [pmra, pmdec]
@@ -104,8 +104,8 @@ def likelihood_null(d1, d2, v1_ra, v1_dec, v2_ra, v2_dec, p1, p2, sigp1, sigp2, 
     Pmu1 = likelihood_gaussian(v1/d1/4.74, mu1, C1)
     v2 = np.array([v2_ra, v2_dec])
     Pmu2 = likelihood_gaussian(v2/d2/4.74, mu1, C2)
-    Pd1 = post_distance(d1, p1, sigp1, prior=prior_distance_expcutoff)
-    Pd2 = post_distance(d2, p2, sigp2, prior=prior_distance_expcutoff)
+    Pd1 = post_distance(d1, p1, sigp1, prior=prior_distance_uniform)
+    Pd2 = post_distance(d2, p2, sigp2, prior=prior_distance_uniform)
     Pv1 = prior_velocity_gaussian(v1_ra, v1_dec)
     Pv2 = prior_velocity_gaussian(v2_ra, v2_dec)
     return Pmu1*Pmu2*Pv1*Pv2*Pd1*Pd2
