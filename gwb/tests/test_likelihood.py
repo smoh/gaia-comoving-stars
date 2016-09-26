@@ -2,8 +2,6 @@ from __future__ import division, print_function
 
 # Third-party
 import astropy.units as u
-import astropy.coordinates as coord
-# import matplotlib.pyplot as pl
 import numpy as np
 
 # Project
