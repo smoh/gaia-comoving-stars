@@ -61,6 +61,36 @@ def get_tangent_basis(ra, dec, dra=0.5, ddec=0.5):
 
     return np.vstack((u3,u2,u1))
 
+def marg_likelihood_helper(v, d, data):
+    """
+    Compute the log-marginal-likelihood for Hypothesis 2: each star in a
+    pair has *different* 3-space velocities. This is equivalent to log(Q)
+    using the notation from the paper.
+
+    Parameters
+    ----------
+    v : array_like [km/s]
+        3-space velocity vector - assumes this is [v^perp_ra, v^perp_dec, v_r]
+        (but that distinction is irrelevant for a spherical isotropic velocity prior).
+    d : numeric [pc]
+        Distance in parsecs.
+    data
+
+    """
+    ra, dec, x, Cinv = data
+    A = get_tangent_basis(ra, dec)
+    v = A.dot(v)
+
+    x_th = np.array([1000./d, v[0]/d*km_spc_to_mas_yr, v[1]/d*km_spc_to_mas_yr, v[2]])
+
+    dx = x-x_th
+    chi2 = np.einsum('i,ji,j->', dx, Cinv, dx)
+
+    # determinant of the non-zero parts
+    sgn,logdet = np.linalg.slogdet(Cinv[:3,:3]/(2*np.pi))
+
+    return -0.5*chi2 + 0.5*logdet
+
 def ln_H1_marg_likelihood(v, d1, d2, data1, data2):
     """
     Compute the log-marginal-likelihood for Hypothesis 1: each star in a
@@ -79,19 +109,19 @@ def ln_H1_marg_likelihood(v, d1, d2, data1, data2):
         array of shape (4,4) for covariances
 
     """
-    ra1, dec1, x1, Cinv1 = data1
-    A1 = get_tangent_basis(ra1, dec1)
+    # ra1, dec1, x1, Cinv1 = data1
+    # A1 = get_tangent_basis(ra1, dec1)
 
-    ra2, dec2, x2, Cinv2 = data2
-    A2 = get_tangent_basis(ra2, dec2)
+    # ra2, dec2, x2, Cinv2 = data2
+    # A2 = get_tangent_basis(ra2, dec2)
 
-    # project v onto tangent basis for each star
-    v1 = A1.dot(v)
-    v2 = A2.dot(v)
+    # # project v onto tangent basis for each star
+    # v1 = A1.dot(v)
+    # v2 = A2.dot(v)
 
-    return ln_H2_marg_likelihood(v1, d1, x1, Cinv1) + ln_H2_marg_likelihood(v2, d2, x2, Cinv2)
+    return marg_likelihood_helper(v, d1, data1) + marg_likelihood_helper(v, d2, data2)
 
-def ln_H2_marg_likelihood(v, d, x, Cinv):
+def ln_H2_marg_likelihood(v1, v2, d1, d2, data1, data2):
     """
     Compute the log-marginal-likelihood for Hypothesis 2: each star in a
     pair has *different* 3-space velocities. This is equivalent to log(Q)
@@ -110,13 +140,4 @@ def ln_H2_marg_likelihood(v, d, x, Cinv):
         array of shape (4,4) for covariances
 
     """
-
-    x_th = np.array([1000./d, v[0]/d*km_spc_to_mas_yr, v[1]/d*km_spc_to_mas_yr, v[2]])
-
-    dx = x-x_th
-    chi2 = np.einsum('i,ji,j->', dx, Cinv, dx)
-
-    # determinant of the non-zero parts
-    sgn,logdet = np.linalg.slogdet(Cinv[:3,:3]/(2*np.pi))
-
-    return -0.5*chi2 + 0.5*logdet
+    return marg_likelihood_helper(v1, d1, data1) + marg_likelihood_helper(v2, d2, data2)
