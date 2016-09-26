@@ -9,6 +9,8 @@ class TGASData(object):
 
     def __init__(self, tbl):
         self.tbl = tbl
+        self._cov = None # for caching
+        self._Cinv = None # for caching
 
     def __getitem__(self, slc):
         return TGASData(self.tbl[slc])
@@ -60,6 +62,10 @@ class TGASData(object):
             for each of the columns.
 
         """
+
+        if self._cov is not None:
+            return self._cov
+
         names = ['ra', 'dec', 'parallax', 'pmra', 'pmdec']
 
         catalog_units = [u.deg, u.deg, u.mas, u.mas/u.yr, u.mas/u.yr]
@@ -86,7 +92,8 @@ class TGASData(object):
 
         for i,name1 in enumerate(names):
             for j,name2 in enumerate(names):
-                if j <= i: continue
+                if j <= i:
+                    continue
                 full_name = "{}_{}_corr".format(name1, name2)
 
                 if change_units:
@@ -98,4 +105,5 @@ class TGASData(object):
                 C[...,i,j] = self.tbl[full_name] * np.sqrt(C[...,i,i]*C[...,j,j]) * faci * facj
                 C[...,j,i] = self.tbl[full_name] * np.sqrt(C[...,i,i]*C[...,j,j]) * faci * facj
 
-        return np.squeeze(C)
+        self._cov = np.squeeze(C)
+        return self._cov
