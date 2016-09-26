@@ -1,0 +1,6 @@
+savefig.dpi : 100
+axes.labelsize : 20
+xtick.labelsize : 15
+ytick.labelsize : 15
+patch.edgecolor : None
+lines.markeredgewidth : 0
