@@ -46,8 +46,8 @@ def write_single_ini(i, catalogs=[TwoMASS, Tycho2, WISE]):
     c = configobj.ConfigObj(ini_file)
     
     # define these coords in epoch=2000
-    ra = (s.ra*u.deg - 15*u.yr*s.pmra*u.mas/u.yr).to('deg')
-    dec = (s.dec*u.deg - 15*u.yr*s.pmdec*u.mas/u.yr).to('deg')
+    ra = (s.ra*u.deg - 15*u.yr*s.pmra*u.mas/u.yr).to('deg').value
+    dec = (s.dec*u.deg - 15*u.yr*s.pmdec*u.mas/u.yr).to('deg').value
     coords1 = SkyCoord(ra, dec, unit='deg')
     
     c['ra'] = ra
@@ -98,8 +98,8 @@ def write_binary_ini(i1, i2, catalogs=[TwoMASS, Tycho2, WISE]):
     c = configobj.ConfigObj(ini_file)
     
     # define these coords in epoch=2000
-    ra = (s1.ra*u.deg - 15*u.yr*s1.pmra*u.mas/u.yr).to('deg')
-    dec = (s1.dec*u.deg - 15*u.yr*s1.pmdec*u.mas/u.yr).to('deg')
+    ra = (s1.ra*u.deg - 15*u.yr*s1.pmra*u.mas/u.yr).to('deg').value
+    dec = (s1.dec*u.deg - 15*u.yr*s1.pmdec*u.mas/u.yr).to('deg').value
     coords1 = SkyCoord(ra, dec, unit='deg')
     
     c['ra'] = ra
