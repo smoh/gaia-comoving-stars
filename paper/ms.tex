@@ -33,6 +33,7 @@
 
 % define macros for math
 \newcommand{\given}{\,|\,}
+\newcommand{\normal}{N}
 \newcommand{\dd}{\mathrm{d}}
 \newcommand{\transp}[1]{{#1}^{\!\mathsf{T}}}
 \newcommand{\inv}[1]{{#1}^{-1}}
@@ -41,6 +42,7 @@
 \newcommand{\propm}{\bs{\mu}}
 \newcommand{\matrx}[1]{\mathbf{#1}}
 \newcommand{\kms}{\rm km~s^{-1}}
+\newcommand{\data}{\mathrm{data}}
 
 % TODO
 \newcommand{\todo}[1]{{\color{red}TODO: #1}}
@@ -259,9 +261,11 @@ This research additionally utilized:
 \section{Some mathematics relevant to the above}
 
 In what follows, all vectors are column vectors.
+We indicate whether a symbol represents a scalar, vector, or tensor
+(matrix) by context, not typesetting.
 Properties of the squared exponential:
 \begin{eqnarray}
-  \ln\left[\int\exp(-\frac{1}{2}\,[x-\mu]\transp\,A\inv\,[x-\mu] - \Delta)\,\dd x\right]
+  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\mu]}\,\inv{A}\,[x-\mu] - \Delta)\,\dd x\right]
   &=& -\frac{d}{2}\,\ln 2\pi -\frac{1}{2}\ln ||A|| -\Delta
   \quad ,
 \end{eqnarray}
@@ -271,18 +275,75 @@ of $d$-space.
 We will need to complete squares.
 If we equate
 \begin{eqnarray}
-  \frac{1}{2}\,[x-\mu]\transp\,A\inv\,[x-\mu] + \Delta
-  &=& \frac{1}{2}\,x\transp\,A\inv\,x + x\transp\,B\,b + C
+  \frac{1}{2}\,\transp{[x-\mu]}\,\inv{A}\,[x-\mu] + \Delta
+  &=& \frac{1}{2}\,\transp{x}\,\inv{A}\,x + \transp{x}\,B\,b + C
   \quad ,
 \end{eqnarray}
 where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
 \begin{eqnarray}
   \mu &=& A\,B\,b
   \\
-  C & = & \Delta - \frac{1}{2}\,\mu\transp\,A\inv\,\mu
+  C & = & \Delta - \frac{1}{2}\,\transp{\mu}\,\inv{A}\,\mu
   \quad .
 \end{eqnarray}
 
-Now in this case, we want to write down the probability of the 
+Now in this case, we want to write down the probability of the data
+given the distance and velocity (the likelihood), and the prior pdf for
+the velocity, and their product.
+The prior pdf for the velocity is Gaussian:
+\begin{eqnarray}
+  p(v) &=& \normal(v\given 0,V)
+  \\
+  \ln p(v) &=& -\frac{3}{2}\,\ln\pi -\frac{1}{2}\,\ln||V|| -\frac{1}{2}\,\transp{v}\,\inv{V}\,v
+  \\
+  V &=& \sigma_v^2\,I
+  \quad ,
+\end{eqnarray}
+where $v$ is the three-vector velocity, and $V$ is an isotropic
+variance tensor.
+Similarly, the likelihood for the data is also a Gaussian.
+Before we write that down, we will make some definitions.
+We construct a vector $y$ as follows:
+\begin{eqnarray}
+  \transp{y} &\equiv& [d_1\,\varpi_1 - 1, d_1\,\mu_{\alpha,1}, d_1\,\mu_{\delta,1}
+                       d_1\,\varpi_2 - 1, d_2\,\mu_{\alpha,2}, d_1\,\mu_{\delta,2}]
+  \\
+  \transp{y} &\equiv& [d_1\,\varpi_1 - 1, d_1\,\mu_{\alpha,1}, d_1\,\mu_{\delta,1}, v_{r,1}
+                       d_1\,\varpi_2 - 1, d_2\,\mu_{\alpha,2}, d_1\,\mu_{\delta,2}, v_{r,2}
+  \quad ,
+\end{eqnarray}
+where we have given two versions, a 6-component and an 8-component
+version (depending on whether there are measured radial velocities),
+the subscripts 1, 2 refer to the first and second stars (arbitrarily
+ordered) of the pair, we have multiplied the strict observables by
+distances $d_1, d_2$, which we are permitted to do (because we are
+\emph{conditioning} on $d_1, d_2$). The vector $y$ is a column vector
+that we have transposed to make it easy to write down.  Fundamentally,
+our model is
+\begin{eqnarray}
+  y &=& M\,v + \mathrm{noise}
+  \\
+  \transp{M} &=& [0, \hat{\alpha_1}, \hat{\delta_1},
+                  0, \hat{\alpha_2}, \hat{\delta_2}]
+  \\
+  \transp{M} &=& [0, \hat{\alpha}_1, \hat{\delta}_2, \hat{r}_1
+                  0, \hat{\alpha}_2, \hat{\delta}_2, \hat{r}_2]
+  \quad,
+\end{eqnarray}
+where $M$ is a $6\times 3$ or $8\times 3$ design matrix, with zeros
+in two rows and unit vectors along the other rows.
+The noise is drawn from a Gaussian with ($6\times 6$ or $8\times 8$)
+covariance matrix $C$, constructed from the distances $d_1, d_2$ and
+the \gaia-provided individual-object covariance matrices.
+Given all these definitions, the likelihood function is
+\begin{eqnarray}
+  p(\data\given v,d_1,d_2) &=& d_1^3\,d_2^3\,\normal(y\given M\,v, C)
+  \\
+  \ln p(\data\given v,d_1,d_2) &=& 3\,\ln d_1 + 3\,\ln d_2 -\frac{6~\mathrm{or}~8}{2}\,\ln\pi
+  -\frac{1}{2}\,\ln||C|| -\frac{1}{2}\,\transp{[y-M\,v]}\,\inv{C}\,[y-M\,v]
+  \quad ,
+\end{eqnarray}
+where the factor of $d_1^2\,d_2^3$ converts to units of \gaia\ data
+from units of $y$.
 
 \end{document}
