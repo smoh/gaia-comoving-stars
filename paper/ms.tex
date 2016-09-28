@@ -29,6 +29,7 @@
 \newcommand{\documentname}{\textsl{Article}}
 \newcommand{\sectionname}{Section}
 \newcommand{\figname}{Figure}
+\newcommand{\eqname}{Equation}
 
 % define macros for math
 \newcommand{\given}{\,|\,}
@@ -120,10 +121,12 @@ where
     \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
     \matrx{C}^{-1} \,
     \left(\bs{x} - \bs{x}_\theta \right) \right] \\
-  \bs{x} &= \transp{\left(\varpi, \mu_\alpha, \mu_\delta, v_r \right)} \\
-  \bs{x}_\theta &= \transp{\left(\frac{1}{d}, \frac{v_\alpha}{d},
-    \frac{v_\delta}{d}, \tilde{v}_r \right)}
+  \bs{x} &= \transp{\left(\begin{array}{c c c c} \varpi & \mu_\alpha &
+    \mu_\delta & v_r \end{array}\right)} \\
+  \bs{x}_\theta &= \transp{\left(\begin{array}{c c c c} \frac{1}{d} & \frac{v_\alpha}{d} &
+    \frac{v_\delta}{d} & \tilde{v}_r \end{array}\right)}
 \end{align}
+\todo{Holy fuck that vector is UGLY}
 We assume Gaussian priors on the true velocity components and use a \todo{which
 one will we use?} distance prior \citep{Astraatmadja:2016} on heliocentric
 distance
@@ -171,6 +174,58 @@ the integrand can be written
     \left(\bs{x} - \bs{x}_\theta \right)
     - \frac{|\bs{v}|^2}{2\,\sigma^2} \right] \\
 \end{equation}
+The integral over radial velocity is simple and can be performed without
+considering any other terms because uncertainties in these measurements will
+not, in general, be covariant with the Gaia data. The integrand over tangential
+velocities can then be written
+\begin{equation}
+  L(v_\alpha, v_\delta, d) \, p(v_\alpha, v_\delta) = \tilde{\mathcal{Z}} \,
+    \exp \left[ -\frac{1}{2}\,\transp{\left(\bs{x}' - \bs{x}'_\theta \right)} \,
+    \matrx{V}' \,
+    \left(\bs{x}' - \bs{x}'_\theta \right)
+    - \frac{(v_\alpha^2 + v_\delta^2)}{2\,\sigma^2} \right]
+    \label{eq:vtan-integrand}
+\end{equation}
+where the primed variables indicate that they are in the sub-space of just the
+astrometric quantities, the constant pre-factor now includes the integral over
+radial velocity
+\begin{align}
+  \tilde{\mathcal{Z}} = \mathcal{Z} \,
+    \exp\left[-\frac{1}{2}\frac{v_r^2}{\sigma_{v_r}^2 + \sigma^2}\right] \,
+    \left[ 2\pi \, (\sigma_{v_r}^2 + \sigma^2) \right]^{1/2}
+\end{align}
+and $\sigma_{v_r}$ is the observational uncertainty of the radial velocity
+measurement. To perform the integral over tangential velocities, we partition
+the inverse variance matrix and vectors so that
+\begin{align}
+  \bs{x}_A &= (\varpi)\\
+  \bs{x}_B &= (\mu_\alpha, \mu_\delta)\\
+  \bs{x}_{\theta, A} &= (d^{-1}) \\
+  \bs{x}_{\theta, B} &= (d^{-1}\,v_\alpha, d^{-1}\,v_\delta) \\
+  \matrx{V} &=
+    \left(\begin{array}{c| c c}
+      V_{11} & V_{12} & V_{13}\\\hline
+      V_{12} & V_{22} & V_{23}\\
+      V_{13} & V_{23} & V_{33}
+    \end{array}\right)
+    = \left(\begin{array}{c c}
+      \matrx{V}_{AA} & \matrx{V}_{AB}\\
+      \matrx{V}_{AB} & \matrx{V}_{BB}
+    \end{array}\right)
+\end{align}
+\todo{Holy fuck that matrix is UGLY - fix with new version of AASTex 6}
+and the argument of the Gaussian in \eqname~\ref{eq:vtan-integrand} can be
+written
+\begin{multline}
+  -\frac{1}{2}\,[
+  \transp{(\bs{x}_A - \bs{x}_{\theta, A})}\,
+    \matrx{V}_{AA}\,(\bs{x}_A - \bs{x}_{\theta, A})\\
+  + \transp{(\bs{x}_B - \bs{x}_{\theta, B})}\,
+    \matrx{V}_{BB}\,(\bs{x}_B - \bs{x}_{\theta, B})\\
+  + 2\,\transp{(\bs{x}_A - \bs{x}_{\theta, A})}\,
+    \matrx{V}_{AB}\,(\bs{x}_B - \bs{x}_{\theta, B})]
+\end{multline}
+\todo{prior in above}
 
 \acknowledgements
 
