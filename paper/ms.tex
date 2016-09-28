@@ -171,4 +171,32 @@ This research additionally utilized:
 \bibliographystyle{aasjournal}
 \bibliography{refs}
 
+\appendix
+\section{Some mathematics relevant to the above}
+
+In what follows, all vectors are column vectors.
+Properties of the squared exponential:
+\begin{eqnarray}
+  \ln\left[\int\exp(-\frac{1}{2}\,[x-\mu]\transp\,A\inv\,[x-\mu] - \Delta)\,\dd x\right]
+  &=& -\frac{d}{2}\,\ln 2\pi -\frac{1}{2}\ln ||A|| -\Delta
+  \quad ,
+\end{eqnarray}
+where $x$ and $\mu$ are $d$-dimensional vectors, $A$ is a symmetric
+matrix, $\Delta$ is a scalar, and the integral is implicitly over all
+of $d$-space.
+We will need to complete squares.
+If we equate
+\begin{eqnarray}
+  \frac{1}{2}\,[x-\mu]\transp\,A\inv\,[x-\mu] + \Delta
+  &=& \frac{1}{2}\,x\transp\,A\inv\,x + x\transp\,B\,b + C
+  \quad ,
+\end{eqnarray}
+where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
+\begin{eqnarray}
+  \mu &=& A\,B\,b
+  \\
+  C & = & \Delta - \frac{1}{2}\,\mu\transp\,A\inv\,\mu
+  \quad .
+\end{eqnarray}
+
 \end{document}
