@@ -33,7 +33,7 @@
 % define macros for math
 \newcommand{\given}{\,|\,}
 \newcommand{\dd}{\mathrm{d}}
-\newcommand{\transp}[1]{{#1}^{\mathsf{T}}}
+\newcommand{\transp}[1]{{#1}^{\!\mathsf{T}}}
 \newcommand{\inv}[1]{{#1}^{-1}}
 \newcommand{\bs}[1]{\boldsymbol{#1}}
 \newcommand{\vperp}{\bs{v}^\perp}
@@ -227,5 +227,7 @@ where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
   C & = & \Delta - \frac{1}{2}\,\mu\transp\,A\inv\,\mu
   \quad .
 \end{eqnarray}
+
+Now in this case, we want to write down the probability of the 
 
 \end{document}
