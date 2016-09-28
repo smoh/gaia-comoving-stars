@@ -2,6 +2,7 @@ from __future__ import division, print_function
 
 # Third-party
 import astropy.units as u
+import astropy.coordinates as coord
 import numpy as np
 
 # Project
@@ -16,6 +17,12 @@ def test_u_vec():
 
     assert get_u_vec(ra[0], dec[0]).shape == (3,)
     assert get_u_vec(ra, dec).shape == (n_test,3)
+
+    for lon,lat in zip(ra,dec):
+        usph = coord.UnitSphericalRepresentation(lon=lon*u.rad, lat=lat*u.rad)
+        astropy_xyz = usph.represent_as(coord.CartesianRepresentation).xyz.value.T
+        assert np.allclose(astropy_xyz, get_u_vec(lon, lat))
+
 
 def test_tangent_basis():
     ra = np.random.uniform(0, 2*np.pi, size=n_test)
