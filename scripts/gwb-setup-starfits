@@ -1,0 +1,162 @@
+#!/usr/bin/env python
+
+from __future__ import print_function, division
+import os, sys
+import numpy as np
+import pandas as pd
+
+DATADIR = os.getenv('GWBDATA', os.path.expanduser('~/.gwb'))
+GAIADIR = os.getenv('GAIADATA', os.path.expanduser('~/.gaia'))
+STARMODELDIR = os.path.join(DATADIR, 'starmodels')
+
+try:
+    TGAS = pd.read_hdf(os.path.join(GAIADIR, 'TgasSource.h5'), 'df')
+except IOError:
+    print('Run gwb-write-tgas-hdf first. Exiting.')
+    sys.exit()
+
+from astropy.coordinates import SkyCoord
+from astropy import units as u
+
+from isochrones.query import Query, TwoMASS, Tycho2, WISE, EmptyQueryError
+from isochrones.extinction import get_AV_infinity
+import configobj
+
+
+class TGASQuery(Query):
+    """Special subclass for a query based on TGAS DR1.  
+
+    `row` is a row of the Gaia DR1 table.
+    """
+    def __init__(self, row, radius=5):
+        self.row = row
+        Query.__init__(self, row.ra, row.dec, row.pmra, row.pmdec, 
+                        epoch=2015., radius=radius)
+
+def write_single_ini(i, catalogs=[TwoMASS, Tycho2, WISE]):
+    s = TGAS.iloc[i]
+    
+    directory = os.path.join(STARMODELDIR, 'singles', str(i))
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
+    ini_file = os.path.join(directory, 'star.ini')
+    if os.path.exists(ini_file):
+        os.remove(ini_file)
+    c = configobj.ConfigObj(ini_file)
+    
+    # define these coords in epoch=2000
+    ra = (s.ra*u.deg - 15*u.yr*s.pmra*u.mas/u.yr).to('deg').value
+    dec = (s.dec*u.deg - 15*u.yr*s.pmdec*u.mas/u.yr).to('deg').value
+    coords1 = SkyCoord(ra, dec, unit='deg')
+    
+    c['ra'] = ra
+    c['dec'] = dec
+    c['maxAV'] = get_AV_infinity(ra, dec)
+    c['parallax'] = s.parallax, s.parallax_error 
+
+    q = TGASQuery(s)
+    
+    for Cat in catalogs:
+        sect = configobj.Section(c, 1, c, {})
+        empty = True
+        
+        cat = Cat(q)
+        try: 
+            mags = cat.get_photometry()
+            for b in mags:
+                sect[b] = mags[b]
+                
+            empty = False
+        except EmptyQueryError:
+            pass
+
+        if not empty:
+            n = Cat.name
+            c[n] = sect
+            c[n]['relative'] = False
+            c[n]['resolution'] = 4.
+
+    c.write()
+        
+def write_binary_ini(i1, i2, catalogs=[TwoMASS, Tycho2, WISE]):
+    """ Write ini file for i1-i2 pair
+    """
+    if not i1 < i2:
+        i1, i2 = i2, i1
+    
+    s1 = TGAS.iloc[i1]
+    s2 = TGAS.iloc[i2]
+    
+    directory = os.path.join(STARMODELDIR, 'binaries', '{}-{}'.format(i1, i2))
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    
+    ini_file = os.path.join(directory, 'star.ini')
+    if os.path.exists(ini_file):
+        os.remove(ini_file)
+    c = configobj.ConfigObj(ini_file)
+    
+    # define these coords in epoch=2000
+    ra = (s1.ra*u.deg - 15*u.yr*s1.pmra*u.mas/u.yr).to('deg').value
+    dec = (s1.dec*u.deg - 15*u.yr*s1.pmdec*u.mas/u.yr).to('deg').value
+    coords1 = SkyCoord(ra, dec, unit='deg')
+    
+    c['ra'] = ra
+    c['dec'] = dec
+    c['maxAV'] = get_AV_infinity(ra, dec)
+
+    plax1, sig1 = s1.parallax, s1.parallax_error 
+    plax2, sig2 = s2.parallax, s2.parallax_error
+
+    # Hack a consistent separation/PA so ObservationTree doesn't get confused
+    c1 = SkyCoord(s1.ra, s1.dec, unit='deg')
+    c2 = SkyCoord(s2.ra, s2.dec, unit='deg')
+    sep = c2.separation(c1).arcsec
+    PA = c2.position_angle(c1).deg
+    
+    norm = 1./sig1**2 + 1./sig2**2
+    c['parallax'] = (plax1/sig1**2 + plax2/sig2**2)/norm, 1/np.sqrt(norm)
+
+    q1 = TGASQuery(s1)
+    q2 = TGASQuery(s2)
+    
+    for Cat in catalogs:
+        sect = configobj.Section(c, 1, c, {})
+        empty = True
+        
+        cat1 = Cat(q1)
+        try: 
+            mags = cat1.get_photometry()
+            for b in mags:
+                sect[b] = mags[b]
+                
+            empty = False
+        except EmptyQueryError:
+            pass
+        
+        cat2 = Cat(q2)
+        try: 
+            mags = cat2.get_photometry()
+            for b in mags:
+                sect[b + '_1'] = mags[b]
+            sect['separation_1'] = sep #cat2.coords.separation(cat1.query_coords).arcsec[0]
+            sect['PA_1'] = PA #cat2.coords.position_angle(cat1.query_coords).deg[0]
+
+            empty = False
+        except EmptyQueryError:
+            pass
+        
+        if not empty:
+            n = Cat.name
+            c[n] = sect
+            c[n]['relative'] = False
+            c[n]['resolution'] = 4.
+    
+    c.write()
+
+if __name__=='__main__':
+    # One test for binary, one for single
+    write_single_ini(541)
+    write_binary_ini(1199, 1203)
+    
