@@ -6,8 +6,7 @@ import astropy.coordinates as coord
 import numpy as np
 
 # Project
-from ..likelihood import (get_u_vec, get_tangent_basis,
-                          ln_H1_marg_likelihood, ln_H2_marg_likelihood)
+from ..coords import get_u_vec, get_tangent_basis
 
 n_test = 8
 
@@ -16,13 +15,12 @@ def test_u_vec():
     dec = np.pi/2. - np.arccos(2*np.random.uniform(size=n_test)-1.)
 
     assert get_u_vec(ra[0], dec[0]).shape == (3,)
-    assert get_u_vec(ra, dec).shape == (n_test,3)
+    assert get_u_vec(ra, dec).shape == (3,n_test)
 
     for lon,lat in zip(ra,dec):
         usph = coord.UnitSphericalRepresentation(lon=lon*u.rad, lat=lat*u.rad)
         astropy_xyz = usph.represent_as(coord.CartesianRepresentation).xyz.value.T
         assert np.allclose(astropy_xyz, get_u_vec(lon, lat))
-
 
 def test_tangent_basis():
     ra = np.random.uniform(0, 2*np.pi, size=n_test)
@@ -32,7 +30,7 @@ def test_tangent_basis():
         A = get_tangent_basis(a, d)
         assert A.shape == (3,3)
 
-        assert np.allclose(np.linalg.norm(A, axis=1), 1.)
+        assert np.allclose(np.linalg.norm(A, axis=0), 1.)
         assert np.allclose(np.dot(A[0], A[1]), 0.)
         assert np.allclose(np.dot(A[0], A[2]), 0.)
         assert np.allclose(np.dot(A[1], A[2]), 0.)
@@ -40,6 +38,18 @@ def test_tangent_basis():
         assert np.allclose(np.cross(A[0], A[1]), A[2])
         assert np.allclose(np.cross(A[0], A[2]), -A[1])
         assert np.allclose(np.cross(A[1], A[2]), A[0])
+
+    A = get_tangent_basis(ra[:4], dec[:4])
+    assert A.shape == (3,3,4)
+
+    assert np.allclose(np.linalg.norm(A, axis=0), 1.)
+    assert np.allclose(np.einsum('ij,ij->', A[0], A[1]), 0.)
+    assert np.allclose(np.einsum('ij,ij->', A[0], A[2]), 0.)
+    assert np.allclose(np.einsum('ij,ij->', A[1], A[2]), 0.)
+
+    assert np.allclose(np.cross(A[0], A[1], axisa=0, axisb=0, axisc=0), A[2])
+    assert np.allclose(np.cross(A[0], A[2], axisa=0, axisb=0, axisc=0), -A[1])
+    assert np.allclose(np.cross(A[1], A[2], axisa=0, axisb=0, axisc=0), A[0])
 
 def make_pair_same_v(d1=81.314, sep_pc=0.1):
     # same velocity vector

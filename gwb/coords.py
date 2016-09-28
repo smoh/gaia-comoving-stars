@@ -63,7 +63,7 @@ def get_tangent_basis(ra, dec, dra=0.5, ddec=0.5):
     u3 = ra_hat - np.einsum('ij,ij->j', ra_hat, u1)*u1 - np.einsum('ij,ij->j', ra_hat, u2)*u2
     u3 /= np.sqrt(np.sum(u3**2, axis=0))
 
-    return np.hstack((u3,u2,u1))
+    return np.squeeze(np.stack((u3,u2,u1), axis=1))
 
 def marg_likelihood_helper(v, d, data):
     """
