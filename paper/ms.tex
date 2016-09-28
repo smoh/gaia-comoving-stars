@@ -142,6 +142,35 @@ can be split into two the product of two simpler integrals $\mathcal{L}_2 = Q_i
   Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d) \, p(\bs{v}) \, p(d)
 \end{equation}
 
+\appendix
+
+Here we derive analytic expressions for the marginal likelihood integrals above.
+
+\todo{Hypothesis 1}
+
+The integrals for Hypothesis 2 are somewhat easier because the true velocity
+vector can be considered to be already in the orthogonal basis defined by the
+tangent plane at the coordinates of the source (we are assuming an isotropic
+velocity prior). We will analytically integrate over the velocity components
+$(v_\alpha,v_\delta,v_r)$ and leave the distance integral to be done
+numerically:
+\begin{equation}
+  \int \, \dd^3\bs{v} \, L(\bs{v}, d) \, p(\bs{v})
+\end{equation}
+The covariance matrix over parallax, proper motion components, and
+radial velocity (if they exist) is $\matrx{C}$ and the inverse variance matrix
+is $\matrx{V}$. Defining the constant
+\begin{equation}
+  \mathcal{Z} = \left[ \det \left(\frac{\matrx{V}}{2\pi} \right) \right]^{1/2}
+\end{equation}
+the integrand can be written
+\begin{equation}
+  L(\bs{v}, d) \, p(\bs{v}) = \mathcal{Z} \,
+    \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
+    \matrx{V} \,
+    \left(\bs{x} - \bs{x}_\theta \right)
+    - \frac{|\bs{v}|^2}{2\,\sigma^2} \right] \\
+\end{equation}
 
 \acknowledgements
 
