@@ -60,7 +60,8 @@ def get_tangent_basis(ra, dec, dra=0.5, ddec=0.5):
     u2 = dec_hat - np.einsum('ij,ij->j', dec_hat, u1)*u1
     u2 /= np.sqrt(np.sum(u2**2, axis=0))
 
-    u3 = ra_hat - np.einsum('ij,ij->j', ra_hat, u1)*u1 - np.einsum('ij,ij->j', ra_hat, u2)*u2
+    u3 = (ra_hat - np.einsum('ij,ij->j', ra_hat, u1)*u1 -
+          np.einsum('ij,ij->j', ra_hat, u2)*u2)
     u3 /= np.sqrt(np.sum(u3**2, axis=0))
 
     return np.squeeze(np.stack((u3,u2,u1), axis=1))
