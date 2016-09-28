@@ -1,7 +1,6 @@
 from __future__ import division, print_function
 
 # Third-party
-import astropy.coordinates as coord
 import astropy.units as u
 import numpy as np
 
@@ -27,8 +26,10 @@ def get_u_vec(lon, lat):
         Unit 3-vector.
 
     """
-    usph = coord.UnitSphericalRepresentation(lon=lon*u.rad, lat=lat*u.rad)
-    return usph.represent_as(coord.CartesianRepresentation).xyz.value.T
+    u_hat = np.array([np.cos(lon) * np.cos(lat),
+                      np.sin(lon) * np.cos(lat),
+                      np.sin(lat)])
+    return u_hat / np.sqrt(np.sum(u_hat**2))
 
 def get_tangent_basis(ra, dec, dra=0.5, ddec=0.5):
     """
