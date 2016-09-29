@@ -17,24 +17,52 @@ class TGASData(object):
 
     # Astrometric data as attributes:
     @property
+    def _ra(self):
+        return np.radians(self.tbl['ra'])
+
+    @property
     def ra(self):
-        return self.tbl['ra']*u.degree
+        return (self._ra*u.radian).to(u.degree)
+
+    @property
+    def _dec(self):
+        return np.radians(self.tbl['dec'])
 
     @property
     def dec(self):
-        return self.tbl['dec']*u.degree
+        return (self._dec*u.radian).to(u.degree)
+
+    @property
+    def _parallax(self):
+        return self.tbl['parallax'] # mas
 
     @property
     def parallax(self):
-        return self.tbl['parallax']*u.mas
+        return self._parallax*u.mas
+
+    @property
+    def _pmra(self):
+        return self.tbl['pmra']
 
     @property
     def pmra(self):
-        return self.tbl['pmra']*u.mas/u.yr
+        return self._pmra*u.mas/u.yr
+
+    @property
+    def _pmdec(self):
+        return self.tbl['pmdec']
 
     @property
     def pmdec(self):
-        return self.tbl['pmdec']*u.mas/u.yr
+        return self._pmdec*u.mas/u.yr
+
+    @property
+    def _rv(self):
+        return 0. # TODO:
+
+    @property
+    def rv(self):
+        return self._rv*u.km/u.s
 
     # Other useful things
     def get_coord(self, with_parallax=False):
@@ -107,3 +135,11 @@ class TGASData(object):
 
         self._cov = np.squeeze(C)
         return self._cov
+
+    @property
+    def get_Cinv(self):
+        # TODO: This assumes 0's in the inverse variance for radial velocities
+        #   but we might actually have some measurements (e.g., from RAVE)
+        Cinv = np.zeros((4,4,len(self.tbl)))
+        Cinv[:3,:3] = np.linalg.inv(self._cov)
+        return Cinv
