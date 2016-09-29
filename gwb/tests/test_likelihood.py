@@ -27,7 +27,7 @@ def make_random_data():
     all_data = []
     for r,d,plx,pmr,pmd,C in zip(ra,dec,parallax,pmra,pmdec,Cov):
         row = {
-            'ra': r, 'dec': d,
+            'ra': np.degrees(r), 'dec': np.degrees(d),
             'parallax': plx, 'pmra': pmr, 'pmdec': pmd
         }
         data = TGASStar(row)
@@ -48,7 +48,7 @@ def make_data_increase_uncertainties():
     for i,a in enumerate(np.linspace(-8,-1,n_data)):
         Cov = np.diag(np.full(6, 2**a))**2
         row = {
-            'ra': ra[i], 'dec': dec[i],
+            'ra': np.degrees(ra[i]), 'dec': np.degrees(dec[i]),
             'parallax': parallax[i], 'pmra': pmra[i], 'pmdec': pmdec[i]
         }
         data = TGASStar(row)
@@ -61,9 +61,17 @@ def make_random_pairs():
     n_data = 128
 
     for i in range(n_data):
-        ra1,ra2 = np.random.uniform(0, 2*np.pi, size=2)
-        dec1,dec2 = np.pi/2. - np.arccos(2*np.random.uniform(size=2)-1.)
-        plx1,plx2 = np.random.uniform(1, 1000., size=2)
+        # ra1,ra2 = np.random.uniform(0, 2*np.pi, size=2)
+        # dec1,dec2 = np.pi/2. - np.arccos(2*np.random.uniform(size=2)-1.)
+        # plx1,plx2 = np.random.uniform(1, 1000., size=2)
+        ra1 = 0.1
+        ra2 = 0.11
+
+        dec1 = -0.57
+        dec2 = -0.56
+
+        plx1 = 1000.
+        plx2 = 1000.
 
         true_v = np.random.normal(0, 25, size=3)
         T1 = get_tangent_basis(ra1, dec1)
@@ -76,7 +84,7 @@ def make_random_pairs():
         pmra2,pmdec2 = v2[:2] * plx2 / 4.740470463496208
         # TODO: ignoring RV for now
 
-        Cov = np.random.uniform(0.1, 0.3, size=(6,6))
+        Cov = np.diag(np.random.uniform(0.1, 0.3, size=6))**2
         Cov[5] = 0. # TODO: ignoring RV for now
         Cov[:,5] = 0. # TODO: ignoring RV for now
 
@@ -89,20 +97,29 @@ def make_random_pairs():
 
         yield [star1, star2]
 
+# ----------------------------------------------------------------------------
+
 def test_y():
     all_data = make_random_data()
     for data in all_data:
         d = 1000./data._parallax
         y = get_y(d, data)
-        assert y.shape == (1,4)
-        assert np.allclose(y[:,0], 0)
+        assert y.shape == (4,)
+        assert np.allclose(y[0], 0)
+
+    ds = [1000./data._parallax for data in all_data[:2]]
+    y = get_y(ds, all_data[:2])
+    assert y.shape == (8,)
 
 def test_M():
     all_data = make_random_data()
     for data in all_data:
         M = get_M(data)
-        assert M.shape == (1,4,3)
-        assert np.allclose(np.linalg.norm(M[0], axis=1), [0, 1, 1, 1])
+        assert M.shape == (4,3)
+        assert np.allclose(np.linalg.norm(M, axis=1), [0, 1, 1, 1])
+
+    M = get_M(all_data[:2])
+    assert M.shape == (8,3)
 
     # make sure the projection matrix M is the same for all of these data
     all_data = make_data_increase_uncertainties()
@@ -118,8 +135,13 @@ def test_Cinv():
     for data in all_data:
         d = 1000./data._parallax
         Cinv = get_Cinv(d, data)
-        assert Cinv.shape == (1,4,4)
+        assert Cinv.shape == (4,4)
         assert np.allclose(Cinv[0], Cinv[0].T)
+
+    ds = [1000./data._parallax for data in all_data[:2]]
+    Cinv = get_Cinv(ds, all_data[:2])
+    assert Cinv.shape == (8,8)
+    assert np.allclose(Cinv[0], Cinv[0].T)
 
     # as uncertainties increase, determinant of inverse variance matrix should get smaller
     all_data = make_data_increase_uncertainties()
@@ -127,7 +149,7 @@ def test_Cinv():
     for data in all_data:
         d = 1000./data._parallax
         Cinv = get_Cinv(d, data)
-        sgn,det = np.linalg.slogdet(Cinv[0,:3,:3])
+        sgn,det = np.linalg.slogdet(Cinv[:3,:3])
         all_det_Cinv.append(det)
 
     all_det_Cinv = np.array(all_det_Cinv)
@@ -145,14 +167,24 @@ def test_A_nu_Delta():
         y = get_y(d, data)
 
         A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
-        assert A.shape == (1,3,3)
+        assert A.shape == (3,3)
         assert np.isfinite(A).all()
 
-        assert nu.shape == (1,3)
+        assert nu.shape == (3,)
         assert np.isfinite(nu).all()
 
-        assert Delta.shape == (1,)
-        assert np.isfinite(Delta).all()
+        assert np.isfinite(Delta)
+
+    ds = [1000./data._parallax for data in all_data[:2]]
+    M = get_M(all_data[:2])
+    Cinv = get_Cinv(ds, all_data[:2])
+    y = get_y(ds, all_data[:2])
+    A, nu, Delta = get_A_nu_Delta(ds, M, Cinv, y, Vinv)
+    assert A.shape == (3,3)
+    assert np.isfinite(A).all()
+    assert nu.shape == (3,)
+    assert np.isfinite(nu).all()
+    assert np.isfinite(Delta)
 
     # as uncertainties increase, nu^T A^-1 nu should *increase*
     all_data = make_data_increase_uncertainties()
@@ -166,28 +198,16 @@ def test_A_nu_Delta():
 
         A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
         Ainv = np.linalg.inv(A)
-        all_log_detA.append(np.linalg.slogdet(A[0])[1])
-        all_nuT_Ainv_nu.append(nu[0].dot(Ainv[0]).dot(nu[0]))
+        all_log_detA.append(np.linalg.slogdet(A)[1])
+        all_nuT_Ainv_nu.append(nu.dot(Ainv).dot(nu))
 
     # A should increase as uncertainties increase
     all_log_detA = np.array(all_log_detA)
     assert np.all((all_log_detA[1:] - all_log_detA[:-1]) > 0)
 
-    # TODO: why does this fail???
+    # nuT_Ainv_nu goes like Sigma^-1, so should decrease
     all_nuT_Ainv_nu = np.array(all_nuT_Ainv_nu)
-    assert np.all((all_nuT_Ainv_nu[1:] - all_nuT_Ainv_nu[:-1]) > 0)
-
-def test_ln_H2_marg_likelihood_helper():
-    print()
-    # all_data = make_random_data()
-    all_data = make_data_increase_uncertainties()
-    for data in all_data:
-        d = 1000./data._parallax
-        Vinv = np.diag([1/25.**2]*3)
-        ll = ln_H2_marg_likelihood_helper(d, data, Vinv)
-        assert np.isfinite(ll).all()
-        print(ll)
-        print()
+    assert np.all((all_nuT_Ainv_nu[1:] - all_nuT_Ainv_nu[:-1]) < 0)
 
 def test_ln_H1_marg_likelihood():
     Vinv = np.diag([1/25.**2]*3)
