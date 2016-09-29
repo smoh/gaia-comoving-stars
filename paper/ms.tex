@@ -260,13 +260,13 @@ This research additionally utilized:
 \appendix
 \section{Some mathematics relevant to the above}
 
-In what follows, all vectors are column vectors.
+In what follows, all vectors are column vectors, unless we have transposed them.
 We indicate whether a symbol represents a scalar, vector, or tensor
 (matrix) by context, not typesetting.
 Properties of the squared exponential:
 \begin{eqnarray}
   \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] - \Delta)\,\dd x\right]
-  &=& \frac{D}{2}\,\ln 2\pi +\frac{1}{2}\ln ||A|| -\Delta
+  &=& +\frac{1}{2}\ln ||2\pi\,A|| -\Delta
   \quad ,
 \end{eqnarray}
 where $x$ and $\nu$ are $D$-dimensional vectors, $A$ is a positive definite
@@ -294,7 +294,7 @@ The prior pdf for the velocity is Gaussian:
 \begin{eqnarray}
   p(v) &=& \normal(v\given 0,V)
   \\
-  \ln p(v) &=& -\frac{3}{2}\,\ln 2\pi -\frac{1}{2}\,\ln||V|| -\frac{1}{2}\,\transp{v}\,\inv{V}\,v
+  \ln p(v) &=& -\frac{1}{2}\,\ln||2\pi\,V|| -\frac{1}{2}\,\transp{v}\,\inv{V}\,v
   \\
   V &=& \sigma_v^2\,I
   \quad ,
@@ -306,7 +306,7 @@ Before we write that down, we will make some definitions.
 We construct a vector $y$ as follows:
 \begin{eqnarray}
   \transp{y} &\equiv& [(d_1\,\varpi_1 - 1), (d_1\,\mu_{\alpha1}), (d_1\,\mu_{\delta1}),
-                       (d_2\,\varpi_2 - 1), (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2})]
+                       (d_2\,\varpi_2 - 1), (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2})] \quad \mbox{or}
   \\
   \transp{y} &\equiv& [(d_1\,\varpi_1 - 1), (d_1\,\mu_{\alpha1}), (d_1\,\mu_{\delta1}), (v_{r1}),
                        (d_2\,\varpi_2 - 1), (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2}), (v_{r2})]
@@ -320,12 +320,12 @@ distances $d_1, d_2$, which we are permitted to do (because we are
 \emph{conditioning} on $d_1, d_2$), and note the wacky minus-ones.
 The vector $y$ is a column vector that we have transposed to make it
 easy to write down.
-Fundamentally, our model is
+Fundamentally, our H1 model (same velocity) is
 \begin{eqnarray}
   y &=& M\,v + \mathrm{noise}
   \\
   \transp{M} &=& [0, \hat{\alpha_1}, \hat{\delta_1},
-                  0, \hat{\alpha_2}, \hat{\delta_2}]
+                  0, \hat{\alpha_2}, \hat{\delta_2}] \quad \mbox{or}
   \\
   \transp{M} &=& [0, \hat{\alpha}_1, \hat{\delta}_2, \hat{r}_1,
                   0, \hat{\alpha}_2, \hat{\delta}_2, \hat{r}_2]
@@ -340,8 +340,9 @@ Given all these definitions, the likelihood function is
 \begin{eqnarray}
   p(\data\given v,d_1,d_2) &=& d_1^3\,d_2^3\,\normal(y\given M\,v, \Sigma)
   \\
-  \ln p(\data\given v,d_1,d_2) &=& 3\,\ln d_1 + 3\,\ln d_2 -\frac{6~\mathrm{or}~8}{2}\,\ln 2\pi
-  -\frac{1}{2}\,\ln||\Sigma|| \\ && \quad -\frac{1}{2}\,\transp{[y-M\,v]}\,\inv{\Sigma}\,[y-M\,v]
+  \ln p(\data\given v,d_1,d_2) &=& 3\,\ln d_1 + 3\,\ln d_2
+  -\frac{1}{2}\,\ln||2\pi\,\Sigma|| \nonumber \\ && \quad
+  -\frac{1}{2}\,\transp{[y-M\,v]}\,\inv{\Sigma}\,[y-M\,v]
   \quad ,
 \end{eqnarray}
 where the factor of $d_1^3\,d_2^3$ converts to units of per \gaia\ data
@@ -354,9 +355,9 @@ We get, in the original parameterization:
   \\
   \nu &=& A\,\transp{M}\,\inv{\Sigma}\,y
   \\
-  \Delta &=& -3\,\ln d_1 -3\,\ln d_2 +\frac{9~\mathrm{or}~11}{2}\,\ln 2\pi
-  +\frac{1}{2}\,\ln||\Sigma|| +\frac{1}{2}\,\ln||V|| \\
-  &&\quad +\frac{1}{2}\,\transp{y}\,\inv{\Sigma}\,y -\frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
+  \Delta &=& -3\,\ln d_1 -3\,\ln d_2
+  +\frac{1}{2}\,\ln||2\pi\,\Sigma|| +\frac{1}{2}\,\ln||2\pi\,V|| \nonumber \\ && \quad
+  +\frac{1}{2}\,\transp{y}\,\inv{\Sigma}\,y -\frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
   \quad ,
 \end{eqnarray}
 where there are sign issues that Hogg doesn't like to think about.
@@ -364,8 +365,35 @@ Finally, we marginalize out the velocity to get the marginalized
 likelihood conditioned on the two distances $d_1, d_2$:
 \begin{eqnarray}
   \ln p(\data\given d_1,d_2)
-  &=& \frac{3}{2}\,\ln 2\pi +\frac{1}{2}\ln ||A|| -\Delta
+  &=& \frac{1}{2}\ln ||2\pi\,A|| -\Delta
   \quad .
 \end{eqnarray}
+
+The story for the H2 model (independent velocities) is very
+similar. In this case, the marginalized likelihood is a product of
+two independent integrals $Q$ each constructed as follows:
+\begin{eqnarray}
+  \transp{y} &\equiv& [(d\,\varpi - 1), (d\,\mu_{\alpha}), (d\,\mu_{\delta})] \quad \mbox{or}
+  \\
+  \transp{y} &\equiv& [(d\,\varpi - 1), (d\,\mu_{\alpha}), (d\,\mu_{\delta}), (v_{r})]
+  \\
+  \transp{M} &=& [0, \hat{\alpha}, \hat{\delta}] \quad \mbox{or}
+  \\
+  \transp{M} &=& [0, \hat{\alpha}, \hat{\delta}_2, \hat{r}]
+  \\
+  \inv{A} &=& [\transp{M}\,\inv{\Sigma}\,M+\inv{V}]
+  \\
+  \nu &=& A\,\transp{M}\,\inv{\Sigma}\,y
+  \\
+  \Delta &=& -3\,\ln d
+  +\frac{1}{2}\,\ln||2\pi\,\Sigma|| +\frac{1}{2}\,\ln||2\pi\,V|| \nonumber \\ && \quad
+  +\frac{1}{2}\,\transp{y}\,\inv{\Sigma}\,y -\frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
+  \\
+  Q &=& \frac{1}{2}\ln ||2\pi\,A|| -\Delta
+  \quad ,
+\end{eqnarray}
+where again there are two options for the dimensionality of $y$ and
+$M$, and once the vectors and $\Sigma$ are properly truncated to one
+star, everything else follows.
 
 \end{document}
