@@ -58,10 +58,33 @@ def get_A_nu_Delta(d, M, Cinv, y, Vinv):
 
     return A, nu, Delta
 
-def ln_marg_likelihood_helper(d, data, Vinv):
+def ln_H1_marg_likelihood(d1, d2, data1, data2, Vinv):
+    d = np.array([d1, d2])
+
+    y1 = get_y(d1, data1)
+    y2 = get_y(d2, data2)
+    y = np.vstack((y1, y2))
+
+    M1 = get_M(data1)
+    M2 = get_M(data2)
+    M = np.vstack((M1,M2))
+
+    Cinv1 = get_Cinv(d1, data1)
+    Cinv2 = get_Cinv(d2, data2)
+    Cinv = np.vstack((Cinv1,Cinv2))
+
+    A,nu,Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
+    _,log_detA = np.linalg.slogdet(2*np.pi*A)
+    return (0.5*log_detA - Delta).sum()
+
+def ln_H2_marg_likelihood_helper(d, data, Vinv):
     y = get_y(d, data)
     M = get_M(data)
     Cinv = get_Cinv(d, data)
     A,nu,Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
     _,log_detA = np.linalg.slogdet(2*np.pi*A)
     return 0.5*log_detA - Delta
+
+def ln_H2_marg_likelihood(d1, d2, data1, data2, Vinv):
+    return (ln_H2_marg_likelihood_helper(d1, data1, Vinv) +
+            ln_H2_marg_likelihood_helper(d2, data2, Vinv))[0]

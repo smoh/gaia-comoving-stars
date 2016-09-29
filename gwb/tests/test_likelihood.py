@@ -5,7 +5,10 @@ import numpy as np
 
 # Project
 from ..data import TGASStar
-from ..likelihood import get_y, get_M, get_Cinv, get_A_nu_Delta, ln_marg_likelihood_helper
+from ..coords import get_tangent_basis
+from ..likelihood import (get_y, get_M, get_Cinv, get_A_nu_Delta,
+                          ln_H1_marg_likelihood, ln_H2_marg_likelihood_helper,
+                          ln_H2_marg_likelihood)
 
 def make_random_data():
     # make fake data
@@ -53,6 +56,38 @@ def make_data_increase_uncertainties():
         all_data.append(data)
 
     return all_data
+
+def make_random_pairs():
+    n_data = 128
+
+    for i in range(n_data):
+        ra1,ra2 = np.random.uniform(0, 2*np.pi, size=2)
+        dec1,dec2 = np.pi/2. - np.arccos(2*np.random.uniform(size=2)-1.)
+        plx1,plx2 = np.random.uniform(1, 1000., size=2)
+
+        true_v = np.random.normal(0, 25, size=3)
+        T1 = get_tangent_basis(ra1, dec1)
+        v1 = T1.dot(true_v)
+        pmra1,pmdec1 = v1[:2] * plx1 / 4.740470463496208
+        # TODO: ignoring RV for now
+
+        T2 = get_tangent_basis(ra2, dec2)
+        v2 = T2.dot(true_v)
+        pmra2,pmdec2 = v2[:2] * plx2 / 4.740470463496208
+        # TODO: ignoring RV for now
+
+        Cov = np.random.uniform(0.1, 0.3, size=(6,6))
+        Cov[5] = 0. # TODO: ignoring RV for now
+        Cov[:,5] = 0. # TODO: ignoring RV for now
+
+        # HACK: they have the same covariance matrix
+        star1 = TGASStar({'ra': ra1, 'dec': dec1, 'parallax': plx1, 'pmra': pmra1, 'pmdec': pmdec1})
+        star1._cov = Cov
+
+        star2 = TGASStar({'ra': ra2, 'dec': dec2, 'parallax': plx2, 'pmra': pmra2, 'pmdec': pmdec2})
+        star2._cov = Cov
+
+        yield [star1, star2]
 
 def test_y():
     all_data = make_random_data()
@@ -142,14 +177,42 @@ def test_A_nu_Delta():
     all_nuT_Ainv_nu = np.array(all_nuT_Ainv_nu)
     assert np.all((all_nuT_Ainv_nu[1:] - all_nuT_Ainv_nu[:-1]) > 0)
 
-def test_ln_marg_likelihood_helper():
+def test_ln_H2_marg_likelihood_helper():
     print()
     # all_data = make_random_data()
     all_data = make_data_increase_uncertainties()
     for data in all_data:
         d = 1000./data._parallax
         Vinv = np.diag([1/25.**2]*3)
-        ll = ln_marg_likelihood_helper(d, data, Vinv)
+        ll = ln_H2_marg_likelihood_helper(d, data, Vinv)
         assert np.isfinite(ll).all()
         print(ll)
         print()
+
+def test_ln_H1_marg_likelihood():
+    Vinv = np.diag([1/25.**2]*3)
+    for pair in make_random_pairs():
+        d1 = 1000/pair[0]._parallax
+        d2 = 1000/pair[1]._parallax
+
+        ll = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+        assert np.isfinite(ll)
+
+def test_ln_H2_marg_likelihood():
+    Vinv = np.diag([1/25.**2]*3)
+    for pair in make_random_pairs():
+        d1 = 1000/pair[0]._parallax
+        d2 = 1000/pair[1]._parallax
+
+        ll = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+        assert np.isfinite(ll)
+
+def test_ln_likelihood_ratio():
+    Vinv = np.diag([1/25.**2]*3)
+    for pair in make_random_pairs():
+        d1 = 1000/pair[0]._parallax
+        d2 = 1000/pair[1]._parallax
+
+        H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+        H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+        print(H1, H2)
