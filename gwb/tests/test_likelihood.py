@@ -120,8 +120,7 @@ def make_good_pairs():
         pmra2,pmdec2 = v2[:2] * plx2 / 4.740470463496208
         # TODO: ignoring RV for now
 
-        # Cov = np.diag(np.random.uniform(0.1, 0.3, size=6))**2
-        Cov = np.diag(np.full(6,1E-6))**2
+        Cov = np.diag(np.random.uniform(0.1, 0.3, size=6))**2
         Cov[5] = 0. # TODO: ignoring RV for now
         Cov[:,5] = 0. # TODO: ignoring RV for now
 
@@ -274,7 +273,7 @@ def test_ln_likelihood_ratio():
 
         H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        print(H1, H2)
+        print(H1 - H2)
 
         break
 
@@ -284,6 +283,6 @@ def test_ln_likelihood_ratio():
 
         H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        print(H1, H2)
+        print(H1 - H2)
 
         break
