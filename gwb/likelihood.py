@@ -47,15 +47,12 @@ def get_A_nu_Delta(d, M, Cinv, y, Vinv):
     d = np.atleast_1d(d)
 
     # using ji vs. ij does the transpose of M
-    # Ainv = np.einsum('ji,jk,ks->is', M, Cinv, M) + Vinv
-    Ainv = (M.T @ (Cinv @ M)) + Vinv
+    Ainv = np.einsum('ji,jk,ks->is', M, Cinv, M) + Vinv
     A = np.linalg.inv(Ainv)
 
     # using ji vs. ij does the transpose
-    # Bb = np.einsum('ji,jk,k->i', M, Cinv, y)
-    # nu = np.einsum('ij,j->i', A, Bb)
-    Bb = M.T @ (Cinv @ y)
-    nu = A @ Bb
+    Bb = np.einsum('ji,jk,k->i', M, Cinv, y)
+    nu = np.einsum('ij,j->i', A, Bb)
 
     # do the right thing when Cinv == 0 for RV's
     idx, = np.where(np.isclose(np.diag(Cinv), 0.))
