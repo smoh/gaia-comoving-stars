@@ -101,23 +101,23 @@ def test_Cinv():
 def test_A_nu_Delta():
     Vinv = np.diag([1/25.**2]*3)
 
-    # all_data = make_random_data()
-    # for data in all_data:
-    #     d = 1000./data._parallax
+    all_data = make_random_data()
+    for data in all_data:
+        d = 1000./data._parallax
 
-    #     M = get_M(data)
-    #     Cinv = get_Cinv(d, data)
-    #     y = get_y(d, data)
+        M = get_M(data)
+        Cinv = get_Cinv(d, data)
+        y = get_y(d, data)
 
-    #     A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
-    #     assert A.shape == (1,3,3)
-    #     assert np.isfinite(A).all()
+        A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
+        assert A.shape == (1,3,3)
+        assert np.isfinite(A).all()
 
-    #     assert nu.shape == (1,3)
-    #     assert np.isfinite(nu).all()
+        assert nu.shape == (1,3)
+        assert np.isfinite(nu).all()
 
-    #     assert Delta.shape == (1,)
-    #     assert np.isfinite(Delta).all()
+        assert Delta.shape == (1,)
+        assert np.isfinite(Delta).all()
 
     # as uncertainties increase, nu^T A^-1 nu should *increase*
     all_data = make_data_increase_uncertainties()
