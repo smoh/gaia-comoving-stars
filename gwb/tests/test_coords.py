@@ -15,7 +15,7 @@ def test_u_vec():
     dec = np.pi/2. - np.arccos(2*np.random.uniform(size=n_test)-1.)
 
     assert get_u_vec(ra[0], dec[0]).shape == (3,)
-    assert get_u_vec(ra, dec).shape == (n_test,3)
+    assert get_u_vec(ra, dec).shape == (3,n_test)
 
     for lon,lat in zip(ra,dec):
         usph = coord.UnitSphericalRepresentation(lon=lon*u.rad, lat=lat*u.rad)

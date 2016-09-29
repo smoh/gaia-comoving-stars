@@ -40,7 +40,7 @@ def get_A_nu_Delta(d, M, Cinv, y, Vinv):
     A = np.linalg.inv(Ainv)
 
     # using ji vs. ij does the transpose
-    Bb = np.einsum('...ji,...jk,...k->...i', M, Cinv, y)
+    Bb = -np.einsum('...ji,...jk,...k->...i', M, Cinv, y)
     nu = np.einsum('...ij,...j->...i', A, Bb)
 
     # do the right thing when Cinv[3,3] == 0
@@ -53,8 +53,8 @@ def get_A_nu_Delta(d, M, Cinv, y, Vinv):
     sgn,log_detVinv = np.linalg.slogdet(Vinv/(2*np.pi))
 
     yT_Cinv_y = np.einsum('...i,...ji,...j->...', y, Cinv, y)
-    nuT_A_nu = np.einsum('...i,...ji,...j->...', nu, A, nu)
-    Delta = -3*np.log(d) - 0.5*log_detCinv - 0.5*log_detVinv + 0.5*yT_Cinv_y - nuT_A_nu
+    nuT_Ainv_nu = np.einsum('...i,...ji,...j->...', nu, Ainv, nu)
+    Delta = -3*np.log(d) - 0.5*log_detCinv - 0.5*log_detVinv + 0.5*yT_Cinv_y - 0.5*nuT_Ainv_nu
 
     return A, nu, Delta
 
