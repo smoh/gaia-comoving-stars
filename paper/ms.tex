@@ -265,25 +265,25 @@ We indicate whether a symbol represents a scalar, vector, or tensor
 (matrix) by context, not typesetting.
 Properties of the squared exponential:
 \begin{eqnarray}
-  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\mu]}\,\inv{A}\,[x-\mu] - \Delta)\,\dd x\right]
-  &=& -\frac{d}{2}\,\ln 2\pi -\frac{1}{2}\ln ||A|| -\Delta
+  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] - \Delta)\,\dd x\right]
+  &=& \frac{D}{2}\,\ln 2\pi +\frac{1}{2}\ln ||A|| -\Delta
   \quad ,
 \end{eqnarray}
-where $x$ and $\mu$ are $d$-dimensional vectors, $A$ is a symmetric
+where $x$ and $\nu$ are $D$-dimensional vectors, $A$ is a symmetric
 matrix, $\Delta$ is a scalar, and the integral is implicitly over all
-of $d$-space.
+of $D$-dimensional $x$-space.
 We will need to complete squares.
 If we equate
 \begin{eqnarray}
-  \frac{1}{2}\,\transp{[x-\mu]}\,\inv{A}\,[x-\mu] + \Delta
+  \frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] + \Delta
   &=& \frac{1}{2}\,\transp{x}\,\inv{A}\,x + \transp{x}\,B\,b + C
   \quad ,
 \end{eqnarray}
 where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
 \begin{eqnarray}
-  \mu &=& A\,B\,b
+  \nu &=& A\,B\,b
   \\
-  C & = & \Delta - \frac{1}{2}\,\transp{\mu}\,\inv{A}\,\mu
+  C & = & \Delta - \frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
   \quad .
 \end{eqnarray}
 
@@ -294,7 +294,7 @@ The prior pdf for the velocity is Gaussian:
 \begin{eqnarray}
   p(v) &=& \normal(v\given 0,V)
   \\
-  \ln p(v) &=& -\frac{3}{2}\,\ln\pi -\frac{1}{2}\,\ln||V|| -\frac{1}{2}\,\transp{v}\,\inv{V}\,v
+  \ln p(v) &=& -\frac{3}{2}\,\ln 2\pi -\frac{1}{2}\,\ln||V|| -\frac{1}{2}\,\transp{v}\,\inv{V}\,v
   \\
   V &=& \sigma_v^2\,I
   \quad ,
@@ -305,10 +305,10 @@ Similarly, the likelihood for the data is also a Gaussian.
 Before we write that down, we will make some definitions.
 We construct a vector $y$ as follows:
 \begin{eqnarray}
-  \transp{y} &\equiv& [d_1\,\varpi_1 - 1, d_1\,\mu_{\alpha,1}, d_1\,\mu_{\delta,1}
+  \transp{y} &\equiv& [(d_1\,\varpi_1 - 1), d_1\,\mu_{\alpha,1}, d_1\,\mu_{\delta,1},
                        d_1\,\varpi_2 - 1, d_2\,\mu_{\alpha,2}, d_1\,\mu_{\delta,2}]
   \\
-  \transp{y} &\equiv& [d_1\,\varpi_1 - 1, d_1\,\mu_{\alpha,1}, d_1\,\mu_{\delta,1}, v_{r,1}
+  \transp{y} &\equiv& [(d_1\,\varpi_1 - 1), d_1\,\mu_{\alpha,1}, d_1\,\mu_{\delta,1}, v_{r,1}
                        d_1\,\varpi_2 - 1, d_2\,\mu_{\alpha,2}, d_1\,\mu_{\delta,2}, v_{r,2}
   \quad ,
 \end{eqnarray}
@@ -317,33 +317,48 @@ version (depending on whether there are measured radial velocities),
 the subscripts 1, 2 refer to the first and second stars (arbitrarily
 ordered) of the pair, we have multiplied the strict observables by
 distances $d_1, d_2$, which we are permitted to do (because we are
-\emph{conditioning} on $d_1, d_2$). The vector $y$ is a column vector
-that we have transposed to make it easy to write down.  Fundamentally,
-our model is
+\emph{conditioning} on $d_1, d_2$), and note the wacky minus-ones.
+The vector $y$ is a column vector that we have transposed to make it
+easy to write down.
+Fundamentally, our model is
 \begin{eqnarray}
   y &=& M\,v + \mathrm{noise}
   \\
   \transp{M} &=& [0, \hat{\alpha_1}, \hat{\delta_1},
                   0, \hat{\alpha_2}, \hat{\delta_2}]
   \\
-  \transp{M} &=& [0, \hat{\alpha}_1, \hat{\delta}_2, \hat{r}_1
+  \transp{M} &=& [0, \hat{\alpha}_1, \hat{\delta}_2, \hat{r}_1,
                   0, \hat{\alpha}_2, \hat{\delta}_2, \hat{r}_2]
   \quad,
 \end{eqnarray}
 where $M$ is a $6\times 3$ or $8\times 3$ design matrix, with zeros
-in two rows and unit vectors along the other rows.
-The noise is drawn from a Gaussian with ($6\times 6$ or $8\times 8$)
-covariance matrix $C$, constructed from the distances $d_1, d_2$ and
+in two rows, and unit vectors along the other rows.
+The noise (in the $y$ vector) is drawn from a Gaussian with ($6\times 6$ or $8\times 8$)
+covariance matrix $\Sigma$, constructed from the distances $d_1, d_2$ and
 the \gaia-provided individual-object covariance matrices.
 Given all these definitions, the likelihood function is
 \begin{eqnarray}
-  p(\data\given v,d_1,d_2) &=& d_1^3\,d_2^3\,\normal(y\given M\,v, C)
+  p(\data\given v,d_1,d_2) &=& d_1^3\,d_2^3\,\normal(y\given M\,v, \Sigma)
   \\
-  \ln p(\data\given v,d_1,d_2) &=& 3\,\ln d_1 + 3\,\ln d_2 -\frac{6~\mathrm{or}~8}{2}\,\ln\pi
-  -\frac{1}{2}\,\ln||C|| -\frac{1}{2}\,\transp{[y-M\,v]}\,\inv{C}\,[y-M\,v]
+  \ln p(\data\given v,d_1,d_2) &=& 3\,\ln d_1 + 3\,\ln d_2 -\frac{6~\mathrm{or}~8}{2}\,\ln 2\pi
+  -\frac{1}{2}\,\ln||\Sigma|| \\ && \quad -\frac{1}{2}\,\transp{[y-M\,v]}\,\inv{\Sigma}\,[y-M\,v]
   \quad ,
 \end{eqnarray}
 where the factor of $d_1^2\,d_2^3$ converts to units of \gaia\ data
 from units of $y$.
+
+Now we multiply together (add in the log) and complete the square.
+We get, in the original parameterization:
+\begin{eqnarray}
+  \nu &=& \inv{[\transp{M}\,\inv{\Sigma}\,M+\inv{V}]}\,\transp{M}\,\inv{\Sigma}\,y
+  \\
+  \Delta &=& 3\,\ln d_1 + 3\,\ln d_2 -\frac{9~\mathrm{or}~11}{2}\,\ln 2\pi
+  -\frac{1}{2}\,\ln||\Sigma|| -\frac{1}{2}\,\ln||V|| \\
+  &&\quad -\frac{1}{2}\,\transp{y}\,\inv{\Sigma}\,y -\frac{1}{2}\,\transp{\nu}\,\inv{[\transp{M}\,\inv{\Sigma}\,M+\inv{V}]}\,\nu
+  \\
+  \ln p(\data\given d_1,d_2) &=& [HOGG]
+  \quad ,
+\end{eqnarray}
+where....HOGG
 
 \end{document}
