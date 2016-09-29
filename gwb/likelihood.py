@@ -10,10 +10,11 @@ from .coords import get_tangent_basis
 pc_mas_yr_to_km_s = (1*u.pc * u.mas/u.yr).to(u.km/u.s,u.dimensionless_angles()).value
 
 def get_y(d, data):
+    d = np.atleast_1d(d)
     y = np.stack([d * data._parallax*1E-3 - 1.,
                   d * data._pmra * pc_mas_yr_to_km_s,
                   d * data._pmdec * pc_mas_yr_to_km_s,
-                  data._rv], axis=1)
+                  np.atleast_1d(data._rv)], axis=1)
     return y
 
 def get_M(data):
