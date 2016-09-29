@@ -1,13 +1,11 @@
 from __future__ import division, print_function
 
 # Third-party
-import astropy.units as u
-import astropy.coordinates as coord
 import numpy as np
 
 # Project
 from ..data import TGASStar
-from ..likelihood import get_y, get_M, get_Cinv, get_A_mu_Delta, ln_marg_likelihood
+from ..likelihood import get_y, get_M, get_Cinv, get_A_nu_Delta, ln_marg_likelihood_helper
 
 def make_data():
     # make fake data
@@ -58,7 +56,7 @@ def test_Cinv():
         assert Cinv.shape == (1,4,4)
         assert np.allclose(Cinv[0], Cinv[0].T)
 
-def test_A_mu_Delta():
+def test_A_nu_Delta():
     all_data = make_data()
     for data in all_data:
         d = 1000./data._parallax
@@ -68,20 +66,20 @@ def test_A_mu_Delta():
         y = get_y(d, data)
         Vinv = np.diag([1/25.**2]*3)
 
-        A, mu, Delta = get_A_mu_Delta(M, Cinv, y, Vinv)
+        A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
         assert A.shape == (1,3,3)
         assert np.isfinite(A).all()
 
-        assert mu.shape == (1,3)
-        assert np.isfinite(mu).all()
+        assert nu.shape == (1,3)
+        assert np.isfinite(nu).all()
 
         assert Delta.shape == (1,)
         assert np.isfinite(Delta).all()
 
-def test_marg_likelihood():
+def test_ln_marg_likelihood_helper():
     all_data = make_data()
     for data in all_data:
         d = 1000./data._parallax
         Vinv = np.diag([1/25.**2]*3)
-        ll = ln_marg_likelihood(d, data, Vinv)
+        ll = ln_marg_likelihood_helper(d, data, Vinv)
         assert np.isfinite(ll).all()

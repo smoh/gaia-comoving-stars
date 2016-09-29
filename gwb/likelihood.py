@@ -29,7 +29,7 @@ def get_Cinv(d, star):
     Cinv[:3,:3] /= d**2
     return Cinv[None]
 
-def get_A_mu_Delta(M, Cinv, y, Vinv):
+def get_A_nu_Delta(d, M, Cinv, y, Vinv):
     if Cinv.ndim > 2:
         n = Cinv.shape[0]
     else:
@@ -42,7 +42,7 @@ def get_A_mu_Delta(M, Cinv, y, Vinv):
 
     # using ji vs. ij does the transpose
     Bb = np.einsum('...ji,...jk,...k->...i', M, Cinv, y)
-    mu = np.einsum('...ij,...j->...i', A, Bb)
+    nu = np.einsum('...ij,...j->...i', A, Bb)
 
     # do the right thing when Cinv[3,3] == 0
     idx = np.isclose(Cinv[...,3,3], 0)
@@ -54,15 +54,15 @@ def get_A_mu_Delta(M, Cinv, y, Vinv):
     sgn,log_detVinv = np.linalg.slogdet(Vinv/(2*np.pi))
 
     yT_Cinv_y = np.einsum('...i,...ji,...j->...', y, Cinv, y)
-    muT_A_mu = np.einsum('...i,...ji,...j->...', mu, A, mu)
-    Delta = 0.5*log_detCinv + 0.5*log_detVinv - 0.5*yT_Cinv_y - muT_A_mu
+    nuT_A_nu = np.einsum('...i,...ji,...j->...', nu, A, nu)
+    Delta = -3*np.log(d) - 0.5*log_detCinv - 0.5*log_detVinv + 0.5*yT_Cinv_y - nuT_A_nu
 
-    return A, mu, Delta
+    return A, nu, Delta
 
-def ln_marg_likelihood(d, data, Vinv):
+def ln_marg_likelihood_helper(d, data, Vinv):
     y = get_y(d, data)
     M = get_M(data)
     Cinv = get_Cinv(d, data)
-    A,mu,Delta = get_A_mu_Delta(M, Cinv, y, Vinv)
-    _,log_Adet = np.linalg.slogdet(A/(2*np.pi))
-    return -Delta + 0.5*log_Adet # TODO: plus or minus? is A actually Ainv?
+    A,nu,Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
+    _,log_detA = np.linalg.slogdet(A/(2*np.pi))
+    return -Delta + 0.5*log_detA # TODO: plus or minus? is A actually Ainv?
