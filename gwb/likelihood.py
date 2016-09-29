@@ -36,7 +36,6 @@ def get_A_nu_Delta(d, M, Cinv, y, Vinv):
         n = 1
 
     # using ji vs. ij does the transpose of M
-    # TODO: is A is actually the inverse of what you think it is?
     Ainv = np.einsum('...ji,...jk,...ks->...is', M, Cinv, M) + Vinv
     A = np.linalg.inv(Ainv)
 
@@ -64,5 +63,5 @@ def ln_marg_likelihood_helper(d, data, Vinv):
     M = get_M(data)
     Cinv = get_Cinv(d, data)
     A,nu,Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
-    _,log_detA = np.linalg.slogdet(A/(2*np.pi))
-    return -Delta + 0.5*log_detA # TODO: plus or minus? is A actually Ainv?
+    _,log_detA = np.linalg.slogdet(2*np.pi*A)
+    return 0.5*log_detA - Delta
