@@ -216,3 +216,5 @@ def test_ln_likelihood_ratio():
         H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         print(H1, H2)
+
+        break
