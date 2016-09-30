@@ -2,8 +2,6 @@ import numpy as np
 from numpy import sqrt, exp, pi, inf
 from scipy import integrate
 
-
-
 def construct_cov_pm(gaia_data):
     """
     Construct covariance matrix from gaia table for proper motion
@@ -20,7 +18,7 @@ def construct_cov_pm(gaia_data):
 
     for i,name1 in enumerate(names):
         for j,name2 in enumerate(names):
-            if j <= i: continue    
+            if j <= i: continue
             full_name = "{}_{}_corr".format(name1, name2)
             C[...,i,j] = gaia_data[full_name]*np.sqrt(C[...,i,i]*C[...,j,j])
             C[...,j,i] = gaia_data[full_name]*np.sqrt(C[...,i,i]*C[...,j,j])
