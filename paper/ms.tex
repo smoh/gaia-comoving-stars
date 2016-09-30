@@ -366,14 +366,14 @@ covariance matrix $\Sigma$, constructed from the distances $d_1, d_2$ and
 the \gaia-provided individual-object covariance matrices.
 Given all these definitions, the likelihood function is
 \begin{eqnarray}
-  p(\data\given v,d_1,d_2) &=& d_1^3\,d_2^3\,\normal(y\given M\,v, \Sigma)
+  p(\data\given v,d_1,d_2) &=& d_1^2\,d_2^2\,\normal(y\given M\,v, \Sigma)
   \\
   \ln p(\data\given v,d_1,d_2) &=& 3\,\ln d_1 + 3\,\ln d_2
   -\frac{1}{2}\,\ln||2\pi\,\Sigma|| \nonumber \\ && \quad
   -\frac{1}{2}\,\transp{[y-M\,v]}\,\inv{\Sigma}\,[y-M\,v]
   \quad ,
 \end{eqnarray}
-where the factor of $d_1^3\,d_2^3$ converts to units of per \gaia\ data
+where the factor of $d_1^2\,d_2^2$ converts to units of per \gaia\ data
 from units of per $y$.
 
 Now we multiply together (add in the log) and complete the square.
@@ -383,7 +383,7 @@ We get, in the original parameterization:
   \\
   \nu &=& -A\,\transp{M}\,\inv{\Sigma}\,y
   \\
-  \Delta &=& -3\,\ln d_1 -3\,\ln d_2
+  \Delta &=& -2\,\ln d_1 -2\,\ln d_2
   +\frac{1}{2}\,\ln||2\pi\,\Sigma|| +\frac{1}{2}\,\ln||2\pi\,V|| \nonumber \\ && \quad
   +\frac{1}{2}\,\transp{y}\,\inv{\Sigma}\,y -\frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
   \quad ,
@@ -413,7 +413,7 @@ two independent integrals $Q$ each constructed as follows:
   \\
   \nu &=& A\,\transp{M}\,\inv{\Sigma}\,y
   \\
-  \Delta &=& -3\,\ln d
+  \Delta &=& -2\,\ln d
   +\frac{1}{2}\,\ln||2\pi\,\Sigma|| +\frac{1}{2}\,\ln||2\pi\,V|| \nonumber \\ && \quad
   +\frac{1}{2}\,\transp{y}\,\inv{\Sigma}\,y -\frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
   \\
