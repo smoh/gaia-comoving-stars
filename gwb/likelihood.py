@@ -8,6 +8,9 @@ from scipy.linalg import block_diag
 # Project
 from .coords import get_tangent_basis
 
+__all__ = ['get_y', 'get_M', 'get_Cinv', 'get_Ainv_nu_Delta',
+           'ln_H1_marg_v_likelihood', 'ln_Q', 'ln_H2_marg_v_likelihood']
+
 pc_mas_yr_to_km_s = (1*u.pc * u.mas/u.yr).to(u.km/u.s,u.dimensionless_angles()).value
 
 def get_y(ds, stars):
@@ -34,14 +37,12 @@ def get_Cinv(ds, stars):
     Cinvs = []
     for d,star in zip(ds,stars):
         Cinv = star.get_sub_cov_inv()
-        Cinv[:3,:3] /= d**2
-        Cinvs.append(Cinv[1:,1:])
+        Cinv[:2,:2] /= d**2
+        Cinvs.append(Cinv)
 
     return block_diag(*Cinvs)
 
 def get_Ainv_nu_Delta(d, M_dirty, Cinv_dirty, y_dirty, Vinv):
-    assert Cinv_dirty.ndim == 2
-
     d = np.atleast_1d(d)
 
     # do the right thing when Cinv == 0 for RV's
@@ -69,10 +70,7 @@ def get_Ainv_nu_Delta(d, M_dirty, Cinv_dirty, y_dirty, Vinv):
 
     return Ainv, nu, Delta
 
-def ln_H1_marg_likelihood(d1, d2, data1, data2, Vinv):
-    ds = np.array([d1, d2])
-    data = [data1, data2]
-
+def _marg_likelihood_helper(ds, data, Vinv):
     y = get_y(ds, data)
     M = get_M(data)
     Cinv = get_Cinv(ds, data)
@@ -83,15 +81,13 @@ def ln_H1_marg_likelihood(d1, d2, data1, data2, Vinv):
     assert sgn > 0
     return 0.5*log_detA - Delta
 
-def ln_H2_marg_likelihood_helper(d, data, Vinv):
-    y = get_y(d, data)
-    M = get_M(data)
-    Cinv = get_Cinv(d, data)
-    Ainv,nu,Delta = get_Ainv_nu_Delta(d, M, Cinv, y, Vinv)
-    sgn,log_detAinv = np.linalg.slogdet(Ainv/(2*np.pi))
-    log_detA = -log_detAinv
-    return 0.5*log_detA - Delta
+def ln_H1_marg_v_likelihood(d1, d2, data1, data2, Vinv):
+    ds = np.array([d1, d2])
+    data = [data1, data2]
+    return _marg_likelihood_helper(ds, data, Vinv)
 
-def ln_H2_marg_likelihood(d1, d2, data1, data2, Vinv):
-    return (ln_H2_marg_likelihood_helper(d1, data1, Vinv) +
-            ln_H2_marg_likelihood_helper(d2, data2, Vinv))
+def ln_Q(d, data, Vinv):
+    return _marg_likelihood_helper(d, data, Vinv)
+
+def ln_H2_marg_v_likelihood(d1, d2, data1, data2, Vinv):
+    return (ln_Q(d1, data1, Vinv) + ln_Q(d2, data2, Vinv))

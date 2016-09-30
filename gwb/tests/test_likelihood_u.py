@@ -1,3 +1,9 @@
+"""
+
+    Unit tests for gwb/likelihood.py
+
+"""
+
 from __future__ import division, print_function
 
 # Third-party
@@ -6,9 +12,8 @@ import numpy as np
 # Project
 from ..data import TGASStar
 from ..coords import get_tangent_basis
-from ..likelihood import (get_y, get_M, get_Cinv, get_A_nu_Delta,
-                          ln_H1_marg_likelihood, ln_H2_marg_likelihood_helper,
-                          ln_H2_marg_likelihood)
+from ..likelihood import (get_y, get_M, get_Cinv, get_Ainv_nu_Delta,
+                          ln_H1_marg_v_likelihood, ln_Q, ln_H2_marg_v_likelihood)
 
 def make_random_data():
     # make fake data
