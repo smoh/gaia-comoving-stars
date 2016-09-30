@@ -29,7 +29,7 @@ def get_u_vec(lon, lat):
     u_hat = np.array([np.cos(lon) * np.cos(lat),
                       np.sin(lon) * np.cos(lat),
                       np.sin(lat)])
-    return u_hat / np.sqrt(np.sum(u_hat**2, axis=0))[None]
+    return u_hat
 
 def get_tangent_basis(ra, dec, dra=0.5, ddec=0.5):
     """
