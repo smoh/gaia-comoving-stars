@@ -121,6 +121,7 @@ def make_good_pairs():
         # TODO: ignoring RV for now
 
         Cov = np.diag(np.random.uniform(0.1, 0.3, size=6))**2
+        # Cov = np.diag(np.full(6,1E-2))**2
         Cov[5] = 0. # TODO: ignoring RV for now
         Cov[:,5] = 0. # TODO: ignoring RV for now
 
@@ -254,6 +255,8 @@ def test_ln_H1_marg_likelihood():
         d2 = 1000/pair[1]._parallax
 
         ll = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+        print(ll)
+        return
         assert np.isfinite(ll)
 
 def test_ln_H2_marg_likelihood():
@@ -264,6 +267,23 @@ def test_ln_H2_marg_likelihood():
 
         ll = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         assert np.isfinite(ll)
+
+def test_plot_shape_of_Q():
+    Vinv = np.diag([1/25.**2]*3)
+    for pair in make_good_pairs():
+        d1 = 1000/pair[0]._parallax
+        print(d1, pair[0]._parallax)
+        d_grid = np.linspace(0.1, 8*d1, 256)
+
+        ll = np.zeros_like(d_grid)
+        for i,d in enumerate(d_grid):
+            ll[i] = ln_H2_marg_likelihood_helper(d, pair[0], Vinv)
+
+        import matplotlib.pyplot as plt
+        plt.plot(d_grid, np.exp(ll-ll.max()))
+        plt.show()
+
+        return
 
 def test_ln_likelihood_ratio():
     Vinv = np.diag([1/25.**2]*3)
@@ -284,5 +304,26 @@ def test_ln_likelihood_ratio():
         H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
         print(H1 - H2)
+
+        d1_grid,d2_grid = np.meshgrid(np.linspace(-3, np.log10(16*d1), 128),
+                                      np.logspace(-3, np.log10(16*d2), 128))
+        d1_grid = d1_grid.ravel()
+        d2_grid = d2_grid.ravel()
+
+        HH1 = np.zeros_like(d1_grid)
+        HH2 = np.zeros_like(d1_grid)
+        for i,(d1,d2) in enumerate(zip(d1_grid, d2_grid)):
+            HH1[i] = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+            HH2[i] = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
+
+        import matplotlib.pyplot as plt
+
+        plt.figure(figsize=(6,6))
+        plt.imshow(HH1.reshape(128,128), cmap='viridis')
+
+        plt.figure(figsize=(6,6))
+        plt.imshow(HH2.reshape(128,128), cmap='viridis')
+
+        plt.show()
 
         break
