@@ -1,3 +1,9 @@
+"""
+
+    Functional tests for gwb/likelihood.py
+
+"""
+
 from __future__ import division, print_function
 
 # Third-party
@@ -6,38 +12,12 @@ import numpy as np
 # Project
 from ..data import TGASStar
 from ..coords import get_tangent_basis
-from ..likelihood import (get_y, get_M, get_Cinv, get_A_nu_Delta,
-                          ln_H1_marg_likelihood, ln_H2_marg_likelihood_helper,
-                          ln_H2_marg_likelihood)
+from ..likelihood import (get_y, get_M, get_Cinv, get_Ainv_nu_Delta,
+                          ln_H1_marg_v_likelihood, ln_Q, ln_H2_marg_v_likelihood)
 
-def make_random_data():
-    # make fake data
-    n_data = 128
-    ra = np.random.uniform(0, 2*np.pi, size=n_data)
-    dec = np.pi/2. - np.arccos(2*np.random.uniform(size=n_data)-1.)
-    parallax = np.random.uniform(-0.1, 1000., size=n_data)
-    pmra,pmdec = np.random.normal(0, 100, size=(2,n_data))
+Vinv = np.diag([1/25.**2]*3)
 
-    _M = np.random.uniform(0.1, 0.3, size=(n_data,6,6))
-    Cov = 0.5 * np.array([M.dot(M.T) for M in _M])
-    _M[:,5] = 0.
-    _M[...,5] = 0.
-    assert Cov.shape == (n_data,6,6)
-
-    all_data = []
-    for r,d,plx,pmr,pmd,C in zip(ra,dec,parallax,pmra,pmdec,Cov):
-        row = {
-            'ra': np.degrees(r), 'dec': np.degrees(d),
-            'parallax': plx, 'pmra': pmr, 'pmdec': pmd
-        }
-        data = TGASStar(row)
-        data._cov = C
-        all_data.append(data)
-
-    return all_data
-
-def make_data_increase_uncertainties():
-    n_data = 8
+def make_data_increase_uncertainties(n_data=128):
     ra = np.full(n_data, np.random.uniform(0, 2*np.pi))
     dec = np.full(n_data, np.pi/2. - np.arccos(2*np.random.uniform()-1.))
     parallax = np.ones(n_data)*10. # 100 pc
@@ -120,8 +100,8 @@ def make_good_pairs():
         pmra2,pmdec2 = v2[:2] * plx2 / 4.740470463496208
         # TODO: ignoring RV for now
 
-        # Cov = np.diag(np.random.uniform(0.1, 0.3, size=6))**2
-        Cov = np.diag(np.full(6,1E-6))**2
+        Cov = np.diag(np.random.uniform(0.1, 0.3, size=6))**2
+        # Cov = np.diag(np.full(6,1E-2))**2
         Cov[5] = 0. # TODO: ignoring RV for now
         Cov[:,5] = 0. # TODO: ignoring RV for now
 
@@ -138,28 +118,7 @@ def make_good_pairs():
 
 # ----------------------------------------------------------------------------
 
-def test_y():
-    all_data = make_random_data()
-    for data in all_data:
-        d = 1000./data._parallax
-        y = get_y(d, data)
-        assert y.shape == (4,)
-        assert np.allclose(y[0], 0)
-
-    ds = [1000./data._parallax for data in all_data[:2]]
-    y = get_y(ds, all_data[:2])
-    assert y.shape == (8,)
-
 def test_M():
-    all_data = make_random_data()
-    for data in all_data:
-        M = get_M(data)
-        assert M.shape == (4,3)
-        assert np.allclose(np.linalg.norm(M, axis=1), [0, 1, 1, 1])
-
-    M = get_M(all_data[:2])
-    assert M.shape == (8,3)
-
     # make sure the projection matrix M is the same for all of these data
     all_data = make_data_increase_uncertainties()
     comp_M = None
@@ -170,61 +129,19 @@ def test_M():
         assert np.allclose(M, comp_M)
 
 def test_Cinv():
-    all_data = make_random_data()
-    for data in all_data:
-        d = 1000./data._parallax
-        Cinv = get_Cinv(d, data)
-        assert Cinv.shape == (4,4)
-        assert np.allclose(Cinv[0], Cinv[0].T)
-
-    ds = [1000./data._parallax for data in all_data[:2]]
-    Cinv = get_Cinv(ds, all_data[:2])
-    assert Cinv.shape == (8,8)
-    assert np.allclose(Cinv[0], Cinv[0].T)
-
     # as uncertainties increase, determinant of inverse variance matrix should get smaller
     all_data = make_data_increase_uncertainties()
     all_det_Cinv = []
     for data in all_data:
         d = 1000./data._parallax
         Cinv = get_Cinv(d, data)
-        sgn,det = np.linalg.slogdet(Cinv[:3,:3])
+        sgn,det = np.linalg.slogdet(Cinv[:2,:2])
         all_det_Cinv.append(det)
 
     all_det_Cinv = np.array(all_det_Cinv)
     assert np.all((all_det_Cinv[1:] - all_det_Cinv[:-1]) < 0)
 
-def test_A_nu_Delta():
-    Vinv = np.diag([1/25.**2]*3)
-
-    all_data = make_random_data()
-    for data in all_data:
-        d = 1000./data._parallax
-
-        M = get_M(data)
-        Cinv = get_Cinv(d, data)
-        y = get_y(d, data)
-
-        A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
-        assert A.shape == (3,3)
-        assert np.isfinite(A).all()
-
-        assert nu.shape == (3,)
-        assert np.isfinite(nu).all()
-
-        assert np.isfinite(Delta)
-
-    ds = [1000./data._parallax for data in all_data[:2]]
-    M = get_M(all_data[:2])
-    Cinv = get_Cinv(ds, all_data[:2])
-    y = get_y(ds, all_data[:2])
-    A, nu, Delta = get_A_nu_Delta(ds, M, Cinv, y, Vinv)
-    assert A.shape == (3,3)
-    assert np.isfinite(A).all()
-    assert nu.shape == (3,)
-    assert np.isfinite(nu).all()
-    assert np.isfinite(Delta)
-
+def test_Ainv_nu_Delta():
     # as uncertainties increase, nu^T A^-1 nu should *increase*
     all_data = make_data_increase_uncertainties()
     all_nuT_Ainv_nu = []
@@ -235,9 +152,8 @@ def test_A_nu_Delta():
         Cinv = get_Cinv(d, data)
         y = get_y(d, data)
 
-        A, nu, Delta = get_A_nu_Delta(d, M, Cinv, y, Vinv)
-        Ainv = np.linalg.inv(A)
-        all_log_detA.append(np.linalg.slogdet(A)[1])
+        Ainv, nu, Delta = get_Ainv_nu_Delta(d, M, Cinv, y, Vinv)
+        all_log_detA.append(-np.linalg.slogdet(Ainv)[1])
         all_nuT_Ainv_nu.append(nu.dot(Ainv).dot(nu))
 
     # A should increase as uncertainties increase
@@ -248,42 +164,38 @@ def test_A_nu_Delta():
     all_nuT_Ainv_nu = np.array(all_nuT_Ainv_nu)
     assert np.all((all_nuT_Ainv_nu[1:] - all_nuT_Ainv_nu[:-1]) < 0)
 
-def test_ln_H1_marg_likelihood():
-    Vinv = np.diag([1/25.**2]*3)
-    for pair in make_bad_pairs():
-        d1 = 1000/pair[0]._parallax
-        d2 = 1000/pair[1]._parallax
+# def test_plot_shape_of_Q():
+#     Vinv = np.diag([1/25.**2]*3)
+#     for pair in make_good_pairs():
+#         d1 = 1000/pair[0]._parallax
+#         print(d1, pair[0]._parallax)
+#         d_grid = np.linspace(0.1, 8*d1, 256)
 
-        ll = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        assert np.isfinite(ll)
+#         ll = np.zeros_like(d_grid)
+#         for i,d in enumerate(d_grid):
+#             ll[i] = ln_Q(d, pair[0], Vinv)
 
-def test_ln_H2_marg_likelihood():
-    Vinv = np.diag([1/25.**2]*3)
-    for pair in make_bad_pairs():
-        d1 = 1000/pair[0]._parallax
-        d2 = 1000/pair[1]._parallax
+#         import matplotlib.pyplot as plt
+#         plt.plot(d_grid, np.exp(ll-ll.max()))
+#         plt.show()
 
-        ll = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        assert np.isfinite(ll)
+#         return
 
-def test_ln_likelihood_ratio():
-    Vinv = np.diag([1/25.**2]*3)
-    for pair in make_bad_pairs():
-        d1 = 1000/pair[0]._parallax
-        d2 = 1000/pair[1]._parallax
+def _compute_ratio(pair):
+    d1 = 1000/pair[0]._parallax
+    d2 = 1000/pair[1]._parallax
 
-        H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        print(H1, H2)
+    ll_H1 = ln_H1_marg_v_likelihood(d1, d2, pair[0], pair[1], Vinv)
+    ll_H2 = ln_H2_marg_v_likelihood(d1, d2, pair[0], pair[1], Vinv)
 
-        break
+    return ll_H1-ll_H2
 
-    for pair in make_good_pairs():
-        d1 = 1000/pair[0]._parallax
-        d2 = 1000/pair[1]._parallax
+# def test_ln_likelihood_ratio():
+#     Vinv = np.diag([1/25.**2]*3)
+#     for pair in make_bad_pairs():
+#         assert _compute_ratio(pair) < 0
+#         break
 
-        H1 = ln_H1_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        H2 = ln_H2_marg_likelihood(d1, d2, pair[0], pair[1], Vinv)
-        print(H1, H2)
-
-        break
+#     for pair in make_good_pairs():
+#         assert _compute_ratio(pair) > -10
+#         break
