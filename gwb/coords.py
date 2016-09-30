@@ -31,38 +31,12 @@ def get_u_vec(lon, lat):
                       np.sin(lat)])
     return u_hat
 
-def get_tangent_basis(ra, dec, dra=0.5, ddec=0.5):
+# TODO: stack properly for array ra, decs
+def get_tangent_basis(ra, dec):
     """
     row vectors are the tangent-space basis at (alpha, delta, r)
     """
-
-    ra = np.atleast_1d(ra)
-    dec = np.atleast_1d(dec)
-
-    # unit vector pointing at the sky position of the target
-    u_hat = get_u_vec(ra, dec)
-
-    # unit vector offset in declination
-    dec_hat_sign = np.ones_like(u_hat)
-    dec_hat_sign[:,dec > np.pi/4] = -1.
-
-    v_hat = np.zeros_like(u_hat)
-    v_hat[:,dec <= np.pi/4] = get_u_vec(ra[dec <= np.pi/4], dec[dec <= np.pi/4]+ddec)
-    v_hat[:,dec > np.pi/4] = get_u_vec(ra[dec > np.pi/4], dec[dec > np.pi/4]-ddec)
-
-    dec_hat = dec_hat_sign * (v_hat - u_hat)
-    ra_hat = get_u_vec(ra+dra, dec) - u_hat # always a positive offset in RA
-
-    # define the orthogonal basis using gram-schmidt orthonormalization
-    #  - u1 is the unit vector that points to (ra,dec)
-    u1 = u_hat
-
-    u2 = dec_hat - np.einsum('ij,ij->j', dec_hat, u1)*u1
-    u2 /= np.sqrt(np.sum(u2**2, axis=0))
-
-    u3 = (ra_hat - np.einsum('ij,ij->j', ra_hat, u1)*u1 -
-          np.einsum('ij,ij->j', ra_hat, u2)*u2)
-    u3 /= np.sqrt(np.sum(u3**2, axis=0))
-
-    T = np.stack((u3,u2,u1))
-    return np.squeeze(np.moveaxis(T,-1,0))
+    return np.array([
+            [-np.sin(ra),  np.cos(ra), 0.],
+            [-np.sin(dec)*np.cos(ra), -np.sin(dec)*np.sin(ra), np.cos(dec)],
+            [np.cos(dec)*np.cos(ra),  np.cos(dec)*np.sin(ra), np.sin(dec)]])
