@@ -331,16 +331,16 @@ where $v$ is the three-vector velocity, and $V$ is an isotropic
 variance tensor.
 Similarly, the likelihood for the data is also a Gaussian.
 Before we write that down, we will make some definitions.
-We construct a vector $y$ as follows:
+We construct a velocity-space data vector $y$ as follows:
 \begin{eqnarray}
-  \transp{y} &\equiv& [(d_1\,\varpi_1 - 1), (d_1\,\mu_{\alpha1}), (d_1\,\mu_{\delta1}),
-                       (d_2\,\varpi_2 - 1), (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2})] \quad \mbox{or}
+  \transp{y} &\equiv& [(d_1\,\mu_{\alpha1}), (d_1\,\mu_{\delta1}),
+                       (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2})] \quad \mbox{or}
   \\
-  \transp{y} &\equiv& [(d_1\,\varpi_1 - 1), (d_1\,\mu_{\alpha1}), (d_1\,\mu_{\delta1}), (v_{r1}),
-                       (d_2\,\varpi_2 - 1), (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2}), (v_{r2})]
+  \transp{y} &\equiv& [(d_1\,\mu_{\alpha1}), (d_1\,\mu_{\delta1}), (v_{r1}),
+                       (d_2\,\mu_{\alpha2}), (d_2\,\mu_{\delta2}), (v_{r2})]
   \quad ,
 \end{eqnarray}
-where we have given two versions, a 6-component and an 8-component
+where we have given two versions, a 4-component and an 6-component
 version (depending on whether there are measured radial velocities),
 the subscripts 1, 2 refer to the first and second stars (arbitrarily
 ordered) of the pair, we have multiplied the strict observables by
@@ -352,11 +352,11 @@ Fundamentally, our H1 model (same velocity) is
 \begin{eqnarray}
   y &=& M\,v + \mathrm{noise}
   \\
-  \transp{M} &=& [0, \hat{\alpha_1}, \hat{\delta_1},
-                  0, \hat{\alpha_2}, \hat{\delta_2}] \quad \mbox{or}
+  \transp{M} &=& [\hat{\alpha_1}, \hat{\delta_1},
+                  \hat{\alpha_2}, \hat{\delta_2}] \quad \mbox{or}
   \\
-  \transp{M} &=& [0, \hat{\alpha}_1, \hat{\delta}_2, \hat{r}_1,
-                  0, \hat{\alpha}_2, \hat{\delta}_2, \hat{r}_2]
+  \transp{M} &=& [\hat{\alpha}_1, \hat{\delta}_2, \hat{r}_1,
+                  \hat{\alpha}_2, \hat{\delta}_2, \hat{r}_2]
   \quad,
 \end{eqnarray}
 where $M$ is a $6\times 3$ or $8\times 3$ design matrix, with zeros
@@ -401,13 +401,13 @@ The story for the H2 model (independent velocities) is very
 similar. In this case, the marginalized likelihood is a product of
 two independent integrals $Q$ each constructed as follows:
 \begin{eqnarray}
-  \transp{y} &\equiv& [(d\,\varpi - 1), (d\,\mu_{\alpha}), (d\,\mu_{\delta})] \quad \mbox{or}
+  \transp{y} &\equiv& [(d\,\mu_{\alpha}), (d\,\mu_{\delta})] \quad \mbox{or}
   \\
-  \transp{y} &\equiv& [(d\,\varpi - 1), (d\,\mu_{\alpha}), (d\,\mu_{\delta}), (v_{r})]
+  \transp{y} &\equiv& [(d\,\mu_{\alpha}), (d\,\mu_{\delta}), (v_{r})]
   \\
-  \transp{M} &=& [0, \hat{\alpha}, \hat{\delta}] \quad \mbox{or}
+  \transp{M} &=& [\hat{\alpha}, \hat{\delta}] \quad \mbox{or}
   \\
-  \transp{M} &=& [0, \hat{\alpha}, \hat{\delta}_2, \hat{r}]
+  \transp{M} &=& [\hat{\alpha}, \hat{\delta}_2, \hat{r}]
   \\
   \inv{A} &=& [\transp{M}\,\inv{\Sigma}\,M+\inv{V}]
   \\
