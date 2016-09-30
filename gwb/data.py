@@ -5,6 +5,8 @@ import astropy.coordinates as coord
 import astropy.units as u
 import numpy as np
 
+__all__ = ['TGASStar']
+
 class TGASStar(object):
 
     def __init__(self, tgas_row, rv=None, rv_err=None, metadata=None):
@@ -123,16 +125,16 @@ class TGASStar(object):
         Return the sub-matrix of the full Gaia covariance matrix that
         just contains parallax, proper motion, and radial velocity terms.
         """
-        return self.get_cov()[2:,2:]
+        return self.get_cov()[3:,3:]
 
     def get_sub_cov_inv(self):
         """
-        Return the inverse of the sub-matrix over parallax, proper motion,
-        and radial velocity terms.
+        Return the inverse of the sub-matrix over velocity terms
+        (proper motion and radial velocity).
         """
-        Cinv = np.zeros((4,4))
+        Cinv = np.zeros((3,3))
         if self._rv_err is None:
-            Cinv[:3,:3] = np.linalg.inv(self.get_sub_cov()[:-1,:-1])
+            Cinv[:2,:2] = np.linalg.inv(self.get_sub_cov()[:-1,:-1])
         else:
             Cinv = np.linalg.inv(self.get_sub_cov())
         return Cinv
