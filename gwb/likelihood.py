@@ -14,17 +14,15 @@ def get_y(ds, stars):
     ds = np.atleast_1d(ds)
     stars = np.atleast_1d(stars)
 
-    y = np.hstack([[d * star._parallax - 1000., # units
-                    d * star._pmra * pc_mas_yr_to_km_s,
+    y = np.hstack([[d * star._pmra * pc_mas_yr_to_km_s,
                     d * star._pmdec * pc_mas_yr_to_km_s,
                     star._rv] for d,star in zip(ds,stars)])
     return y
 
 def get_M(stars):
     stars = np.atleast_1d(stars)
-    M0 = np.zeros(3)
 
-    M = [np.vstack((M0,get_tangent_basis(star._ra, star._dec)))
+    M = [get_tangent_basis(star._ra, star._dec)
          for star in stars]
 
     return np.vstack(M)
@@ -37,7 +35,7 @@ def get_Cinv(ds, stars):
     for d,star in zip(ds,stars):
         Cinv = star.get_sub_cov_inv()
         Cinv[:3,:3] /= d**2
-        Cinvs.append(Cinv)
+        Cinvs.append(Cinv[1:,1:])
 
     return block_diag(*Cinvs)
 
@@ -66,7 +64,7 @@ def get_Ainv_nu_Delta(d, M_dirty, Cinv_dirty, y_dirty, Vinv):
 
     yT_Cinv_y = np.einsum('i,ji,j->', y, Cinv, y)
     nuT_Ainv_nu = np.einsum('i,ji,j->', nu, Ainv, nu)
-    Delta = (-sum([3*np.log(dd) for dd in d]) - 0.5*log_detCinv - 0.5*log_detVinv
+    Delta = (-sum([2*np.log(dd) for dd in d]) - 0.5*log_detCinv - 0.5*log_detVinv
              + 0.5*yT_Cinv_y - 0.5*nuT_Ainv_nu)
 
     return Ainv, nu, Delta
