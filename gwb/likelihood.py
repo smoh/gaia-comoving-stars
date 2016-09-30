@@ -14,6 +14,9 @@ __all__ = ['get_y', 'get_M', 'get_Cinv', 'get_Ainv_nu_Delta',
 pc_mas_yr_to_km_s = (1*u.pc * u.mas/u.yr).to(u.km/u.s,u.dimensionless_angles()).value
 
 def get_y(ds, stars):
+    """
+    Construct the vector y, which should have length 3*n_stars
+    """
     ds = np.atleast_1d(ds)
     stars = np.atleast_1d(stars)
 
@@ -23,6 +26,9 @@ def get_y(ds, stars):
     return y
 
 def get_M(stars):
+    """
+    Construct the matrix M, which should have shape (3*n_stars, 3*n_stars)
+    """
     stars = np.atleast_1d(stars)
 
     M = [get_tangent_basis(star._ra, star._dec)
@@ -31,6 +37,9 @@ def get_M(stars):
     return np.vstack(M)
 
 def get_Cinv(ds, stars):
+    """
+    Construct the matrix Cinv, which should have shape (3*n_stars, 3*n_stars)
+    """
     ds = np.atleast_1d(ds)
     stars = np.atleast_1d(stars)
 
