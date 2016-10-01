@@ -31,12 +31,18 @@ def get_u_vec(lon, lat):
                       np.sin(lat)])
     return u_hat
 
-# TODO: stack properly for array ra, decs
 def get_tangent_basis(ra, dec):
     """
     row vectors are the tangent-space basis at (alpha, delta, r)
     """
-    return np.array([
-            [-np.sin(ra),  np.cos(ra), 0.],
-            [-np.sin(dec)*np.cos(ra), -np.sin(dec)*np.sin(ra), np.cos(dec)],
-            [np.cos(dec)*np.cos(ra),  np.cos(dec)*np.sin(ra), np.sin(dec)]])
+    ra = np.atleast_1d(ra)
+    dec = np.atleast_1d(dec)
+    s = []
+    for cra, cdec in zip(ra, dec):
+        s.append(
+            np.array([
+                [-np.sin(cra),  np.cos(cra), 0.],
+                [-np.sin(cdec)*np.cos(cra), -np.sin(cdec)*np.sin(cra), np.cos(cdec)],
+                [np.cos(cdec)*np.cos(cra),  np.cos(cdec)*np.sin(cra), np.sin(cdec)]
+                ]))
+    return np.array(s).squeeze()
