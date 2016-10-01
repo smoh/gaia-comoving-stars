@@ -54,10 +54,12 @@ def get_Cinv(ds, stars):
 def get_Ainv_nu_Delta(d, M_dirty, Cinv_dirty, y_dirty, Vinv):
     d = np.atleast_1d(d)
 
-    # do the right thing when Cinv == 0 for RV's
-    idx, = np.where(np.isclose(np.diag(Cinv_dirty), 0.))
-    Cinv = np.delete(Cinv_dirty, idx, axis=0)
-    Cinv = np.delete(Cinv, idx, axis=1)
+    # If inverse variances of RV is zero (RV info unavailable),
+    # delete covariances with RV
+    idx = np.arange(2, Cinv_dirty.shape[-1], 3)
+    noRV = Cinv_dirty[idx,idx] == 0.
+    Cinv = np.delete(Cinv_dirty, idx[noRV], axis=0)
+    Cinv = np.delete(Cinv, idx[noRV], axis=1)
     _,log_detCinv = np.linalg.slogdet(Cinv/(2*np.pi))
 
     M = np.delete(M_dirty, idx, axis=0)
