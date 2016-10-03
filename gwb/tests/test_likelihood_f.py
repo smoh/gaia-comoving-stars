@@ -12,7 +12,7 @@ import numpy as np
 # Project
 from ..data import TGASStar
 from ..coords import get_tangent_basis
-from ..likelihood import (get_y, get_M, get_Cinv, get_Ainv_nu_Delta,
+from ..likelihood import (get_y_Cinv, get_M, get_Ainv_nu_Delta,
                           ln_H1_marg_v_likelihood, ln_Q, ln_H2_marg_v_likelihood)
 
 Vinv = np.diag([1/25.**2]*3)
@@ -55,7 +55,7 @@ def test_Cinv():
     all_det_Cinv = []
     for data in all_data:
         d = 1000./data._data['parallax']
-        Cinv = get_Cinv(d, data)
+        y,Cinv = get_y_Cinv(d, data)
         sgn,det = np.linalg.slogdet(Cinv[:2,:2])
         all_det_Cinv.append(det)
 
@@ -70,8 +70,7 @@ def test_Ainv_nu_Delta():
     for data in all_data:
         d = 1000./data._data['parallax']
         M = get_M(data)
-        Cinv = get_Cinv(d, data)
-        y = get_y(d, data)
+        y,Cinv = get_y_Cinv(d, data)
 
         Ainv, nu, Delta = get_Ainv_nu_Delta(d, M, Cinv, y, Vinv)
         all_log_detA.append(-np.linalg.slogdet(Ainv)[1])
