@@ -71,16 +71,16 @@ def get_posterior_distance_samples(star, size=1, min_parallax=0.1):
 
     return 1000/samples[:size]
 
-def ln_H1_FML(star1, star2, Vinv, n_dist_samples=128):
+def ln_H1_FML(star1, star2, Vinv, n_dist_samples=128, v_scatter=0.):
     dist1 = get_posterior_distance_samples(star1, size=n_dist_samples)
     dist2 = get_posterior_distance_samples(star2, size=n_dist_samples)
-    ll_H1_at_samples = np.array([ln_H1_marg_v_likelihood(d1, d2, star1, star2, Vinv)
+    ll_H1_at_samples = np.array([ln_H1_marg_v_likelihood(d1, d2, star1, star2, Vinv, v_scatter)
                                  for d1,d2 in zip(dist1, dist2)])
     return logsumexp(ll_H1_at_samples) - np.log(float(ll_H1_at_samples.size))
 
-def ln_H2_FML(star1, star2, Vinv, n_dist_samples=128):
+def ln_H2_FML(star1, star2, Vinv, n_dist_samples=128, v_scatter=0.):
     dist1 = get_posterior_distance_samples(star1, size=n_dist_samples)
     dist2 = get_posterior_distance_samples(star2, size=n_dist_samples)
-    ll_H2_at_samples = np.array([ln_H2_marg_v_likelihood(d1, d2, star1, star2, Vinv)
+    ll_H2_at_samples = np.array([ln_H2_marg_v_likelihood(d1, d2, star1, star2, Vinv, v_scatter)
                                  for d1,d2 in zip(dist1, dist2)])
     return logsumexp(ll_H2_at_samples) - np.log(float(ll_H2_at_samples.size))

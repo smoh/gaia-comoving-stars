@@ -50,3 +50,16 @@ def test_tangent_basis():
     assert np.allclose(np.cross(A[:,0], A[:,1]), A[:,2])
     assert np.allclose(np.cross(A[:,0], A[:,2]), -A[:,1])
     assert np.allclose(np.cross(A[:,1], A[:,2]), A[:,0])
+
+def test_projections():
+    # Should be all radial
+    all_radial = [
+        (0,0,[100.,0,0]),
+        (0,90,[0,0,100]),
+        (90,0,[0,100,0]),
+        (-90,0,[0,-100,0])
+    ]
+    for ra,dec,v in all_radial[-1:]:
+        T = get_tangent_basis(np.radians(ra), np.radians(dec))
+        assert np.allclose(T.T.dot(v), [0,0,100])
+
