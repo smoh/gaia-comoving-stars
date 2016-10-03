@@ -47,7 +47,7 @@ def main(pool, stacked_tgas_path, pair_indices_path,
 
     # MAGIC NUMBERs
     n_distance_samples = 128
-    Vinv = np.diag(np.full(3, 1/25)**2) # 3x3 inverse variance matrix for disk stars
+    Vinv = np.diag(np.full(3, 1./25.)**2) # 3x3 inverse variance matrix for disk stars
 
     if not os.path.exists(pair_indices_path):
         raise IOError("Path to pair indices file '{}' does not exist!".format(pair_indices_path))
