@@ -174,8 +174,8 @@ class TGASStar(TGASData):
                 if j <= i:
                     continue
                 full_name = "{}_{}_corr".format(name1, name2)
-                C[i,j] = self[full_name] * np.sqrt(C[i,i]*C[j,j])
-                C[j,i] = self[full_name] * np.sqrt(C[i,i]*C[j,j])
+                C[i,j] = self._data[full_name] * np.sqrt(C[i,i]*C[j,j])
+                C[j,i] = self._data[full_name] * np.sqrt(C[i,i]*C[j,j])
 
         if self._rv_err is not None:
             C[5,5] = self._rv_err**2
