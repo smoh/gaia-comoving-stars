@@ -115,6 +115,10 @@ class TGASData(object):
         return coord.SkyCoord(ra=self.ra, dec=self.dec,
                               distance=self.get_distance(lutz_kelker=lutz_kelker))
 
+    @property
+    def parallax_snr(self):
+        return self.parallax / self.parallax_error
+
 
 class TGASStar(TGASData):
 
