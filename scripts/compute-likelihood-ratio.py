@@ -2,6 +2,8 @@
 import os
 
 # Third-party
+import astropy.units as u
+from astropy.constants import G, M_sun
 from astropy.io import fits
 from astropy import log as logger
 import h5py
@@ -14,22 +16,21 @@ from gwb.fml import ln_H1_FML, ln_H2_FML
 
 class Worker(object):
 
-    def __init__(self, Vinv, v_scatter, n_distance_samples, output_filename):
+    def __init__(self, Vinv, n_distance_samples, output_filename):
         self.Vinv = np.array(Vinv)
-        self.v_scatter = v_scatter
         self.n_distance_samples = n_distance_samples
         self.output_filename = output_filename
 
-    def work(self, i, star1, star2):
-        h1 = ln_H1_FML(star1, star2, Vinv=self.Vinv, v_scatter=self.v_scatter,
+    def work(self, i, star1, star2, v_scatter):
+        h1 = ln_H1_FML(star1, star2, Vinv=self.Vinv, v_scatter=v_scatter,
                        n_dist_samples=self.n_distance_samples)
-        h2 = ln_H2_FML(star1, star2, Vinv=self.Vinv, v_scatter=self.v_scatter,
+        h2 = ln_H2_FML(star1, star2, Vinv=self.Vinv, v_scatter=v_scatter,
                        n_dist_samples=self.n_distance_samples)
         return i, h1, h2
 
     def __call__(self, task):
-        i, star1, star2 = task
-        return self.work(i, star1, star2)
+        i, star1, star2, v_scatter = task
+        return self.work(i, star1, star2, v_scatter)
 
     def callback(self, result):
         if result is None:
@@ -46,7 +47,6 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
 
     # MAGIC NUMBERs
     n_distance_samples = 128
-    # v_scatter = 1. # km/s
     Vinv = np.diag(np.full(3, 1/25)**2) # 3x3 inverse variance matrix for disk stars
 
     if not os.path.exists(pair_indices_path):
@@ -56,7 +56,10 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
                                                        v_scatter)
 
     # load the pair indices
-    pair_idx = fits.getdata(pair_indices_path, 0)
+    tbl = fits.getdata(pair_indices_path, 1)
+    pair_idx = np.vstack((tbl['star1'], tbl['star2'])).T
+    dv = tbl['delta_v'] * u.km/u.s
+    sep = tbl['sep'] * u.pc
 
     if os.path.exists(output_file) and not overwrite:
         with h5py.File(output_file, 'a') as f:
@@ -76,10 +79,12 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
         raise ValueError("Number of surviving stars after S/N cut and pair indices "
                          "are not consistent!")
 
-    all_pairs = [[k,tgas[i],tgas[j]] for k,(i,j) in enumerate(pair_idx)]
+    assumed_mass = 2*M_sun # HACK, MAGIC NUMBER
+    orb_v = np.sqrt(G*assumed_mass / sep).to(u.km/u.s).value
+    v_scatter = np.sqrt(v_scatter**2 + orb_v**2)
+    all_pairs = [[k,tgas[i],tgas[j],v_scatter[k]] for k,(i,j) in enumerate(pair_idx)]
 
-    worker = Worker(Vinv=Vinv, v_scatter=v_scatter,
-                    n_distance_samples=n_distance_samples,
+    worker = Worker(Vinv=Vinv, n_distance_samples=n_distance_samples,
                     output_filename=output_file)
     pool.map(worker, all_pairs, callback=worker.callback)
     pool.close()

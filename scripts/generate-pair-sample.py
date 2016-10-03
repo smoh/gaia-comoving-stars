@@ -23,9 +23,9 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     if not os.path.exists(os.path.abspath(output_path)):
         raise IOError("Specified output path '{}' does not exist.".format(output_path))
 
-    output_file = os.path.join(output_path, "snr{}_n{}_dv{:.0f}.fits".format(signal_to_noise_cut,
-                                                                             n_neighbors,
-                                                                             delta_v_cut))
+    output_file = os.path.join(output_path, "snr{:.0f}_n{}_dv{:.0f}.fits".format(signal_to_noise_cut,
+                                                                                 n_neighbors,
+                                                                                 delta_v_cut))
     if os.path.exists(output_file) and not overwrite:
         raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.")
 
@@ -56,6 +56,8 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     cut = dv < delta_v_cut
 
     all_pair_idx = all_pair_idx[cut]
+    dv = dv[cut]
+    sep = tree_d.ravel()[cut]
     logger.info("{} pairs before trimming duplicates".format(len(all_pair_idx)))
 
     hitting_edge = np.bincount(all_pair_idx[:,0]) == n_neighbors
@@ -66,9 +68,15 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     str_pairs = np.array(["{}{}".format(i,j) for i,j in all_pair_idx])
     _, unq_idx = np.unique(str_pairs, return_index=True)
     all_pair_idx = all_pair_idx[unq_idx]
+    dv = dv[unq_idx]
+    sep = sep[unq_idx]
     logger.info("{} pairs after trimming duplicates".format(len(all_pair_idx)))
 
-    hdu = fits.PrimaryHDU(all_pair_idx)
+    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(all_pair_idx[:,0], all_pair_idx[:,1], dv, sep)]
+    tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
+                                ('delta_v', 'f8'), ('sep', 'f8')])
+
+    hdu = fits.BinTableHDU(tbl)
     hdu.writeto(output_file, clobber=True)
 
 if __name__ == "__main__":
