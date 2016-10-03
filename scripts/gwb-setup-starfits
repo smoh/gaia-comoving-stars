@@ -43,7 +43,8 @@ def main(pool, pairs=None, N_singles=None, seed=1234,
 
     inds_single = get_N_random(N_singles, seed=seed)
 
-    worker = Worker(overwrite=overwrite, raise_exceptions=raise_exceptions, rootdir=rootdir)
+    worker = Worker(overwrite=overwrite, raise_exceptions=raise_exceptions, 
+                    rootdir=os.path.join(rootdir, 'singles'))
     if pool is not None:
         pool.map(worker, inds_single)
         pool.close()
