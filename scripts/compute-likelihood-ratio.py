@@ -78,11 +78,9 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
 
     all_pairs = [[k,tgas[i],tgas[j]] for k,(i,j) in enumerate(pair_idx)]
 
-    worker = Worker(Vinv=Vinv, v_scatter=v_scatter, n_distance_samples=n_distance_samples,
+    worker = Worker(Vinv=Vinv, v_scatter=v_scatter,
+                    n_distance_samples=n_distance_samples,
                     output_filename=output_file)
-
-    worker.callback(worker(all_pairs[0]))
-
     pool.map(worker, all_pairs, callback=worker.callback)
     pool.close()
 
