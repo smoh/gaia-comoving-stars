@@ -1,0 +1,17 @@
+name: gwb
+
+channels:
+  - astropy
+
+dependencies:
+  - python=3
+  - astropy
+  - numpy
+  - matplotlib
+  - scipy
+  - scikit-learn
+  - h5py
+  - pip
+  - pip:
+    - six
+

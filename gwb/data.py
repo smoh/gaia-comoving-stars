@@ -79,6 +79,9 @@ class TGASData(object):
         else: # many rows
             return TGASData(sliced, rv=rv, rv_err=rv_err)
 
+    def __len__(self):
+        return len(self._data)
+
     @property
     def rv(self):
         return self._rv*u.km/u.s
@@ -91,7 +94,7 @@ class TGASData(object):
 
         if lutz_kelker:
             snr = self._data['parallax'] / self._data['parallax_error']
-            if snr < 4:
+            if np.any(snr < 4):
                 raise ValueError("S/N is smaller than 4!")
             tmp = self._data['parallax'] * (0.5 + 0.5*np.sqrt(1 - 16/snr**2))
 
@@ -118,6 +121,10 @@ class TGASData(object):
         return coord.SkyCoord(ra=self.ra, dec=self.dec,
                               distance=self.get_distance(lutz_kelker=lutz_kelker))
 
+    @property
+    def parallax_snr(self):
+        return self.parallax / self.parallax_error
+
 
 class TGASStar(TGASData):
 
@@ -136,6 +143,9 @@ class TGASStar(TGASData):
         else:
             self._rv = 0.
             self._rv_err = None
+
+    def __len__(self):
+        return 1
 
     def get_cov(self):
         """
