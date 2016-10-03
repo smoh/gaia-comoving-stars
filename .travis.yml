@@ -20,4 +20,4 @@ install:
     - pip install six
 
 script:
-    - py.test
+    - py.test gwb
