@@ -58,6 +58,10 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     all_pair_idx = all_pair_idx[cut]
     logger.info("{} pairs before trimming duplicates".format(len(all_pair_idx)))
 
+    hitting_edge = np.bincount(all_pair_idx[:,0]) == n_neighbors
+    logger.info("{} stars likely have more than {} neighbors".format(hitting_edge.sum(),
+                                                                     n_neighbors))
+
     all_pair_idx = np.sort(all_pair_idx, axis=1)
     str_pairs = np.array(["{}{}".format(i,j) for i,j in all_pair_idx])
     _, unq_idx = np.unique(str_pairs, return_index=True)
