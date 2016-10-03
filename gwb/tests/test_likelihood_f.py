@@ -54,7 +54,7 @@ def test_Cinv():
     all_data = make_data_increase_uncertainties()
     all_det_Cinv = []
     for data in all_data:
-        d = 1000./data._parallax
+        d = 1000./data._data['parallax']
         Cinv = get_Cinv(d, data)
         sgn,det = np.linalg.slogdet(Cinv[:2,:2])
         all_det_Cinv.append(det)
@@ -68,7 +68,7 @@ def test_Ainv_nu_Delta():
     all_nuT_Ainv_nu = []
     all_log_detA = []
     for data in all_data:
-        d = 1000./data._parallax
+        d = 1000./data._data['parallax']
         M = get_M(data)
         Cinv = get_Cinv(d, data)
         y = get_y(d, data)

@@ -57,7 +57,7 @@ def get_posterior_distance_samples(star, size=1, min_parallax=0.1):
     samples = np.array([])
     iter = 0
     while len(samples) < size or iter == maxiter:
-        batch = np.random.normal(star.parallax, np.sqrt(star.get_cov()[0,0]), size=batch_size)
+        batch = np.random.normal(star._data['parallax'], np.sqrt(star.get_cov()[0,0]), size=batch_size)
         tmps = ln_parallax_prior(batch, min_parallax=min_parallax)
         tmps -= tmps.max()
 

@@ -7,6 +7,7 @@ from scipy.linalg import block_diag
 
 # Project
 from .coords import get_tangent_basis
+from .data import TGASStar
 
 __all__ = ['get_y_Cinv', 'get_M', 'get_Ainv_nu_Delta',
            'ln_H1_marg_v_likelihood', 'ln_Q', 'ln_H2_marg_v_likelihood']
@@ -19,15 +20,14 @@ def get_y_Cinv(ds, stars, v_scatter=0.):
     Construct the vector y, which should have length 3*n_stars
     """
     ds = np.atleast_1d(ds)
-    stars = np.atleast_1d(stars)
+    if isinstance(stars, TGASStar):
+        stars = [stars]
 
-    y = np.hstack([[d * star._pmra * km_s_per_pc_mas_yr,
-                    d * star._pmdec * km_s_per_pc_mas_yr,
+    y = np.hstack([[d * star._data['pmra'] * km_s_per_pc_mas_yr,
+                    d * star._data['pmdec'] * km_s_per_pc_mas_yr,
                     star._rv] for d,star in zip(ds,stars)])
 
     # Construct the matrix Cinv, which should have shape (3*n_stars, 3*n_stars)
-    ds = np.atleast_1d(ds)
-    stars = np.atleast_1d(stars)
     assert len(ds) == len(stars)
 
     Cinvs = []
@@ -55,9 +55,10 @@ def get_M(stars):
     """
     Construct the matrix M, which should have shape (3*n_stars, 3*n_stars)
     """
-    stars = np.atleast_1d(stars)
+    if isinstance(stars, TGASStar):
+        stars = [stars]
 
-    M = [get_tangent_basis(star._ra, star._dec)
+    M = [get_tangent_basis(np.radians(star._data['ra']), np.radians(star._data['dec']))
          for star in stars]
 
     return np.vstack(M)

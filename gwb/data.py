@@ -42,38 +42,43 @@ class TGASData(object):
             self._rv_err = rv_err.to(u.km/u.s).value
 
         else:
-            self._rv = None
+            self._rv = 0. # need to do this so y can have float type
             self._rv_err = None
 
         # TODO: maybe support memory-mapping here?
         if isinstance(filename_or_data, six.string_types):
-            self._data = fits.getdata(filename_or_data, 1)
+            self._data = np.array(fits.getdata(filename_or_data, 1))
 
         else:
-            self._data = filename_or_data
+            self._data = np.array(filename_or_data)
 
     def __getattr__(self, name):
-        if name in self._unit_map:
-            return self._data[name] * self._unit_map[name]
+        # to prevent recursion errors:
+        #   http://nedbatchelder.com/blog/201010/surprising_getattr_recursion.html
+        if name == '_data':
+            raise AttributeError()
+
+        if name in TGASData._unit_map:
+            return self._data[name] * TGASData._unit_map[name]
 
         elif name in self._data.dtype.names:
             return self._data[name]
 
         else:
             raise AttributeError("Object {} has no attribute '{}' and source data "
-                                 "table has no column with that name.")
+                                 "table has no column with that name.".format(self, name))
 
     def __getitem__(self, slc):
         sliced = self._data[slc]
 
-        if self._rv is not None:
+        if self._rv_err is not None:
             rv = self._rv[slc]
             rv_err = self._rv_err[slc]
         else:
             rv = None
             rv_err = None
 
-        if hasattr(sliced, 'row'): # this is only one row
+        if sliced.ndim == 0: # this is only one row
             return TGASStar(row=sliced, rv=rv, rv_err=rv_err)
 
         else: # many rows
@@ -141,11 +146,14 @@ class TGASStar(TGASData):
             self._rv = rv.to(u.km/u.s).value
             self._rv_err = rv_err.to(u.km/u.s).value
         else:
-            self._rv = 0.
+            self._rv = 0. # need to do this so y can have float type
             self._rv_err = None
 
     def __len__(self):
         return 1
+
+    def __getitem__(self, slc):
+        object.__getitem__(self, slc)
 
     def get_cov(self):
         """
@@ -174,8 +182,8 @@ class TGASStar(TGASData):
                 if j <= i:
                     continue
                 full_name = "{}_{}_corr".format(name1, name2)
-                C[i,j] = self[full_name] * np.sqrt(C[i,i]*C[j,j])
-                C[j,i] = self[full_name] * np.sqrt(C[i,i]*C[j,j])
+                C[i,j] = self._data[full_name] * np.sqrt(C[i,i]*C[j,j])
+                C[j,i] = self._data[full_name] * np.sqrt(C[i,i]*C[j,j])
 
         if self._rv_err is not None:
             C[5,5] = self._rv_err**2
