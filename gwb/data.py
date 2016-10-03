@@ -16,9 +16,12 @@ class TGASData(object):
         'parallax': u.milliarcsecond,
         'pmra': u.milliarcsecond/u.year,
         'pmdec': u.milliarcsecond/u.year,
+        'ra_error': u.degree,
+        'dec_error': u.degree,
+        'parallax_error': u.milliarcsecond,
+        'pmra_error': u.milliarcsecond/u.year,
+        'pmdec_error': u.milliarcsecond/u.year,
     }
-    for name,unit in _unit_map:
-        _unit_map['{}_error'.format(name)] = unit
 
     def __init__(self, filename_or_data, rv=None, rv_err=None):
 
