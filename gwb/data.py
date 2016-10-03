@@ -1,16 +1,125 @@
 from __future__ import division, print_function
 
 # Third-party
+from astropy.io import fits
 import astropy.coordinates as coord
 import astropy.units as u
 import numpy as np
+import six
 
-__all__ = ['TGASStar']
+__all__ = ['TGASData', 'TGASStar']
 
-class TGASStar(object):
+class TGASData(object):
+    _unit_map = {
+        'ra': u.degree,
+        'dec': u.degree,
+        'parallax': u.milliarcsecond,
+        'pmra': u.milliarcsecond/u.year,
+        'pmdec': u.milliarcsecond/u.year,
+    }
+    for name,unit in _unit_map:
+        _unit_map['{}_error'.format(name)] = unit
 
-    def __init__(self, tgas_row, rv=None, rv_err=None, metadata=None):
-        self._row = tgas_row
+    def __init__(self, filename_or_data, rv=None, rv_err=None):
+
+        # radial velocities
+        if rv is not None:
+            if rv_err is None:
+                raise ValueError("If radial velocity is provided, you must also "
+                                 "provide an error.")
+
+            if not hasattr(rv, 'unit') or not hasattr(rv_err, 'unit'):
+                raise TypeError("Input radial velocity and error must be an Astropy "
+                                "Quantity object.")
+
+            elif not rv.unit.is_equivalent(u.km/u.s) or not rv_err.unit.is_equivalent(u.km/u.s):
+                raise u.UnitsError("Radial velocity unit is not convertible to km/s!")
+
+            self._rv = rv.to(u.km/u.s).value
+            self._rv_err = rv_err.to(u.km/u.s).value
+
+        else:
+            self._rv = None
+            self._rv_err = None
+
+        # TODO: maybe support memory-mapping here?
+        if isinstance(filename_or_data, six.string_types):
+            self._data = fits.getdata(filename_or_data, 1)
+
+        else:
+            self._data = filename_or_data
+
+    def __getattr__(self, name):
+        if name in self._unit_map:
+            return self._data[name] * self._unit_map[name]
+
+        elif name in self._data.dtype.names:
+            return self._data[name]
+
+        else:
+            raise AttributeError("Object {} has no attribute '{}' and source data "
+                                 "table has no column with that name.")
+
+    def __getitem__(self, slc):
+        sliced = self._data[slc]
+
+        if self._rv is not None:
+            rv = self._rv[slc]
+            rv_err = self._rv_err[slc]
+        else:
+            rv = None
+            rv_err = None
+
+        if hasattr(sliced, 'row'): # this is only one row
+            return TGASStar(row=sliced, rv=rv, rv_err=rv_err)
+
+        else: # many rows
+            return TGASData(sliced, rv=rv, rv_err=rv_err)
+
+    @property
+    def rv(self):
+        return self._rv*u.km/u.s
+
+    # Other convenience methods
+    def get_distance(self, lutz_kelker=True):
+        """
+        Return the distance with or without the Lutz-Kelker correction.
+        """
+
+        if lutz_kelker:
+            snr = self._data['parallax'] / self._data['parallax_error']
+            if snr < 4:
+                raise ValueError("S/N is smaller than 4!")
+            tmp = self._data['parallax'] * (0.5 + 0.5*np.sqrt(1 - 16/snr**2))
+
+        else:
+            tmp = self._data['parallax']
+
+        return 1000./tmp * u.pc
+
+    def get_vtan(self, lutz_kelker=True):
+        """
+        Return the tangential velocity computed using the proper motion
+        and distance.
+        """
+        d = self.get_distance(lutz_kelker=lutz_kelker)
+        vra = (self.pmra * d).to(u.km/u.s, u.dimensionless_angles()).value
+        vdec = (self.pmdec * d).to(u.km/u.s, u.dimensionless_angles()).value
+        return np.vstack((vra, vdec)).T * u.km/u.s
+
+    def get_coord(self, lutz_kelker=True):
+        """
+        Return an `~astropy.coordinates.SkyCoord` object to represent
+        all coordinates.
+        """
+        return coord.SkyCoord(ra=self.ra, dec=self.dec,
+                              distance=self.get_distance(lutz_kelker=lutz_kelker))
+
+
+class TGASStar(TGASData):
+
+    def __init__(self, row, rv=None, rv_err=None):
+        self._data = row
         self._cov = None # for caching
         self._Cinv = None # for caching
 
@@ -24,65 +133,6 @@ class TGASStar(object):
         else:
             self._rv = 0.
             self._rv_err = None
-
-    def __getitem__(self, slc):
-        return self._row[slc]
-
-    # Astrometric data as attributes:
-    @property
-    def _ra(self):
-        return np.radians(self['ra'])
-
-    @property
-    def ra(self):
-        return (self._ra*u.radian).to(u.degree)
-
-    @property
-    def _dec(self):
-        return np.radians(self['dec'])
-
-    @property
-    def dec(self):
-        return (self._dec*u.radian).to(u.degree)
-
-    @property
-    def _parallax(self):
-        return self['parallax'] # mas
-
-    @property
-    def parallax(self):
-        return self._parallax*u.mas
-
-    @property
-    def _pmra(self):
-        return self['pmra']
-
-    @property
-    def pmra(self):
-        return self._pmra*u.mas/u.yr
-
-    @property
-    def _pmdec(self):
-        return self['pmdec']
-
-    @property
-    def pmdec(self):
-        return self._pmdec*u.mas/u.yr
-
-    @property
-    def rv(self):
-        return self._rv*u.km/u.s
-
-    # Other useful things
-    def get_coord(self, with_parallax=False):
-        if with_parallax:
-            return coord.SkyCoord(ra=self['ra']*u.degree,
-                                  dec=self['dec']*u.degree,
-                                  distance=(1000./self['parallax'])*u.pc)
-
-        else:
-            return coord.SkyCoord(ra=self['ra']*u.degree,
-                                  dec=self['dec']*u.degree)
 
     def get_cov(self):
         """
@@ -119,20 +169,4 @@ class TGASStar(object):
 
         self._cov = C
         return self._cov
-
-    def get_distance(self, lutz_kelker=True):
-        """
-        TODO
-        """
-
-        if lutz_kelker:
-            snr = self._parallax / self._row['parallax_error']
-            if snr < 4:
-                raise ValueError("S/N is smaller than 4!")
-            tmp = self._parallax * (0.5 + 0.5*np.sqrt(1 - 16/snr**2))
-
-        else:
-            tmp = self._parallax
-
-        return 1000./tmp * u.pc
 
