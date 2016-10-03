@@ -33,7 +33,7 @@ setup(
     license="MIT",
     description="Gaia wide binaries.",
     long_description=rd("README.md"),
-    package_data={"": ["LICENSE"]},
+    package_data={"": ["LICENSE"], "gwb": "tests/data/tgas_subset.fits"},
     install_requires=["six"],
     include_package_data=True,
     classifiers=[
