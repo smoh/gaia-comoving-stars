@@ -3,6 +3,7 @@ from __future__ import division, print_function
 # Third-party
 from astropy.io import fits
 from astropy.utils.data import get_pkg_data_filename
+import numpy as np
 
 # Project
 from ..data import TGASData, TGASStar

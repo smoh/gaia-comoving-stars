@@ -11,7 +11,7 @@ import numpy as np
 
 # Project
 from ..data import TGASStar
-from ..likelihood import (get_y, get_M, get_Cinv, get_Ainv_nu_Delta,
+from ..likelihood import (get_y_Cinv, get_M, get_Ainv_nu_Delta,
                           ln_H1_marg_v_likelihood, ln_Q, ln_H2_marg_v_likelihood)
 
 Vinv = np.diag([1/25.**2]*3)
@@ -55,12 +55,17 @@ def test_y():
     all_data = make_random_data()
     for data in all_data:
         d = 1000./data._data['parallax']
-        y = get_y(d, data)
+        y,Cinv = get_y_Cinv(d, data)
         assert y.shape == (3,)
+        assert y.dtype == np.float64
+        assert Cinv.shape == (3,3)
+        assert np.allclose(Cinv[0], Cinv[0].T)
 
     ds = [1000./data._data['parallax'] for data in all_data[:2]]
-    y = get_y(ds, all_data[:2])
+    y,Cinv = get_y_Cinv(ds, all_data[:2])
     assert y.shape == (6,)
+    assert Cinv.shape == (6,6)
+    assert np.allclose(Cinv[0], Cinv[0].T)
 
 def test_M():
     all_data = make_random_data()
@@ -72,27 +77,13 @@ def test_M():
     M = get_M(all_data[:2])
     assert M.shape == (6,3)
 
-def test_Cinv():
-    all_data = make_random_data()
-    for data in all_data:
-        d = 1000./data._data['parallax']
-        Cinv = get_Cinv(d, data)
-        assert Cinv.shape == (3,3)
-        assert np.allclose(Cinv[0], Cinv[0].T)
-
-    ds = [1000./data._data['parallax'] for data in all_data[:2]]
-    Cinv = get_Cinv(ds, all_data[:2])
-    assert Cinv.shape == (6,6)
-    assert np.allclose(Cinv[0], Cinv[0].T)
-
 def test_Ainv_nu_Delta():
     all_data = make_random_data()
     for data in all_data:
         d = 1000./data._data['parallax']
 
         M = get_M(data)
-        Cinv = get_Cinv(d, data)
-        y = get_y(d, data)
+        y,Cinv = get_y_Cinv(d, data)
 
         Ainv, nu, Delta = get_Ainv_nu_Delta(d, M, Cinv, y, Vinv)
         assert Ainv.shape == (3,3)
@@ -105,8 +96,7 @@ def test_Ainv_nu_Delta():
 
     ds = [1000./data._data['parallax'] for data in all_data[:2]]
     M = get_M(all_data[:2])
-    Cinv = get_Cinv(ds, all_data[:2])
-    y = get_y(ds, all_data[:2])
+    y,Cinv = get_y_Cinv(ds, all_data[:2])
     Ainv, nu, Delta = get_Ainv_nu_Delta(ds, M, Cinv, y, Vinv)
     assert Ainv.shape == (3,3)
     assert np.isfinite(Ainv).all()

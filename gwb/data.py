@@ -42,7 +42,7 @@ class TGASData(object):
             self._rv_err = rv_err.to(u.km/u.s).value
 
         else:
-            self._rv = None
+            self._rv = 0. # need to do this so y can have float type
             self._rv_err = None
 
         # TODO: maybe support memory-mapping here?
@@ -66,7 +66,7 @@ class TGASData(object):
     def __getitem__(self, slc):
         sliced = self._data[slc]
 
-        if self._rv is not None:
+        if self._rv_err is not None:
             rv = self._rv[slc]
             rv_err = self._rv_err[slc]
         else:
@@ -141,11 +141,14 @@ class TGASStar(TGASData):
             self._rv = rv.to(u.km/u.s).value
             self._rv_err = rv_err.to(u.km/u.s).value
         else:
-            self._rv = 0.
+            self._rv = 0. # need to do this so y can have float type
             self._rv_err = None
 
     def __len__(self):
         return 1
+
+    def __getitem__(self, slc):
+        object.__getitem__(self, slc)
 
     def get_cov(self):
         """
