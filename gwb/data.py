@@ -120,21 +120,19 @@ class TGASStar(object):
         self._cov = C
         return self._cov
 
-    def get_sub_cov(self):
+    def get_distance(self, lutz_kelker=True):
         """
-        Return the sub-matrix of the full Gaia covariance matrix that
-        just contains parallax, proper motion, and radial velocity terms.
+        TODO
         """
-        return self.get_cov()[3:,3:]
 
-    def get_sub_cov_inv(self):
-        """
-        Return the inverse of the sub-matrix over velocity terms
-        (proper motion and radial velocity).
-        """
-        Cinv = np.zeros((3,3))
-        if self._rv_err is None:
-            Cinv[:2,:2] = np.linalg.inv(self.get_sub_cov()[:-1,:-1])
+        if lutz_kelker:
+            snr = self._parallax / self._row['parallax_error']
+            if snr < 4:
+                raise ValueError("S/N is smaller than 4!")
+            tmp = self._parallax * (0.5 + 0.5*np.sqrt(1 - 16/snr**2))
+
         else:
-            Cinv = np.linalg.inv(self.get_sub_cov())
-        return Cinv
+            tmp = self._parallax
+
+        return 1000./tmp * u.pc
+
