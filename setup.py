@@ -34,6 +34,7 @@ setup(
     description="Gaia wide binaries.",
     long_description=rd("README.md"),
     package_data={"": ["LICENSE"]},
+    install_requires=["six"],
     include_package_data=True,
     classifiers=[
         "Intended Audience :: Science/Research",

@@ -15,7 +15,8 @@ install:
     - conda update -q conda
     - conda info -a
 
-    - conda create --yes -n test python=$PYTHON_VERSION numpy scipy pytest setuptools astropy
+    - conda create --yes -n test python=$PYTHON_VERSION numpy scipy pytest setuptools astropy pip
+    - pip install six
     - source activate test
 
 script:
