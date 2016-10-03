@@ -21,8 +21,8 @@ def get_y_Cinv(ds, stars, v_scatter=0.):
     ds = np.atleast_1d(ds)
     stars = np.atleast_1d(stars)
 
-    y = np.hstack([[d * star._pmra * km_s_per_pc_mas_yr,
-                    d * star._pmdec * km_s_per_pc_mas_yr,
+    y = np.hstack([[d * star._data['pmra'] * km_s_per_pc_mas_yr,
+                    d * star._data['pmdec'] * km_s_per_pc_mas_yr,
                     star._rv] for d,star in zip(ds,stars)])
 
     # Construct the matrix Cinv, which should have shape (3*n_stars, 3*n_stars)
@@ -57,7 +57,7 @@ def get_M(stars):
     """
     stars = np.atleast_1d(stars)
 
-    M = [get_tangent_basis(np.radians(star._ra), np.radians(star._dec))
+    M = [get_tangent_basis(np.radians(star._data['ra']), np.radians(star._data['dec']))
          for star in stars]
 
     return np.vstack(M)

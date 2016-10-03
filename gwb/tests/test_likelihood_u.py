@@ -54,11 +54,11 @@ def make_random_data(n_batch=1, size=128):
 def test_y():
     all_data = make_random_data()
     for data in all_data:
-        d = 1000./data._parallax
+        d = 1000./data._data['parallax']
         y = get_y(d, data)
         assert y.shape == (3,)
 
-    ds = [1000./data._parallax for data in all_data[:2]]
+    ds = [1000./data._data['parallax'] for data in all_data[:2]]
     y = get_y(ds, all_data[:2])
     assert y.shape == (6,)
 
@@ -75,12 +75,12 @@ def test_M():
 def test_Cinv():
     all_data = make_random_data()
     for data in all_data:
-        d = 1000./data._parallax
+        d = 1000./data._data['parallax']
         Cinv = get_Cinv(d, data)
         assert Cinv.shape == (3,3)
         assert np.allclose(Cinv[0], Cinv[0].T)
 
-    ds = [1000./data._parallax for data in all_data[:2]]
+    ds = [1000./data._data['parallax'] for data in all_data[:2]]
     Cinv = get_Cinv(ds, all_data[:2])
     assert Cinv.shape == (6,6)
     assert np.allclose(Cinv[0], Cinv[0].T)
@@ -88,7 +88,7 @@ def test_Cinv():
 def test_Ainv_nu_Delta():
     all_data = make_random_data()
     for data in all_data:
-        d = 1000./data._parallax
+        d = 1000./data._data['parallax']
 
         M = get_M(data)
         Cinv = get_Cinv(d, data)
@@ -103,7 +103,7 @@ def test_Ainv_nu_Delta():
 
         assert np.isfinite(Delta)
 
-    ds = [1000./data._parallax for data in all_data[:2]]
+    ds = [1000./data._data['parallax'] for data in all_data[:2]]
     M = get_M(all_data[:2])
     Cinv = get_Cinv(ds, all_data[:2])
     y = get_y(ds, all_data[:2])
@@ -116,14 +116,14 @@ def test_Ainv_nu_Delta():
 
 def test_H1_marg():
     for star1,star2 in make_random_data(n_batch=2):
-        d1 = 1000/star1._parallax
-        d2 = 1000/star1._parallax
+        d1 = 1000/star1._data['parallax']
+        d2 = 1000/star1._data['parallax']
         ll = ln_H1_marg_v_likelihood(d1, d2, star1, star2, Vinv)
         assert np.isfinite(ll)
 
 def test_H2_marg():
     for star1,star2 in make_random_data(n_batch=2):
-        d1 = 1000/star1._parallax
-        d2 = 1000/star1._parallax
+        d1 = 1000/star1._data['parallax']
+        d2 = 1000/star1._data['parallax']
         ll = ln_H2_marg_v_likelihood(d1, d2, star1, star2, Vinv)
         assert np.isfinite(ll)
