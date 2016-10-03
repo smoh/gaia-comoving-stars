@@ -47,10 +47,10 @@ class TGASData(object):
 
         # TODO: maybe support memory-mapping here?
         if isinstance(filename_or_data, six.string_types):
-            self._data = fits.getdata(filename_or_data, 1)
+            self._data = np.array(fits.getdata(filename_or_data, 1))
 
         else:
-            self._data = filename_or_data
+            self._data = np.array(filename_or_data)
 
     def __getattr__(self, name):
         if name in self._unit_map:
@@ -61,7 +61,7 @@ class TGASData(object):
 
         else:
             raise AttributeError("Object {} has no attribute '{}' and source data "
-                                 "table has no column with that name.")
+                                 "table has no column with that name.".format(self, name))
 
     def __getitem__(self, slc):
         sliced = self._data[slc]
@@ -73,7 +73,7 @@ class TGASData(object):
             rv = None
             rv_err = None
 
-        if hasattr(sliced, 'row'): # this is only one row
+        if sliced.ndim == 0: # this is only one row
             return TGASStar(row=sliced, rv=rv, rv_err=rv_err)
 
         else: # many rows
@@ -167,7 +167,7 @@ class TGASStar(TGASData):
         # pre-load the diagonal
         for i,name in enumerate(names):
             full_name = "{}_error".format(name)
-            C[i,i] = self._row[full_name]**2
+            C[i,i] = self._data[full_name]**2
 
         for i,name1 in enumerate(names):
             for j,name2 in enumerate(names):
