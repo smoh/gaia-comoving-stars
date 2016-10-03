@@ -8,7 +8,7 @@ from multiprocessing import Pool
 from tgastars.write import write_ini
 from tgastars.data import TGAS
 
-from gwb.config import STARMODELDIR
+from gwb.cfg import STARMODELDIR
 
 def get_N_random(N, seed=None):
     """Returns N random indices from TGAS
