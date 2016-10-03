@@ -1,14 +1,11 @@
 # Standard library
 import os
-import sys
 
 # Third-party
 from astropy.io import fits
 from astropy import log as logger
-import astropy.units as u
 import h5py
 import numpy as np
-import six
 from schwimmbad import choose_pool
 
 # Project
