@@ -52,8 +52,8 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
     if not os.path.exists(pair_indices_path):
         raise IOError("Path to pair indices file '{}' does not exist!".format(pair_indices_path))
 
-    output_file = '{}_vscatter{:.0f}-lratio.h5'.format(os.path.splitext(pair_indices_path,
-                                                                        v_scatter)[0])
+    output_file = '{}_vscatter{:.0f}-lratio.h5'.format(os.path.splitext(pair_indices_path)[0],
+                                                       v_scatter)
 
     # load the pair indices
     pair_idx = fits.getdata(pair_indices_path, 0)
