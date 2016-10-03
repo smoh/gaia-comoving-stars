@@ -61,5 +61,5 @@ def test_projections():
     ]
     for ra,dec,v in all_radial[-1:]:
         T = get_tangent_basis(np.radians(ra), np.radians(dec))
-        assert np.allclose(T.T.dot(v), [0,0,100])
+        assert np.allclose(T.dot(v), [0,0,100])
 
