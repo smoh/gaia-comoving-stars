@@ -157,7 +157,7 @@ class TGASStar(TGASData):
         # pre-load the diagonal
         for i,name in enumerate(names):
             full_name = "{}_error".format(name)
-            C[i,i] = self._row[full_name]**2
+            C[i,i] = self._data[full_name]**2
 
         for i,name1 in enumerate(names):
             for j,name2 in enumerate(names):
