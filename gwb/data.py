@@ -53,8 +53,13 @@ class TGASData(object):
             self._data = np.array(filename_or_data)
 
     def __getattr__(self, name):
-        if name in self._unit_map:
-            return self._data[name] * self._unit_map[name]
+        # to prevent recursion errors:
+        #   http://nedbatchelder.com/blog/201010/surprising_getattr_recursion.html
+        if name == '_data':
+            raise AttributeError()
+
+        if name in TGASData._unit_map:
+            return self._data[name] * TGASData._unit_map[name]
 
         elif name in self._data.dtype.names:
             return self._data[name]
