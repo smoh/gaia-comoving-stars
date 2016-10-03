@@ -57,7 +57,7 @@ def get_M(stars):
     """
     stars = np.atleast_1d(stars)
 
-    M = [get_tangent_basis(star._ra, star._dec)
+    M = [get_tangent_basis(np.radians(star._ra), np.radians(star._dec))
          for star in stars]
 
     return np.vstack(M)
