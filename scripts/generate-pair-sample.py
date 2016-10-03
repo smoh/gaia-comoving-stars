@@ -32,14 +32,15 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     if os.path.exists(output_file) and not overwrite:
         raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.")
 
-    tgas = TGASData(os.path.abspath(stacked_tgas_path))
-    n_full_tgas = len(tgas)
+    tgas0 = TGASData(os.path.abspath(stacked_tgas_path))
+    n_full_tgas = len(tgas0)
+    index0 = np.arange(n_full_tgas)
 
     # first, do a signal-to-noise cut
-    tgas = tgas[tgas.parallax_snr > signal_to_noise_cut]
+    tgas = tgas0[tgas0.parallax_snr > signal_to_noise_cut]  # this should return a copy of tgas0
+    index0_snr = index0[tgas0.parallax_snr > signal_to_noise_cut]
     logger.info("{}/{} targets left after S/N cut".format(len(tgas), n_full_tgas))
 
-    # next, built the KD Tree using the XYZ positions
     c = tgas.get_coord()
     X = c.cartesian.xyz.T
 
@@ -48,7 +49,9 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
         sep = np.linalg.norm(X[all_pair_idx[:,0]]-X[all_pair_idx[:,1]], axis=1)
         vtan = tgas.get_vtan().value
         dv = np.sqrt(np.sum((vtan[all_pair_idx[:,0]] - vtan[all_pair_idx[:,1]])**2, axis=1))
+        index0_out = np.vstack([index0_snr[all_pair_idx[:,0]], index0_snr[all_pair_idx[:,1]]]).T
     else:
+        # next, built the KD Tree using the XYZ positions
         # separation in position
         tree = KDTree(X)
         tree_d,tree_i = tree.query(X, k=n_neighbors+1) # 0th match is always self
@@ -77,11 +80,12 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
         str_pairs = np.array(["{}{}".format(i,j) for i,j in all_pair_idx])
         _, unq_idx = np.unique(str_pairs, return_index=True)
         all_pair_idx = all_pair_idx[unq_idx]
+        index0_out = np.vstack([index0_snr[all_pair_idx[:,0]], index0_snr[all_pair_idx[:,1]]]).T
         dv = dv[unq_idx]
         sep = sep[unq_idx]
         logger.info("{} pairs after trimming duplicates".format(len(all_pair_idx)))
 
-    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(all_pair_idx[:,0], all_pair_idx[:,1], dv, sep)]
+    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(index0_out[:,0], index0_out[:,1], dv, sep)]
     tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
                                 ('delta_v', 'f8'), ('sep', 'f8')])
 

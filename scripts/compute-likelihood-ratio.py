@@ -42,7 +42,7 @@ class Worker(object):
                 f['lnH1'][i] = h1
                 f['lnH2'][i] = h2
 
-def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
+def main(pool, stacked_tgas_path, pair_indices_path,
          v_scatter, output_path="../data", seed=42, overwrite=False):
 
     # MAGIC NUMBERs
@@ -73,11 +73,6 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
 
     # read in TGAS data
     tgas = TGASData(os.path.abspath(stacked_tgas_path))
-    tgas = tgas[tgas.parallax_snr > signal_to_noise_cut]
-
-    if len(tgas) < pair_idx.max():
-        raise ValueError("Number of surviving stars after S/N cut and pair indices "
-                         "are not consistent!")
 
     assumed_mass = 2*M_sun # HACK, MAGIC NUMBER
     orb_v = np.sqrt(G*assumed_mass / sep).to(u.km/u.s).value
@@ -116,8 +111,6 @@ if __name__ == "__main__":
                         type=str, help="Path to stacked TGAS data file.")
     parser.add_argument("--pairs-file", dest="pair_indices_path", required=True,
                         type=str, help="Path to pair indices file.")
-    parser.add_argument("--snr-cut", dest="signal_to_noise_cut", default=8,
-                        type=float, help="Minimum signal-to-noise ratio in parallax.")
     parser.add_argument("--vscatter", dest="v_scatter", default=1,
                         type=float, help="TODO")
     parser.add_argument("--output-path", dest="output_path", default="../data/",
@@ -146,6 +139,6 @@ if __name__ == "__main__":
     logger.debug("Using pool: {}".format(pool.__class__))
 
     # use a context manager so the prior samples file always gets deleted
-    main(pool, args.stacked_tgas_path, args.pair_indices_path, args.signal_to_noise_cut,
+    main(pool, args.stacked_tgas_path, args.pair_indices_path,
          v_scatter=args.v_scatter, output_path=args.output_path,
          seed=args.seed, overwrite=args.overwrite)
