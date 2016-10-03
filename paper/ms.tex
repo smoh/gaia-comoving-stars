@@ -30,6 +30,7 @@
 \newcommand{\sectionname}{Section}
 \newcommand{\figname}{Figure}
 \newcommand{\eqname}{Equation}
+\newcommand{\dr}{\acronym{DR1}}
 
 % define macros for math
 \newcommand{\given}{\,|\,}
@@ -43,6 +44,7 @@
 \newcommand{\matrx}[1]{\mathbf{#1}}
 \newcommand{\kms}{\rm km~s^{-1}}
 \newcommand{\data}{\mathrm{data}}
+\newcommand{\snr}{[S/N]_\varpi}
 
 % TODO
 \newcommand{\todo}[1]{{\color{red}TODO: #1}}
@@ -52,8 +54,8 @@
 \title{Co-moving stars in \textsl{Gaia DR1}}
 \author{Adrian M. Price-Whelan\altaffilmark{\pu,\adrn},
         Semyeong Oh\altaffilmark{\pu},
-        Timothy D. Morton\altaffilmark{\pu},
         David W. Hogg\altaffilmark{\ccpp,\mpia},
+        Timothy D. Morton\altaffilmark{\pu},
         David N. Spergel\altaffilmark{\pu,\cca}
 }
 
@@ -121,9 +123,31 @@ superficially discussed.
 
 \section{Introduction} \label{sec:intro}
 
+\todo{Some bullshit about binary stars...}
+
 \section{Data} \label{sec:data}
 
+The primary data set used in this \documentname\ is the Tycho-Gaia Astrometric
+Solution (TGAS), released as a part of Data Release 1 of the Gaia mission
+(\citealt{many}). TGAS contains astrometric measurements (sky position,
+parallax, and proper motions) and associated covariance matrices for a large
+fraction of the \project{Tycho-2} catalog (\citealt{tycho2}) with median
+astrometric precision equivalent to the \project{Hipparcos} catalog ($\approx
+0.3~{\rm mas}$; \citealt{hipparcos}). In terms of parallax signal-to-noise
+($\snr = \varpi/\sigma_\varpi$), the TGAS catalog contains 1240114 stars
+with $\snr > 4$ and 619618 stars with $\snr > 8$. The increase in precision over
+Tycho-2 and increase in volume over Hipparcos makes the TGAS catalog a powerful
+data set to search for widely-separated, co-moving stars.
 
+In the sections that follow, we construct a statistical model that use the TGAS
+data and associated covariances to handle the non-trivial uncertainties [...].
+Here, we instead visualize simple quantities constructed directly from the
+astrometric measurements to emphasize the quality of the data. For each star
+with $\snr > 8$, we use the reported parallax and parallax error to compute a
+distance corrected for the Lutz-Kelker bias (\citealt{lutzkelker}):
+\begin{equation}
+  d = 1000 \, \left[\frac{\varpi}{2} \, \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
+\end{equation}
 
 \section{Methods} \label{sec:methods}
 
@@ -181,88 +205,6 @@ can be split into two the product of two simpler integrals $\mathcal{L}_2 = Q_i
 \begin{equation}
   Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d) \, p(\bs{v}) \, p(d)
 \end{equation}
-
-\appendix
-
-Here we derive analytic expressions for the marginal likelihood integrals above.
-
-\todo{Hypothesis 1}
-
-The integrals for Hypothesis 2 are somewhat easier because the true velocity
-vector can be considered to be already in the orthogonal basis defined by the
-tangent plane at the coordinates of the source (we are assuming an isotropic
-velocity prior). We will analytically integrate over the velocity components
-$(v_\alpha,v_\delta,v_r)$ and leave the distance integral to be done
-numerically:
-\begin{equation}
-  \int \, \dd^3\bs{v} \, L(\bs{v}, d) \, p(\bs{v})
-\end{equation}
-The covariance matrix over parallax, proper motion components, and
-radial velocity (if they exist) is $\matrx{C}$ and the inverse variance matrix
-is $\matrx{V}$. Defining the constant
-\begin{equation}
-  \mathcal{Z} = \left[ \det \left(\frac{\matrx{V}}{2\pi} \right) \right]^{1/2}
-\end{equation}
-the integrand can be written
-\begin{equation}
-  L(\bs{v}, d) \, p(\bs{v}) = \mathcal{Z} \,
-    \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
-    \matrx{V} \,
-    \left(\bs{x} - \bs{x}_\theta \right)
-    - \frac{|\bs{v}|^2}{2\,\sigma^2} \right] \\
-\end{equation}
-The integral over radial velocity is simple and can be performed without
-considering any other terms because uncertainties in these measurements will
-not, in general, be covariant with the Gaia data. The integrand over tangential
-velocities can then be written
-\begin{equation}
-  L(v_\alpha, v_\delta, d) \, p(v_\alpha, v_\delta) = \tilde{\mathcal{Z}} \,
-    \exp \left[ -\frac{1}{2}\,\transp{\left(\bs{x}' - \bs{x}'_\theta \right)} \,
-    \matrx{V}' \,
-    \left(\bs{x}' - \bs{x}'_\theta \right)
-    - \frac{(v_\alpha^2 + v_\delta^2)}{2\,\sigma^2} \right]
-    \label{eq:vtan-integrand}
-\end{equation}
-where the primed variables indicate that they are in the sub-space of just the
-astrometric quantities, the constant pre-factor now includes the integral over
-radial velocity
-\begin{align}
-  \tilde{\mathcal{Z}} = \mathcal{Z} \,
-    \exp\left[-\frac{1}{2}\frac{v_r^2}{\sigma_{v_r}^2 + \sigma^2}\right] \,
-    \left[ 2\pi \, (\sigma_{v_r}^2 + \sigma^2) \right]^{1/2}
-\end{align}
-and $\sigma_{v_r}$ is the observational uncertainty of the radial velocity
-measurement. To perform the integral over tangential velocities, we partition
-the inverse variance matrix and vectors so that
-\begin{align}
-  \bs{x}_A &= (\varpi)\\
-  \bs{x}_B &= (\mu_\alpha, \mu_\delta)\\
-  \bs{x}_{\theta, A} &= (d^{-1}) \\
-  \bs{x}_{\theta, B} &= (d^{-1}\,v_\alpha, d^{-1}\,v_\delta) \\
-  \matrx{V} &=
-    \left(\begin{array}{c| c c}
-      V_{11} & V_{12} & V_{13}\\\hline
-      V_{12} & V_{22} & V_{23}\\
-      V_{13} & V_{23} & V_{33}
-    \end{array}\right)
-    = \left(\begin{array}{c c}
-      \matrx{V}_{AA} & \matrx{V}_{AB}\\
-      \matrx{V}_{AB} & \matrx{V}_{BB}
-    \end{array}\right)
-\end{align}
-\todo{Holy fuck that matrix is UGLY - fix with new version of AASTex 6}
-and the argument of the Gaussian in \eqname~\ref{eq:vtan-integrand} can be
-written
-\begin{multline}
-  -\frac{1}{2}\,[
-  \transp{(\bs{x}_A - \bs{x}_{\theta, A})}\,
-    \matrx{V}_{AA}\,(\bs{x}_A - \bs{x}_{\theta, A})\\
-  + \transp{(\bs{x}_B - \bs{x}_{\theta, B})}\,
-    \matrx{V}_{BB}\,(\bs{x}_B - \bs{x}_{\theta, B})\\
-  + 2\,\transp{(\bs{x}_A - \bs{x}_{\theta, A})}\,
-    \matrx{V}_{AB}\,(\bs{x}_B - \bs{x}_{\theta, B})]
-\end{multline}
-\todo{prior in above}
 
 \acknowledgements
 
