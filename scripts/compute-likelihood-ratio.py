@@ -9,7 +9,7 @@ import numpy as np
 from schwimmbad import choose_pool
 
 # Project
-from gwb.data import TGASData, TGASStar
+from gwb.data import TGASData
 from gwb.fml import ln_H1_FML, ln_H2_FML
 
 class Worker(object):
@@ -42,17 +42,18 @@ class Worker(object):
                 f['lnH2'][i] = h2
 
 def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
-         output_path="../data", seed=42, overwrite=False):
+         v_scatter, output_path="../data", seed=42, overwrite=False):
 
     # MAGIC NUMBERs
     n_distance_samples = 128
-    v_scatter = 1. # km/s
+    # v_scatter = 1. # km/s
     Vinv = np.diag(np.full(3, 1/25)**2) # 3x3 inverse variance matrix for disk stars
 
     if not os.path.exists(pair_indices_path):
         raise IOError("Path to pair indices file '{}' does not exist!".format(pair_indices_path))
 
-    output_file = '{}-likelihood-ratio.h5'.format(os.path.splitext(pair_indices_path)[0])
+    output_file = '{}_vscatter{:.0f}-lratio.h5'.format(os.path.splitext(pair_indices_path,
+                                                                        v_scatter)[0])
 
     # load the pair indices
     pair_idx = fits.getdata(pair_indices_path, 0)
@@ -76,7 +77,6 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
                          "are not consistent!")
 
     all_pairs = [[k,tgas[i],tgas[j]] for k,(i,j) in enumerate(pair_idx)]
-    all_pairs = all_pairs[:8] # HACK: testing
 
     worker = Worker(Vinv=Vinv, v_scatter=v_scatter, n_distance_samples=n_distance_samples,
                     output_filename=output_file)
@@ -115,6 +115,8 @@ if __name__ == "__main__":
                         type=str, help="Path to pair indices file.")
     parser.add_argument("--snr-cut", dest="signal_to_noise_cut", default=8,
                         type=float, help="Minimum signal-to-noise ratio in parallax.")
+    parser.add_argument("--vscatter", dest="v_scatter", default=1,
+                        type=float, help="TODO")
     parser.add_argument("--output-path", dest="output_path", default="../data/",
                         type=str, help="Path to write output.")
 
@@ -142,4 +144,5 @@ if __name__ == "__main__":
 
     # use a context manager so the prior samples file always gets deleted
     main(pool, args.stacked_tgas_path, args.pair_indices_path, args.signal_to_noise_cut,
-         output_path=args.output_path, seed=args.seed, overwrite=args.overwrite)
+         v_scatter=args.v_scatter, output_path=args.output_path,
+         seed=args.seed, overwrite=args.overwrite)
