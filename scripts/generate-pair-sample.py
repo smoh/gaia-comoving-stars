@@ -32,15 +32,18 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     if os.path.exists(output_file) and not overwrite:
         raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.")
 
+    # the full TGAS data table
     tgas0 = TGASData(os.path.abspath(stacked_tgas_path))
     n_full_tgas = len(tgas0)
     index0 = np.arange(n_full_tgas)
 
-    # first, do a signal-to-noise cut
+    # do a signal-to-noise cut and preserve the indices of the surviving targets
+    #   from the original stacked_tgas file
     tgas = tgas0[tgas0.parallax_snr > signal_to_noise_cut]  # this should return a copy of tgas0
     index0_snr = index0[tgas0.parallax_snr > signal_to_noise_cut]
     logger.info("{}/{} targets left after S/N cut".format(len(tgas), n_full_tgas))
 
+    # convert the sky position and Lutz-Kelker corrected distance into a 3D cartesian position
     c = tgas.get_coord()
     X = c.cartesian.xyz.T
 
