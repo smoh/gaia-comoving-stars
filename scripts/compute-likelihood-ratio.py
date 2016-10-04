@@ -47,6 +47,7 @@ def main(pool, stacked_tgas_path, pair_indices_path,
 
     # MAGIC NUMBERs
     n_distance_samples = 128
+    assumed_mass = 2*M_sun
     Vinv = np.diag(np.full(3, 1./25.)**2) # 3x3 inverse variance matrix for disk stars
 
     if not os.path.exists(pair_indices_path):
@@ -74,14 +75,18 @@ def main(pool, stacked_tgas_path, pair_indices_path,
     # read in TGAS data
     tgas = TGASData(os.path.abspath(stacked_tgas_path))
 
-    assumed_mass = 2*M_sun # HACK, MAGIC NUMBER
     orb_v = np.sqrt(G*assumed_mass / sep).to(u.km/u.s).value
     v_scatter = np.sqrt(v_scatter**2 + orb_v**2)
     all_pairs = [[k,tgas[i],tgas[j],v_scatter[k]] for k,(i,j) in enumerate(pair_idx)]
 
     worker = Worker(Vinv=Vinv, n_distance_samples=n_distance_samples,
                     output_filename=output_file)
-    pool.map(worker, all_pairs, callback=worker.callback)
+
+    for result in pool.map(worker, all_pairs, callback=worker.callback):
+        # returns a generator, so need to explicitly loop to do the processing, but
+        #   we ignore the results because the callback function caches them.
+        pass
+
     pool.close()
 
 if __name__ == "__main__":
