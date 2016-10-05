@@ -42,12 +42,13 @@ class Worker(object):
                 f['lnH1'][i] = h1
                 f['lnH2'][i] = h2
 
-def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
+def main(pool, stacked_tgas_path, pair_indices_path,
          v_scatter, output_path="../data", seed=42, overwrite=False):
 
     # MAGIC NUMBERs
     n_distance_samples = 128
-    Vinv = np.diag(np.full(3, 1/25)**2) # 3x3 inverse variance matrix for disk stars
+    assumed_mass = 2*M_sun
+    Vinv = np.diag(np.full(3, 1./25.)**2) # 3x3 inverse variance matrix for disk stars
 
     if not os.path.exists(pair_indices_path):
         raise IOError("Path to pair indices file '{}' does not exist!".format(pair_indices_path))
@@ -73,20 +74,19 @@ def main(pool, stacked_tgas_path, pair_indices_path, signal_to_noise_cut,
 
     # read in TGAS data
     tgas = TGASData(os.path.abspath(stacked_tgas_path))
-    tgas = tgas[tgas.parallax_snr > signal_to_noise_cut]
 
-    if len(tgas) < pair_idx.max():
-        raise ValueError("Number of surviving stars after S/N cut and pair indices "
-                         "are not consistent!")
-
-    assumed_mass = 2*M_sun # HACK, MAGIC NUMBER
     orb_v = np.sqrt(G*assumed_mass / sep).to(u.km/u.s).value
     v_scatter = np.sqrt(v_scatter**2 + orb_v**2)
     all_pairs = [[k,tgas[i],tgas[j],v_scatter[k]] for k,(i,j) in enumerate(pair_idx)]
 
     worker = Worker(Vinv=Vinv, n_distance_samples=n_distance_samples,
                     output_filename=output_file)
-    pool.map(worker, all_pairs, callback=worker.callback)
+
+    for result in pool.map(worker, all_pairs, callback=worker.callback):
+        # returns a generator, so need to explicitly loop to do the processing, but
+        #   we ignore the results because the callback function caches them.
+        pass
+
     pool.close()
 
 if __name__ == "__main__":
@@ -116,8 +116,6 @@ if __name__ == "__main__":
                         type=str, help="Path to stacked TGAS data file.")
     parser.add_argument("--pairs-file", dest="pair_indices_path", required=True,
                         type=str, help="Path to pair indices file.")
-    parser.add_argument("--snr-cut", dest="signal_to_noise_cut", default=8,
-                        type=float, help="Minimum signal-to-noise ratio in parallax.")
     parser.add_argument("--vscatter", dest="v_scatter", default=1,
                         type=float, help="TODO")
     parser.add_argument("--output-path", dest="output_path", default="../data/",
@@ -146,6 +144,6 @@ if __name__ == "__main__":
     logger.debug("Using pool: {}".format(pool.__class__))
 
     # use a context manager so the prior samples file always gets deleted
-    main(pool, args.stacked_tgas_path, args.pair_indices_path, args.signal_to_noise_cut,
+    main(pool, args.stacked_tgas_path, args.pair_indices_path,
          v_scatter=args.v_scatter, output_path=args.output_path,
          seed=args.seed, overwrite=args.overwrite)

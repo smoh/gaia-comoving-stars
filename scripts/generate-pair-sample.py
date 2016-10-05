@@ -15,7 +15,7 @@ from sklearn.neighbors import KDTree
 from gwb.data import TGASData
 
 def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
-         output_path="../data/", overwrite=False):
+         output_path="../data/", overwrite=False, randompairs=False, randomsize=10000):
 
     if not os.path.exists(os.path.abspath(stacked_tgas_path)):
         raise IOError("Stacked TGAS data file '{}' does not exist.".format(stacked_tgas_path))
@@ -23,56 +23,72 @@ def main(stacked_tgas_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
     if not os.path.exists(os.path.abspath(output_path)):
         raise IOError("Specified output path '{}' does not exist.".format(output_path))
 
-    output_file = os.path.join(output_path, "snr{:.0f}_n{}_dv{:.0f}.fits".format(signal_to_noise_cut,
-                                                                                 n_neighbors,
-                                                                                 delta_v_cut))
+    if randompairs:
+        output_file = os.path.join(output_path, "snr{:.0f}_random{:d}.fits".format(
+            signal_to_noise_cut, randomsize))
+    else:
+        output_file = os.path.join(output_path, "snr{:.0f}_n{}_dv{:.0f}.fits".format(
+            signal_to_noise_cut, n_neighbors, delta_v_cut))
     if os.path.exists(output_file) and not overwrite:
         raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.")
 
-    tgas = TGASData(os.path.abspath(stacked_tgas_path))
-    n_full_tgas = len(tgas)
+    # the full TGAS data table
+    tgas0 = TGASData(os.path.abspath(stacked_tgas_path))
+    n_full_tgas = len(tgas0)
+    index0 = np.arange(n_full_tgas)
 
-    # first, do a signal-to-noise cut
-    tgas = tgas[tgas.parallax_snr > signal_to_noise_cut]
+    # do a signal-to-noise cut and preserve the indices of the surviving targets
+    #   from the original stacked_tgas file
+    tgas = tgas0[tgas0.parallax_snr > signal_to_noise_cut]  # this should return a copy of tgas0
+    index0_snr = index0[tgas0.parallax_snr > signal_to_noise_cut]
     logger.info("{}/{} targets left after S/N cut".format(len(tgas), n_full_tgas))
 
-    # next, built the KD Tree using the XYZ positions
+    # convert the sky position and Lutz-Kelker corrected distance into a 3D cartesian position
     c = tgas.get_coord()
     X = c.cartesian.xyz.T
 
-    # separation in position
-    tree = KDTree(X)
-    tree_d,tree_i = tree.query(X, k=n_neighbors+1) # 0th match is always self
-    tree_d = tree_d[:,1:]
-    tree_i = tree_i[:,1:]
+    if randompairs:
+        all_pair_idx = np.random.randint(0, len(tgas), size=(randomsize, 2))
+        sep = np.linalg.norm(X[all_pair_idx[:,0]]-X[all_pair_idx[:,1]], axis=1)
+        vtan = tgas.get_vtan().value
+        dv = np.sqrt(np.sum((vtan[all_pair_idx[:,0]] - vtan[all_pair_idx[:,1]])**2, axis=1))
+        index0_out = np.vstack([index0_snr[all_pair_idx[:,0]], index0_snr[all_pair_idx[:,1]]]).T
+    else:
+        # next, built the KD Tree using the XYZ positions
+        # separation in position
+        tree = KDTree(X)
+        tree_d,tree_i = tree.query(X, k=n_neighbors+1) # 0th match is always self
+        tree_d = tree_d[:,1:]
+        tree_i = tree_i[:,1:]
 
-    idx0 = np.arange(len(tgas), dtype=int)
-    idx0 = np.repeat(idx0[:,None], n_neighbors, axis=1)
-    all_pair_idx = np.vstack((idx0.ravel(), tree_i.ravel())).T
+        idx0 = np.arange(len(tgas), dtype=int)
+        idx0 = np.repeat(idx0[:,None], n_neighbors, axis=1)
+        all_pair_idx = np.vstack((idx0.ravel(), tree_i.ravel())).T
 
-    # now compute velocity difference
-    vtan = tgas.get_vtan().value
-    dv = np.sqrt(np.sum((vtan[all_pair_idx[:,0]] - vtan[all_pair_idx[:,1]])**2, axis=1))
-    cut = dv < delta_v_cut
+        # now compute velocity difference
+        vtan = tgas.get_vtan().value
+        dv = np.sqrt(np.sum((vtan[all_pair_idx[:,0]] - vtan[all_pair_idx[:,1]])**2, axis=1))
+        cut = dv < delta_v_cut
 
-    all_pair_idx = all_pair_idx[cut]
-    dv = dv[cut]
-    sep = tree_d.ravel()[cut]
-    logger.info("{} pairs before trimming duplicates".format(len(all_pair_idx)))
+        all_pair_idx = all_pair_idx[cut]
+        dv = dv[cut]
+        sep = tree_d.ravel()[cut]
+        logger.info("{} pairs before trimming duplicates".format(len(all_pair_idx)))
 
-    hitting_edge = np.bincount(all_pair_idx[:,0]) == n_neighbors
-    logger.info("{} stars likely have more than {} neighbors".format(hitting_edge.sum(),
-                                                                     n_neighbors))
+        hitting_edge = np.bincount(all_pair_idx[:,0]) == n_neighbors
+        logger.info("{} stars likely have more than {} neighbors".format(hitting_edge.sum(),
+                                                                        n_neighbors))
 
-    all_pair_idx = np.sort(all_pair_idx, axis=1)
-    str_pairs = np.array(["{}{}".format(i,j) for i,j in all_pair_idx])
-    _, unq_idx = np.unique(str_pairs, return_index=True)
-    all_pair_idx = all_pair_idx[unq_idx]
-    dv = dv[unq_idx]
-    sep = sep[unq_idx]
-    logger.info("{} pairs after trimming duplicates".format(len(all_pair_idx)))
+        all_pair_idx = np.sort(all_pair_idx, axis=1)
+        str_pairs = np.array(["{}{}".format(i,j) for i,j in all_pair_idx])
+        _, unq_idx = np.unique(str_pairs, return_index=True)
+        all_pair_idx = all_pair_idx[unq_idx]
+        index0_out = np.vstack([index0_snr[all_pair_idx[:,0]], index0_snr[all_pair_idx[:,1]]]).T
+        dv = dv[unq_idx]
+        sep = sep[unq_idx]
+        logger.info("{} pairs after trimming duplicates".format(len(all_pair_idx)))
 
-    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(all_pair_idx[:,0], all_pair_idx[:,1], dv, sep)]
+    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(index0_out[:,0], index0_out[:,1], dv, sep)]
     tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
                                 ('delta_v', 'f8'), ('sep', 'f8')])
 
@@ -103,6 +119,10 @@ if __name__ == "__main__":
                         type=int, help="Number of nearest neighbors to process for each star.")
     parser.add_argument("--deltav-cut", dest="delta_v_cut", default=4,
                         type=float, help="TODO.")
+    parser.add_argument("--randompairs", help="Pair randomly instead of nearest neighbors",
+                        default=False, action='store_true')
+    parser.add_argument("--randomsize", help="Number of random pairs to generate",
+                        type=int, default=10000)
     parser.add_argument("--output-path", dest="output_path", default="../data/",
                         type=str, help="Path to write output.")
 
@@ -127,5 +147,9 @@ if __name__ == "__main__":
     if args.seed is not None:
         np.random.seed(args.seed)
 
+    if args.randompairs:
+        logger.warning("Randomly pairing stars -- neighbors/deltav-cut will be ignored.")
+
     main(args.stacked_tgas_path, args.signal_to_noise_cut, args.n_neighbors, args.delta_v_cut,
-         output_path=args.output_path, overwrite=args.overwrite)
+         output_path=args.output_path, overwrite=args.overwrite,
+         randompairs=args.randompairs, randomsize=args.randomsize)
