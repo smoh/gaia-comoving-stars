@@ -4,6 +4,7 @@ from __future__ import division, print_function
 import astropy.units as u
 import numpy as np
 from scipy.linalg import block_diag
+from scipy.misc import logsumexp
 
 # Project
 from .coords import get_tangent_basis
@@ -130,13 +131,20 @@ def _marg_likelihood_helper(ds, data, Vinv, v_scatter):
     assert sgn > 0
     return 0.5*log_detA - Delta
 
-def ln_H1_marg_v_likelihood(d1, d2, data1, data2, Vinv, v_scatter=0.):
+def ln_H1_marg_v_likelihood(d1, d2, data1, data2, Vinvs, v_scatter=0.):
+    Vinvs = np.array(Vinvs)
+    if Vinvs.ndim < 3:
+        Vinvs = Vinvs[None]
+
     ds = np.array([d1, d2])
     data = [data1, data2]
-    return _marg_likelihood_helper(ds, data, Vinv, v_scatter)
+    return logsumexp([_marg_likelihood_helper(ds, data, Vinv, v_scatter) for Vinv in Vinvs])
 
-def ln_Q(d, data, Vinv, v_scatter=0.):
-    return _marg_likelihood_helper(d, data, Vinv, v_scatter)
+def ln_Q(d, data, Vinvs, v_scatter=0.):
+    Vinvs = np.array(Vinvs)
+    if Vinvs.ndim < 3:
+        Vinvs = Vinvs[None]
+    return logsumexp([_marg_likelihood_helper(d, data, Vinv, v_scatter) for Vinv in Vinvs])
 
 def ln_H2_marg_v_likelihood(d1, d2, data1, data2, Vinv, v_scatter=0.):
     return (ln_Q(d1, data1, Vinv, v_scatter) + ln_Q(d2, data2, Vinv, v_scatter))
