@@ -123,7 +123,27 @@ superficially discussed.
 
 \section{Introduction} \label{sec:intro}
 
-\todo{Some bullshit about binary stars...}
+Two stars moving with similar full-space velocity vectors (``co-moving stars'')
+are either remnants of a dispersing stellar system or are a widely-separated
+binary star system. In either case, co-moving stars are of great interest for
+studying chemical uniformity and star formation processes, the destruction of
+star clusters and dwarf galaxies, and the tidal field and small-scale properties
+of the mass distribution in the Milky Way. To date, thousands of candidate
+co-moving star pairs have been identified by searching for stars with common
+proper motions (\citealt{Luyten:1979,Poveda:1994,Allen:2000,Gould:2003,
+Chaname:2004,Lepine:2007,Alonso-Floriano:2015}).
+% Cite:
+% https://ui.adsabs.harvard.edu/#abs/2012ApJ...757..170A/abstract
+% https://ui.adsabs.harvard.edu/#abs/2012AJ....144..102T/abstract
+% https://ui.adsabs.harvard.edu/#abs/2014ApJ...790..158A/abstract
+
+% Two stars moving with full-space velocity vector differences $\lesssim 1~\kms$
+% with orbital semi-major axes $a \gtrsim 10^-3~{\rm pc}$.
+
+Useful for:
+- star cluster disruption and dispersal
+- chemical abundance comparison (no interaction)
+- dynamics
 
 \section{Data} \label{sec:data}
 
@@ -134,46 +154,81 @@ parallax, and proper motions) and associated covariance matrices for a large
 fraction of the \project{Tycho-2} catalog (\citealt{tycho2}) with median
 astrometric precision equivalent to the \project{Hipparcos} catalog ($\approx
 0.3~{\rm mas}$; \citealt{hipparcos}). In terms of parallax signal-to-noise
-($\snr = \varpi/\sigma_\varpi$), the TGAS catalog contains 1240114 stars
-with $\snr > 4$ and 619618 stars with $\snr > 8$. The increase in precision over
-Tycho-2 and increase in volume over Hipparcos makes the TGAS catalog a powerful
-data set to search for widely-separated, co-moving stars.
+($\snr = \varpi/\sigma_\varpi$), the TGAS catalog contains 1240114 stars with
+$\snr > 4$, 619618 stars with $\snr > 8$, and 197105 stars with $\snr > 16$. The
+increase in precision over Tycho-2 and increase in volume over Hipparcos makes
+the TGAS catalog a powerful data set to search for widely-separated, co-moving
+stars.
 
-In the sections that follow, we construct a statistical model that use the TGAS
-data and associated covariances to handle the non-trivial uncertainties [...].
-Here, we instead visualize simple quantities constructed directly from the
-astrometric measurements to emphasize the quality of the data. For each star
-with $\snr > 8$, we use the reported parallax and parallax error to compute a
-distance corrected for the Lutz-Kelker bias (\citealt{lutzkelker}):
+In the sections that follow, we construct a statistical model that propagates
+the non-trivial uncertainties in the data to our beliefs about the likelihood
+that a given pair are co-moving. Here, we instead compute quantities directly
+from the astrometric measurements to visualize and emphasize the quality of the
+data. For each star with $\snr > 16$, we use the reported parallax and parallax
+error to compute a distance corrected for the Lutz-Kelker bias
+(\citealt{lutzkelker}):
 \begin{equation}
-  d = 1000 \, \left[\frac{\varpi}{2} \, \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
+  d_{\rm LK} = 1000 \, \left[\frac{\varpi}{2} \,
+    \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
 \end{equation}
+We use this distance and the sky positions of each source to compute 3D
+Cartesian positions, $\boldsymbol{x}$, for all stars and find the nearest
+neighbor to each source in 3-space using the KDTree implementation in
+\project{scikit-learn} (\citealt{scikit-learn}). We remove duplicates from
+this sample and are left with 138962 pairs of stars. For all pairs, we then
+compute the tangential velocity difference
+\begin{equation}
+  |\Delta \bs{v}_{\rm t}| = d_{\rm LK} \,
+                            \sqrt{(\mu_{\alpha,1}-\mu_{\alpha,2})^2 +
+                                  (\mu_{\delta,1}-\mu_{\delta,2})^2}
+\end{equation}
+\figname~\ref{fig:dv-sep} shows these quantities plotted for all pairs that pass
+the above signal-to-noise cut. Pairs with small physical separation also tend to
+have small velocity differences. Intriguingly, there appear to be an abundance
+of pairs with small velocity separation at separations $|\delta\bs{x}| \gtrsim
+1~{\rm pc}$.
+
+\begin{figure*}[p]
+\begin{center}
+\includegraphics[width=\textwidth]{figures/dv-sep.pdf}
+\end{center}
+\caption{%
+Difference in tangential velocity vs. physical separation for pairs of stars
+selected to be nearest neighbors in separation. Dashed line shows zero velocity
+difference. Note the points with small velocity difference: these are likely
+widely-separated binary stars.
+\label{fig:dv-sep}}
+\end{figure*}
+
+\todo{More naive visualizations, or save for the full sample?}
 
 \section{Methods} \label{sec:methods}
 
-For a pair of stars $(i,j)$, we want to ratio the fully marginalized likelihood
-(FML) of the stars having the same 3-space velocity (hypothesis 1,
-$\mathcal{L}_1$) over the FML of the stars having different 3-space velocities
-(hypothesis 2, $\mathcal{L}_2$). When this ratio is large, the pair is a
-candidate binary star. For \gaia\ DR1, we only observe parallax, $\varpi$, and
-two proper motion components, $\propm = (\mu_\alpha, \mu_\delta)$ for each star.
-Where there is overlap with \rave\ or \apogee, some number of observed radial
-velocities, $v_r$, with observed variances $\sigma^2_{v_r}$ (independent of the
-\gaia\ data) may also be available. We assume that the uncertainties in these
-observed quantites are known with covariance matrix $\matrx{C}$. The likelihoods
-$\mathcal{L}_1, \mathcal{L}_2$ are marginalized over true 3-space velocity and
-distance for each star in the pair.
+For a given pair of stars $(i,j)$, we compute the fully marginalized likelihood
+(FML) that the pair has the same 3-space velocity (hypothesis 1,
+$\mathcal{L}_1$) and the FML of the stars having different 3-space velocities
+(hypothesis 2, $\mathcal{L}_2$). We use the ratio of these FMLs as a scalar for
+selecting candidate widely-separated binary stars. \gaia\ \dr\ only contains
+parallax, $\varpi$, and two proper motion components, $\propm = (\mu_\alpha,
+\mu_\delta)$ for each star, so for the majority of sources we only have
+information about the tangential velocities of the stars. Where there is overlap
+with \rave\ or \apogee, some number of observed radial velocities, $v_r$, with
+observed variances $\sigma^2_{v_r}$ (independent of the \gaia\ data) may also be
+available. We assume that the uncertainties in these observed quantites are
+known with covariance matrix $\matrx{C}$. The likelihood functions $L_1, L_2$
+are marginalized over true 3-space velocity and distance for each star in the
+pair.
 \begin{align}
   \mathcal{L}_1 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v} \,
     L_i(\bs{v}, d_i) \,
     L_j(\bs{v}, d_j) \,
-    p(\bs{v}) \, p(d_i) \, p(d_j) \\
+    p(\bs{v}) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j) \\
   \mathcal{L}_2 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v}_i \, \dd^3 \bs{v}_j \,
     L_i(\bs{v}_i, d_i) \,
     L_j(\bs{v}_j, d_j) \,
-    p(\bs{v}_i) \, p(\bs{v}_j) \, p(d_i) \, p(d_j) \\
+    p(\bs{v}_i) \, p(\bs{v}_j) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j) \label{eq:hyp2}
 \end{align}
 where
 \begin{align}
@@ -182,29 +237,44 @@ where
     \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
     \matrx{C}^{-1} \,
     \left(\bs{x} - \bs{x}_\theta \right) \right] \\
-  \bs{x} &= \transp{\left(\begin{array}{c c c c} \varpi & \mu_\alpha &
-    \mu_\delta & v_r \end{array}\right)} \\
-  \bs{x}_\theta &= \transp{\left(\begin{array}{c c c c} \frac{1}{d} & \frac{v_\alpha}{d} &
-    \frac{v_\delta}{d} & \tilde{v}_r \end{array}\right)}
+  \bs{x} &= \transp{(\begin{array}{c c c} \mu_\alpha &
+    \mu_\delta & v_r \end{array})} \\
+  \bs{x}_\theta &= \transp{\left(\begin{array}{c c c} d^{-1}\,v_\alpha &
+    d^{-1}\,v_\delta & \tilde{v}_r \end{array}\right)}
 \end{align}
-\todo{Holy fuck that vector is UGLY}
-We assume Gaussian priors on the true velocity components and use a \todo{which
-one will we use?} distance prior \citep{Astraatmadja:2016} on heliocentric
+and we compute the posterior pdfs for the true distances, $p(d\given\varpi)$,
+using a uniform space density prior \citep{Astraatmadja:2016} on heliocentric
 distance
-\begin{align}
-  p(\bs{v}) &= \normal(0,25)~\kms \\
-  p(d) &= \frac{r^2}{2\,L^3} \, \exp\left(-r/L\right)
-\end{align}
+\begin{equation}
+  p(d) \propto d^2
+\end{equation}
+We assume Gaussian priors on the true velocity components
+\begin{equation}
+  p(\bs{v}) = \normal(0,25)~\kms
+\end{equation}
 
 For hypothesis 1, the integral over velocity is non-trivial because the same
 ``true'' 3-space velocity vector projects into tangential velocity components
-differently depending on sky position when the sky separation is appreciable
-($v_\alpha = v_\alpha(\bs{v}, \alpha, \delta)$). For hypothesis 2, the integral
-can be split into two the product of two simpler integrals $\mathcal{L}_2 = Q_i
-\, Q_j$ where
+differently depending on sky position ($v_\alpha = v_\alpha(\bs{v}, \alpha,
+\delta)$). The marginalization integral for hypothesis 2 is simpler because the
+integral in \eqname~\ref{eq:hyp2} can be split into the product of two simpler
+integrals $\mathcal{L}_2 = Q_i \, Q_j$ where
 \begin{equation}
-  Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d) \, p(\bs{v}) \, p(d)
+  Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d) \, p(\bs{v}) \, p(d\given\varpi)
 \end{equation}
+In either case, the marginalization over true 3-space velocity can be performed
+analytically; we derive the relevant expressions in
+\sectionname~\ref{sec:appendix}. After marginalizing over velocity, the
+likelihood integrands only depend on distance; we numerically compute the
+integrals over the true distances to each star in a pair, $d_1,d_2$, using Monte
+Carlo integration with $K$ samples from the distance posterior pdfs:
+\begin{equation}
+  \int \, \dd d \, \tilde{L}(d) \, p(d\given\varpi) \approx
+    \frac{1}{K} \, \sum_k^K \, \tilde{L}(d_k)
+\end{equation}
+Through experimentation, we have found that $K=128$ samples are sufficient for
+estimating the above integrals for stars with a wide range in parallax
+signal-to-noise.
 
 \acknowledgements
 
@@ -235,7 +305,10 @@ This research additionally utilized:
 \bibliography{refs}
 
 \appendix
-\section{Some mathematics relevant to the above}
+
+\section{Some mathematics relevant to the above} \label{sec:appendix}
+
+\todo{clean this up}
 
 In what follows, all vectors are column vectors, unless we have transposed them.
 We indicate whether a symbol represents a scalar, vector, or tensor
