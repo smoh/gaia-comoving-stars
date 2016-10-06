@@ -136,7 +136,7 @@ def ln_H1_marg_v_likelihood(d1, d2, data1, data2, Vinvs, v_scatter=0., prior_wei
     if Vinvs.ndim < 3:
         Vinvs = Vinvs[None]
     if prior_weights is None:
-        prior_weights = np.ones(Vinv.shape[0])/Vinv.shape[0]
+        prior_weights = np.ones(Vinvs.shape[0])/Vinvs.shape[0]
 
     ds = np.array([d1, d2])
     data = [data1, data2]
@@ -148,7 +148,7 @@ def ln_Q(d, data, Vinvs, v_scatter=0., prior_weights=None):
     if Vinvs.ndim < 3:
         Vinvs = Vinvs[None]
     if prior_weights is None:
-        prior_weights = np.ones(Vinv.shape[0])/Vinv.shape[0]
+        prior_weights = np.ones(Vinvs.shape[0])/Vinvs.shape[0]
     return logsumexp([_marg_likelihood_helper(d, data, Vinv, v_scatter) for Vinv in Vinvs],
                      b=prior_weights)
 
