@@ -31,6 +31,7 @@
 \newcommand{\figname}{Figure}
 \newcommand{\eqname}{Equation}
 \newcommand{\dr}{\acronym{DR1}}
+\newcommand{\tgas}{\acronym{TGAS}}
 
 % define macros for math
 \newcommand{\given}{\,|\,}
@@ -43,6 +44,7 @@
 \newcommand{\propm}{\bs{\mu}}
 \newcommand{\matrx}[1]{\mathbf{#1}}
 \newcommand{\kms}{\rm km~s^{-1}}
+\newcommand{\msun}{{\rm M}_\odot}
 \newcommand{\data}{\mathrm{data}}
 \newcommand{\snr}{[S/N]_\varpi}
 
@@ -183,23 +185,20 @@ chemical uniformity and star formation processes.
 \section{Data} \label{sec:data}
 
 The primary data set used in this \documentname\ is the Tycho-Gaia Astrometric
-Solution (TGAS), released as a part of Data Release 1 of the Gaia mission
-(\citealt{many}). TGAS contains astrometric measurements (sky position,
+Solution (\tgas), released as a part of Data Release 1 (\dr) of the Gaia mission
+(\citealt{many}). \tgas\ contains astrometric measurements (sky position,
 parallax, and proper motions) and associated covariance matrices for a large
 fraction of the \project{Tycho-2} catalog (\citealt{tycho2}) with median
-astrometric precision equivalent to the \project{Hipparcos} catalog ($\approx
-0.3~{\rm mas}$; \citealt{hipparcos}). In terms of parallax signal-to-noise
-($\snr = \varpi/\sigma_\varpi$), the TGAS catalog contains 1240114 stars with
-$\snr > 4$, 619618 stars with $\snr > 8$, and 197105 stars with $\snr > 16$. The
-increase in precision over Tycho-2 and increase in volume over Hipparcos makes
-the TGAS catalog a powerful data set to search for widely-separated, co-moving
-stars.
-
+astrometric precision comparable to that of the \project{Hipparcos} catalog
+($\approx 0.3~{\rm mas}$; \citealt{hipparcos}). In terms of parallax
+signal-to-noise ($\snr = \varpi/\sigma_\varpi$), the \tgas\ catalog contains
+42385 high-precision stars with $\snr > 32$: here we visualize quantities
+computed from this high-precsision sample to emphasize the quality of the data.
 In the sections that follow, we construct a statistical model that propagates
 the non-trivial uncertainties in the data to our beliefs about the likelihood
-that a given pair are co-moving. Here, we instead compute quantities directly
-from the astrometric measurements to visualize and emphasize the quality of the
-data. For each star with $\snr > 16$, we use the reported parallax and parallax
+that a given pair are co-moving.
+
+For each star with $\snr > 32$, we use the reported parallax and parallax
 error to compute a distance corrected for the Lutz-Kelker bias
 (\citealt{lutzkelker}):
 \begin{equation}
@@ -210,18 +209,18 @@ We use this distance and the sky positions of each source to compute 3D
 Cartesian positions, $\boldsymbol{x}$, for all stars and find the nearest
 neighbor to each source in 3-space using the KDTree implementation in
 \project{scikit-learn} (\citealt{scikit-learn}). We remove duplicates from
-this sample and are left with 138962 pairs of stars. For all pairs, we then
+this sample and are left with 29870 pairs of stars. For all pairs, we then
 compute the tangential velocity difference
 \begin{equation}
   |\Delta \bs{v}_{\rm t}| = d_{\rm LK} \,
                             \sqrt{(\mu_{\alpha,1}-\mu_{\alpha,2})^2 +
                                   (\mu_{\delta,1}-\mu_{\delta,2})^2}
 \end{equation}
-\figname~\ref{fig:dv-sep} shows these quantities plotted for all pairs that pass
-the above signal-to-noise cut. Pairs with small physical separation also tend to
-have small velocity differences. Intriguingly, there appear to be an abundance
-of pairs with small velocity separation at separations $|\delta\bs{x}| \gtrsim
-1~{\rm pc}$.
+\figname~\ref{fig:dv-sep} shows the tangential velocity difference against the
+physical separation plotted for all pairs that pass the above signal-to-noise
+cut. Pairs with small physical separation also tend to have small velocity
+differences. Intriguingly, there appear to be an abundance of pairs with small
+velocity separation at separations $|\delta\bs{x}| \gtrsim 1~{\rm pc}$.
 
 \begin{figure*}[p]
 \begin{center}
@@ -239,20 +238,49 @@ widely-separated binary stars.
 
 \section{Methods} \label{sec:methods}
 
-For a given pair of stars $(i,j)$, we compute the fully marginalized likelihood
-(FML) that the pair has the same 3-space velocity (hypothesis 1,
-$\mathcal{L}_1$) and the FML of the stars having different 3-space velocities
-(hypothesis 2, $\mathcal{L}_2$). We use the ratio of these FMLs as a scalar for
-selecting candidate widely-separated binary stars. \gaia\ \dr\ only contains
-parallax, $\varpi$, and two proper motion components, $\propm = (\mu_\alpha,
-\mu_\delta)$ for each star, so for the majority of sources we only have
-information about the tangential velocities of the stars. Where there is overlap
-with \rave\ or \apogee, some number of observed radial velocities, $v_r$, with
-observed variances $\sigma^2_{v_r}$ (independent of the \gaia\ data) may also be
-available. We assume that the uncertainties in these observed quantites are
-known with covariance matrix $\matrx{C}$. The likelihood functions $L_1, L_2$
-are marginalized over true 3-space velocity and distance for each star in the
-pair.
+The abundance of pairs of stars with small velocity difference in the
+high-precsision sample of \figname~\ref{fig:dv-sep} suggests that there are a
+significant number of co-moving stars in the \tgas\ data at separations as large
+as a few parsecs. Here we develop a method to select high-confidence co-moving
+stars that properly incorporates the complex uncertainties associated with the
+\gaia\ data. We make the following assumptions in order to construct a
+statistical model (a likelihood function with explicit priors on our
+parameters):
+\begin{itemize}
+  \item We assume that the uncertainties in the data---parallax, $\varpi$, and
+    two proper motion components, $\propm = (\begin{array}[t]{c c} \mu_\alpha &
+    \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances.
+  \item We assume that the tangential velocities of a given pair of stars in the
+    \tgas\ sample (relative to the solar system barycenter) are either (1)
+    co-moving with velocities equal to the circular velocity of a $2~\msun$
+    binary star system with the given physical separation, (2) co-moving with
+    velocities drawn from a zero-mean Gaussian with velocity dispersion $\sigma
+    = 1~\kms$, or (3) drawn from a mixture of three isotropic, zero-mean
+    Gaussian distributions with velocity dispersions equal to $(\sigma_1,
+    \sigma_2, \sigma_3) = (8, 32, 128)~\kms$ meant to represent young disk
+    stars, old disk stars, and halo stars.
+\end{itemize}
+
+Under these assumptions, the likelihood function for the proper-motion data for
+a star given true distance, $d$, and true tangential velocity, $\bs{v}^\perp =
+(\begin{array}[t]{c c} v_\alpha & v_\delta\end{array})^\mathsf{T}$ is
+\begin{align}
+  L(\bs{v}^\perp, d) &=
+    \left[\det\left(\frac{\matrx{C}^{-1}}{2\pi}\right)\right]^{1/2} \,
+    \exp \left[ -\frac{1}{2} \transp{\left(\bs{\mu} - \bs{x}_\theta \right)} \,
+    \matrx{C}^{-1} \,
+    \left(\bs{\mu} - \bs{x}_\theta \right) \right] \\
+  \bs{x}_\theta &= d^{-1} \, \bs{v}^\perp
+\end{align}
+
+\todo{APW is working on this text...}
+We compute the fully
+marginalized likelihood (FML) that the pair has the same 3-space velocity
+(hypothesis 1, $\mathcal{L}_1$) and the FML of the stars having different
+3-space velocities (hypothesis 2, $\mathcal{L}_2$). We use the ratio of these
+FMLs as a scalar for selecting candidate co-moving stars, as described below in
+more detail. The likelihood functions $L_1, L_2$ are marginalized over true
+3-space velocity and distance for each star in the pair.
 \begin{align}
   \mathcal{L}_1 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v} \,
@@ -266,17 +294,7 @@ pair.
     p(\bs{v}_i) \, p(\bs{v}_j) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j) \label{eq:hyp2}
 \end{align}
 where
-\begin{align}
-  L(\bs{v}, d) &=
-    \left[\det\left(\frac{\matrx{C}^{-1}}{2\pi}\right)\right]^{1/2} \,
-    \exp \left[ -\frac{1}{2} \transp{\left(\bs{x} - \bs{x}_\theta \right)} \,
-    \matrx{C}^{-1} \,
-    \left(\bs{x} - \bs{x}_\theta \right) \right] \\
-  \bs{x} &= \transp{(\begin{array}{c c c} \mu_\alpha &
-    \mu_\delta & v_r \end{array})} \\
-  \bs{x}_\theta &= \transp{\left(\begin{array}{c c c} d^{-1}\,v_\alpha &
-    d^{-1}\,v_\delta & \tilde{v}_r \end{array}\right)}
-\end{align}
+
 and we compute the posterior pdfs for the true distances, $p(d\given\varpi)$,
 using a uniform space density prior \citep{Astraatmadja:2016} on heliocentric
 distance
@@ -310,75 +328,6 @@ Carlo integration with $K$ samples from the distance posterior pdfs:
 Through experimentation, we have found that $K=128$ samples are sufficient for
 estimating the above integrals for stars with a wide range in parallax
 signal-to-noise.
-
-\section{Results 1: A catalog of candidate wide binaries}
-
-\todo{Galactic context / orbits}
-
-\section{Results 2: Star clusters and cluster remnants}
-
-\section{Conclusions}
-
-\acknowledgements
-
-This research was partially supported by the \acronym{NSF} (grants
-  \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
-  \acronym{NASA} (grant \acronym{NNX12AI50G}),
-  and the Moore-Sloan Data Science Environment at \acronym{NYU}. The data
-analysis presented in this article was partially performed on computational
-resources supported by the Princeton Institute for Computational Science and
-Engineering (PICSciE) and the Office of Information Technology's High
-Performance Computing Center and Visualization Laboratory at Princeton
-University.
-
-\software{The code used in this project is available from
-\url{https://github.com/smoh/gaia-wide-binaries} under the MIT open-source
-software license. This version was generated at git commit
-\texttt{\githash\,(\gitdate)}.
-This research additionally utilized:
-    \texttt{Astropy} (\citealt{Astropy-Collaboration:2013}),
-    %\texttt{emcee} (\citealt{Foreman-Mackey:2013}),
-    \texttt{IPython} (\citealt{Perez:2007}),
-    \texttt{matplotlib} (\citealt{Hunter:2007}),
-    and \texttt{numpy} (\citealt{Van-der-Walt:2011}).}
-
-% \facility{\sdssiii, \apogee}
-
-\bibliographystyle{aasjournal}
-\bibliography{refs}
-
-\appendix
-
-\section{Some mathematics relevant to the above} \label{sec:appendix}
-
-\todo{clean this up}
-
-In what follows, all vectors are column vectors, unless we have transposed them.
-We indicate whether a symbol represents a scalar, vector, or tensor
-(matrix) by context, not typesetting.
-Properties of the squared exponential:
-\begin{eqnarray}
-  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] - \Delta)\,\dd x\right]
-  &=& +\frac{1}{2}\ln ||2\pi\,A|| -\Delta
-  \quad ,
-\end{eqnarray}
-where $x$ and $\nu$ are $D$-dimensional vectors, $A$ is a positive definite
-matrix, $\Delta$ is a scalar, and the integral is implicitly over all
-of $D$-dimensional $x$-space.
-We will need to complete squares.
-If we equate
-\begin{eqnarray}
-  \frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] + \Delta
-  &=& \frac{1}{2}\,\transp{x}\,\inv{A}\,x + \transp{x}\,B\,b + C
-  \quad ,
-\end{eqnarray}
-where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
-\begin{eqnarray}
-  \nu &=& -A\,B\,b
-  \\
-  \Delta & = & C - \frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
-  \quad .
-\end{eqnarray}
 
 Now in this case, we want to write down the probability density for the data
 given the distances and velocity (the likelihood), and the prior pdf for
@@ -488,5 +437,74 @@ two independent integrals $Q$ each constructed as follows:
 where again there are two options for the dimensionality of $y$ and
 $M$, and once the vectors and $\Sigma$ are properly truncated to one
 star, everything else follows.
+
+\section{Results 1: A catalog of candidate wide binaries}
+
+\todo{Galactic context / orbits}
+
+\section{Results 2: Star clusters and cluster remnants}
+
+\section{Conclusions}
+
+\acknowledgements
+
+This research was partially supported by the \acronym{NSF} (grants
+  \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
+  \acronym{NASA} (grant \acronym{NNX12AI50G}),
+  and the Moore-Sloan Data Science Environment at \acronym{NYU}. The data
+analysis presented in this article was partially performed on computational
+resources supported by the Princeton Institute for Computational Science and
+Engineering (PICSciE) and the Office of Information Technology's High
+Performance Computing Center and Visualization Laboratory at Princeton
+University.
+
+\software{The code used in this project is available from
+\url{https://github.com/smoh/gaia-wide-binaries} under the MIT open-source
+software license. This version was generated at git commit
+\texttt{\githash\,(\gitdate)}.
+This research additionally utilized:
+    \texttt{Astropy} (\citealt{Astropy-Collaboration:2013}),
+    %\texttt{emcee} (\citealt{Foreman-Mackey:2013}),
+    \texttt{IPython} (\citealt{Perez:2007}),
+    \texttt{matplotlib} (\citealt{Hunter:2007}),
+    and \texttt{numpy} (\citealt{Van-der-Walt:2011}).}
+
+% \facility{\sdssiii, \apogee}
+
+\bibliographystyle{aasjournal}
+\bibliography{refs}
+
+\appendix
+
+\section{Some mathematics relevant to the above} \label{sec:appendix}
+
+\todo{clean this up}
+
+In what follows, all vectors are column vectors, unless we have transposed them.
+We indicate whether a symbol represents a scalar, vector, or tensor
+(matrix) by context, not typesetting.
+Properties of the squared exponential:
+\begin{eqnarray}
+  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] - \Delta)\,\dd x\right]
+  &=& +\frac{1}{2}\ln ||2\pi\,A|| -\Delta
+  \quad ,
+\end{eqnarray}
+where $x$ and $\nu$ are $D$-dimensional vectors, $A$ is a positive definite
+matrix, $\Delta$ is a scalar, and the integral is implicitly over all
+of $D$-dimensional $x$-space.
+We will need to complete squares.
+If we equate
+\begin{eqnarray}
+  \frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] + \Delta
+  &=& \frac{1}{2}\,\transp{x}\,\inv{A}\,x + \transp{x}\,B\,b + C
+  \quad ,
+\end{eqnarray}
+where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
+\begin{eqnarray}
+  \nu &=& -A\,B\,b
+  \\
+  \Delta & = & C - \frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
+  \quad .
+\end{eqnarray}
 
 \end{document}
