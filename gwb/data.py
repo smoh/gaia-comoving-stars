@@ -99,8 +99,6 @@ class TGASData(object):
 
         if lutz_kelker:
             snr = self._data['parallax'] / self._data['parallax_error']
-            if np.any(snr < 4):
-                raise ValueError("S/N is smaller than 4!")
             tmp = self._data['parallax'] * (0.5 + 0.5*np.sqrt(1 - 16/snr**2))
 
         else:
