@@ -160,7 +160,7 @@ if __name__ == "__main__":
     parser_b.add_argument("-n", "--neighbors", dest="n_neighbors", default=32,
                           type=int, help="Number of nearest neighbors to process for each star.")
     parser_b.add_argument("--dv", "--deltav-cut", dest="delta_v_cut", default=8,
-                          type=float, help="TODO.")
+                          type=float, help="perpendicular velocity cut in km/s")
 
     args = parser.parse_args()
 
