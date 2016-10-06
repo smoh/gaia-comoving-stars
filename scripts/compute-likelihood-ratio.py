@@ -48,7 +48,7 @@ def main(pool, stacked_tgas_path, pair_indices_path,
     # MAGIC NUMBERs
     n_distance_samples = 128
     assumed_mass = 2*M_sun
-    Vinv = np.diag(np.full(3, 1./25.)**2) # 3x3 inverse variance matrix for disk stars
+    Vinvs = [np.diag(np.full(3, 1./8.)**2), np.diag(np.full(3, 1./32.)**2), np.diag(np.full(3, 1./128.)**2)] # 3x3 inverse variance matrix for disk stars
 
     if not os.path.exists(pair_indices_path):
         raise IOError("Path to pair indices file '{}' does not exist!".format(pair_indices_path))
@@ -79,7 +79,7 @@ def main(pool, stacked_tgas_path, pair_indices_path,
     v_scatter = np.sqrt(v_scatter**2 + orb_v**2)
     all_pairs = [[k,tgas[i],tgas[j],v_scatter[k]] for k,(i,j) in enumerate(pair_idx)]
 
-    worker = Worker(Vinv=Vinv, n_distance_samples=n_distance_samples,
+    worker = Worker(Vinv=Vinvs, n_distance_samples=n_distance_samples,
                     output_filename=output_file)
 
     for result in pool.map(worker, all_pairs, callback=worker.callback):
@@ -138,6 +138,7 @@ if __name__ == "__main__":
 
     else: # default
         logger.setLevel(logging.INFO)
+
 
     pool_kwargs = dict(mpi=args.mpi, processes=args.n_procs)
     pool = choose_pool(**pool_kwargs)
