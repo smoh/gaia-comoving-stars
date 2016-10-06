@@ -131,20 +131,26 @@ def _marg_likelihood_helper(ds, data, Vinv, v_scatter):
     assert sgn > 0
     return 0.5*log_detA - Delta
 
-def ln_H1_marg_v_likelihood(d1, d2, data1, data2, Vinvs, v_scatter=0.):
+def ln_H1_marg_v_likelihood(d1, d2, data1, data2, Vinvs, v_scatter=0., prior_weights=None):
     Vinvs = np.array(Vinvs)
     if Vinvs.ndim < 3:
         Vinvs = Vinvs[None]
+    if prior_weights is None:
+        prior_weights = np.ones(Vinv.shape[0])/Vinv.shape[0]
 
     ds = np.array([d1, d2])
     data = [data1, data2]
-    return logsumexp([_marg_likelihood_helper(ds, data, Vinv, v_scatter) for Vinv in Vinvs])
+    return logsumexp([_marg_likelihood_helper(ds, data, Vinv, v_scatter) for Vinv in Vinvs],
+                     b=prior_weights)
 
-def ln_Q(d, data, Vinvs, v_scatter=0.):
+def ln_Q(d, data, Vinvs, v_scatter=0., prior_weights=None):
     Vinvs = np.array(Vinvs)
     if Vinvs.ndim < 3:
         Vinvs = Vinvs[None]
-    return logsumexp([_marg_likelihood_helper(d, data, Vinv, v_scatter) for Vinv in Vinvs])
+    if prior_weights is None:
+        prior_weights = np.ones(Vinv.shape[0])/Vinv.shape[0]
+    return logsumexp([_marg_likelihood_helper(d, data, Vinv, v_scatter) for Vinv in Vinvs],
+                     b=prior_weights)
 
-def ln_H2_marg_v_likelihood(d1, d2, data1, data2, Vinv, v_scatter=0.):
-    return (ln_Q(d1, data1, Vinv, v_scatter) + ln_Q(d2, data2, Vinv, v_scatter))
+def ln_H2_marg_v_likelihood(d1, d2, data1, data2, Vinv, v_scatter=0., prior_weights=None):
+    return (ln_Q(d1, data1, Vinv, v_scatter, prior_weights) + ln_Q(d2, data2, Vinv, v_scatter, prior_weights))
