@@ -16,16 +16,17 @@ from gwb.fml import ln_H1_FML, ln_H2_FML
 
 class Worker(object):
 
-    def __init__(self, Vinv, n_distance_samples, output_filename):
+    def __init__(self, Vinv, n_distance_samples, output_filename, prior_weights):
         self.Vinv = np.array(Vinv)
+        self.prior_weights = prior_weights
         self.n_distance_samples = n_distance_samples
         self.output_filename = output_filename
 
     def work(self, i, star1, star2, v_scatter):
         h1 = ln_H1_FML(star1, star2, Vinv=self.Vinv, v_scatter=v_scatter,
-                       n_dist_samples=self.n_distance_samples)
+                       n_dist_samples=self.n_distance_samples, prior_weights=self.prior_weights)
         h2 = ln_H2_FML(star1, star2, Vinv=self.Vinv, v_scatter=v_scatter,
-                       n_dist_samples=self.n_distance_samples)
+                       n_dist_samples=self.n_distance_samples, prior_weights=self.prior_weights)
         return i, h1, h2
 
     def __call__(self, task):
@@ -48,7 +49,10 @@ def main(pool, stacked_tgas_path, pair_indices_path,
     # MAGIC NUMBERs
     n_distance_samples = 128
     assumed_mass = 2*M_sun
-    Vinvs = [np.diag(np.full(3, 1./8.)**2), np.diag(np.full(3, 1./32.)**2), np.diag(np.full(3, 1./128.)**2)] # 3x3 inverse variance matrix for disk stars
+    Vinvs = [np.eye(3)/15.**2,
+             np.eye(3)/30.**2,
+             np.eye(3)/50.**2]   # 3x3 inverse variances for gaussian prior on velocities
+    prior_weights = np.array([0.3, 0.55, 0.15])
 
     if not os.path.exists(pair_indices_path):
         raise IOError("Path to pair indices file '{}' does not exist!".format(pair_indices_path))
@@ -80,7 +84,7 @@ def main(pool, stacked_tgas_path, pair_indices_path,
     all_pairs = [[k,tgas[i],tgas[j],v_scatter[k]] for k,(i,j) in enumerate(pair_idx)]
 
     worker = Worker(Vinv=Vinvs, n_distance_samples=n_distance_samples,
-                    output_filename=output_file)
+                    output_filename=output_file, prior_weights=prior_weights)
 
     for result in pool.map(worker, all_pairs, callback=worker.callback):
         # returns a generator, so need to explicitly loop to do the processing, but
