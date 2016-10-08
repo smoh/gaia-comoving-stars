@@ -29,7 +29,7 @@ def ln_parallax_prior(parallax, min_parallax=0.1):
     parallax = np.atleast_1d(parallax)
     lnp = np.full(parallax.shape, -np.inf)
     good_ix = parallax > min_parallax
-    lnp[good_ix] = -2*np.log(parallax[good_ix])
+    lnp[good_ix] = -4.*np.log(parallax[good_ix])
     return lnp
 
 def get_posterior_distance_samples(star, size=1, min_parallax=0.1):
