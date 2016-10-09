@@ -153,6 +153,18 @@ class TGASStar(TGASData):
     def __getitem__(self, slc):
         object.__getitem__(self, slc)
 
+    def __str__(self):
+        infostr = '\n'.join([
+            # 'index    = %i' %(i),
+            'ra       = %s' % (self.dec),
+            'dec      = %s' % (self.dec),
+            'parallax = %s (snr = %.1f)' % (self.parallax, self.parallax_snr),
+            'pmra     = %s (snr = %.1f)' % (self.pmra, self.pmra/self.pmra_error),
+            'pmdec    = %s (snr = %.1f)' % (self.pmdec, self.pmdec/self.pmdec_error),
+            'dist vra vdec = %s %s' % (self.get_distance(), self.get_vtan()),
+        ])
+        return infostr
+
     def get_cov(self):
         """
         The Gaia TGAS data table contains correlation coefficients and standard
