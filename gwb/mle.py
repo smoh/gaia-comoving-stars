@@ -22,7 +22,7 @@ def lnprior_distance_constdens(d, rlim=10.):
     if d>0 and d<rlim:
         return -2.*log(d)
     else:
-        return -inf
+        return -np.inf
 
 def lnprior_velocity_gaussian(vx, vy, vz, V=None):
     if V is None:
@@ -59,7 +59,7 @@ get_A = lambda star: get_tangent_basis(deg2rad(star._data['ra']), deg2rad(star._
 
 class FitMCMC(object):
     ndim = 4
-    # lnprob = lnprob
+    lnprob = lnprob
     def __init__(self, star, nwalkers=10, nsteps=5000, nburn=50):
         if not isinstance(star, TGASStar):
             raise ValueError('star must be an instance of TGASStar class')
@@ -75,7 +75,7 @@ class FitMCMC(object):
             np.random.normal(0, 30, nwalkers),
             np.random.normal(0, 30, nwalkers)]).T
 
-        sampler = emcee.EnsembleSampler(nwalkers, self.ndim, lnprob, args=(star,))
+        sampler = emcee.EnsembleSampler(nwalkers, FitMCMC.ndim, FitMCMC.lnprob, args=(star,))
         pos, prob, state = sampler.run_mcmc(p0, nsteps)
         samples = sampler.chain[:, nburn:, :].reshape((-1, self.ndim))
         self.sampler = sampler
@@ -87,8 +87,52 @@ class FitMCMC(object):
         A = get_A(star)
         d = samples[:,0]
         vra, vdec, vr = A.dot(samples[:,1:].T)
-        self.samples_vradecr = np.vstack([
+        self.samples_d = np.vstack([
             1./d,
             vra/d/4.74,
-            vdec/d/4.74,
-            vr]).T
+            vdec/d/4.74]).T
+            # vr]).T
+
+class FitMCMC_samev(object):
+    ndim = 5
+    lnprob = lnprob_samev
+    def __init__(self, star1, star2, nwalkers=10, nsteps=5000, nburn=50):
+        if not (isinstance(star1, TGASStar) or isinstance(star2, TGASStar)):
+            raise ValueError('stars must be an instance of TGASStar class')
+        self.walkers = nwalkers
+        self.star1 = star1
+        self.star2 = star2
+        self.nsteps = nsteps
+        self.nburn = nburn
+
+        # p0 should have shape (nwalkers, ndim)
+        p0 = np.vstack([
+            np.random.normal(1./star1.parallax.value, (star1.parallax_error/star1.parallax**2).value, nwalkers),
+            np.random.normal(1./star2.parallax.value, (star2.parallax_error/star2.parallax**2).value, nwalkers),
+            np.random.normal(0, 30, nwalkers),
+            np.random.normal(0, 30, nwalkers),
+            np.random.normal(0, 30, nwalkers)]).T
+
+        sampler = emcee.EnsembleSampler(nwalkers, FitMCMC_samev.ndim, FitMCMC_samev.lnprob, args=(star1, star2,))
+        pos, prob, state = sampler.run_mcmc(p0, nsteps)
+        samples = sampler.chain[:, nburn:, :].reshape((-1, self.ndim))
+        self.sampler = sampler
+        self.pos = pos
+        self.prob = prob
+        self.state = state
+        self.samples = samples
+
+        d1 = samples[:,0]
+        d2 = samples[:,1]
+        A1 = get_A(star1)
+        vra1, vdec1, vr1 = A1.dot(samples[:,2:].T)
+        self.samples_d1 = np.vstack([
+            1./d1,
+            vra1/d1/4.74,
+            vdec1/d1/4.74]).T
+        A2 = get_A(star2)
+        vra2, vdec2, vr2 = A2.dot(samples[:,2:].T)
+        self.samples_d2 = np.vstack([
+            1./d2,
+            vra2/d2/4.74,
+            vdec2/d2/4.74]).T
