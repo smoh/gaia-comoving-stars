@@ -89,6 +89,7 @@ def main_neighbors(stacked_tgas_path, output_path, signal_to_noise_cut, n_neighb
     tree_d,tree_i = tree.query(X, k=n_neighbors+1) # 0th match is always self
     tree_d = tree_d[:,1:]
     tree_i = tree_i[:,1:]
+    tree_n = np.tile(np.arange(1,n_neighbors+1), tree_d.shape)
 
     idx0 = np.arange(len(tgas), dtype=int)
     idx0 = np.repeat(idx0[:,None], n_neighbors, axis=1)
@@ -102,6 +103,7 @@ def main_neighbors(stacked_tgas_path, output_path, signal_to_noise_cut, n_neighb
     all_pair_idx = all_pair_idx[cut]
     dv = dv[cut]
     sep = tree_d.ravel()[cut]
+    nni = tree_n.ravel()[cut]
     logger.info("{} pairs before trimming duplicates".format(len(all_pair_idx)))
 
     hitting_edge = np.bincount(all_pair_idx[:,0]) == n_neighbors
@@ -115,11 +117,13 @@ def main_neighbors(stacked_tgas_path, output_path, signal_to_noise_cut, n_neighb
     index0_out = np.vstack([index0_snr[all_pair_idx[:,0]], index0_snr[all_pair_idx[:,1]]]).T
     dv = dv[unq_idx]
     sep = sep[unq_idx]
+    nni = nni[unq_idx]
     logger.info("{} pairs after trimming duplicates".format(len(all_pair_idx)))
 
-    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(index0_out[:,0], index0_out[:,1], dv, sep)]
+    rows = [(i1,i2,x,y,nnic) for i1,i2,x,y,nnic in zip(index0_out[:,0], index0_out[:,1], dv, sep, nni)]
     tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
-                                ('delta_v', 'f8'), ('sep', 'f8')])
+                                ('delta_v', 'f8'), ('sep', 'f8'),
+                                ('nni', 'i8')])
 
     return output_file, tbl
 
@@ -199,7 +203,7 @@ if __name__ == "__main__":
                                          delta_v_cut=args.delta_v_cut,
                                          overwrite=args.overwrite)
 
-    required_names = ['star1', 'star2', 'delta_v', 'sep']
+    required_names = ['star1', 'star2', 'delta_v', 'sep', 'nni']
     for name in required_names:
         assert name in tbl.dtype.names
 
