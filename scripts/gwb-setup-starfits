@@ -6,10 +6,12 @@ import numpy as np
 import argparse
 from multiprocessing import Pool
 
-from tgastars.write import write_ini
+from astropy.io import fits
+
+from tgastars.write import write_ini, write_binary_ini
 from tgastars.data import TGAS
 
-from gwb.cfg import STARMODELDIR
+from gwb.starmodels.cfg import STARMODELDIR
 
 def get_N_random(N, seed=None):
     """Returns N random indices from TGAS
@@ -33,7 +35,8 @@ class Worker(object):
         return self.work(i)
 
 def main(pool, pairs=None, N_singles=None, seed=1234, 
-        overwrite=False, raise_exceptions=False, rootdir=STARMODELDIR):
+        overwrite=False, raise_exceptions=False, rootdir=STARMODELDIR,
+        pair_file='../data/snr8_dv10_llr7.5.fits'):
 
     if pairs is not None:
         i1 = pairs[:, 0]
@@ -42,14 +45,21 @@ def main(pool, pairs=None, N_singles=None, seed=1234,
     if N_singles is None:
         N_singles = len(i1)
 
+
     inds_single = get_N_random(N_singles, seed=seed)
+
+    tbl = fits.getdata(pair_file)
+    inds_binary = ['{}-{}'.format(s1, s2) for s1, s2 in zip(tbl.star1, tbl.star2)]
 
     worker = Worker(overwrite=overwrite, raise_exceptions=raise_exceptions, 
                     rootdir=os.path.join(rootdir, 'singles'))
+
     if pool is not None:
+        pool.map(worker, inds_binary)
         pool.map(worker, inds_single)
         pool.close()
     else:
+        map(worker, inds_binary)
         map(worker, inds_single)
 
 if __name__=='__main__':
