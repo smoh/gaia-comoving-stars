@@ -34,33 +34,40 @@ class Worker(object):
     def __call__(self, i):
         return self.work(i)
 
-def main(pool, pairs=None, N_singles=None, seed=1234, 
+def main(pool, N_singles=None, seed=1234, 
         overwrite=False, raise_exceptions=False, rootdir=STARMODELDIR,
         pair_file='../data/snr8_dv10_llr7.5.fits'):
 
-    if pairs is not None:
-        i1 = pairs[:, 0]
-        i2 = pairs[:, 1]
 
-    if N_singles is None:
-        N_singles = len(i1)
-
-
-    inds_single = get_N_random(N_singles, seed=seed)
 
     tbl = fits.getdata(pair_file)
     inds_binary = ['{}-{}'.format(s1, s2) for s1, s2 in zip(tbl.star1, tbl.star2)]
+
+    inds_single = np.concatenate([tbl.star1, tbl.star2])
+
+    if N_singles is None:
+        N_singles = len(tbl.star1)
+
+    inds_single_control = get_N_random(N_singles, seed=seed)
 
     worker = Worker(overwrite=overwrite, raise_exceptions=raise_exceptions, 
                     rootdir=os.path.join(rootdir, 'singles'))
 
     if pool is not None:
+        print('writing binary ini files...')
         pool.map(worker, inds_binary)
+        print('writing single ini files..')
         pool.map(worker, inds_single)
+        print('writing single (control) ini files..')
+        pool.map(worker, inds_single_control)        
         pool.close()
     else:
+        print('writing binary ini files...')
         map(worker, inds_binary)
+        print('writing single ini files..')
         map(worker, inds_single)
+        print('writing single (control) ini files..')
+        map(worker, inds_single_control)        
 
 if __name__=='__main__':
 
