@@ -51,7 +51,7 @@ def main(pool, N_singles=None, seed=1234,
     inds_single_control = get_N_random(N_singles, seed=seed)
 
     worker = Worker(overwrite=overwrite, raise_exceptions=raise_exceptions, 
-                    rootdir=os.path.join(rootdir, 'singles'))
+                    rootdir=rootdir)
 
     if pool is not None:
         print('writing binary ini files...')
