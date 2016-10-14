@@ -89,7 +89,8 @@ def main_neighbors(stacked_tgas_path, output_path, signal_to_noise_cut, n_neighb
     tree_d,tree_i = tree.query(X, k=n_neighbors+1) # 0th match is always self
     tree_d = tree_d[:,1:]
     tree_i = tree_i[:,1:]
-    tree_n = np.tile(np.arange(1,n_neighbors+1), tree_d.shape)
+    tree_n = np.tile(np.arange(1,n_neighbors+1), (tree_d.shape[0],1))
+    assert tree_d.shape == tree_n.shape, "something's wrong"
 
     idx0 = np.arange(len(tgas), dtype=int)
     idx0 = np.repeat(idx0[:,None], n_neighbors, axis=1)
