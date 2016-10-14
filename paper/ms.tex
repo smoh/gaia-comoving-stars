@@ -2,7 +2,7 @@
 
 % to-do list
 % ----------
-
+% - check for TODO's and references to APW, HOGG, SMOH
 % style notes
 % -----------
 % - This file generates by Makefile; don't be typing ``pdflatex'' or some bullshit.
@@ -19,6 +19,7 @@
 \usepackage{microtype}  % ALWAYS!
 \usepackage{amsmath}
 \hypersetup{backref,breaklinks,colorlinks,urlcolor=cbblue,linkcolor=cbblue,citecolor=black}
+\usepackage{dsfont}
 
 % define macros for text
 \newcommand{\project}[1]{\textsl{#1}}
@@ -47,6 +48,7 @@
 \newcommand{\msun}{{\rm M}_\odot}
 \newcommand{\data}{\mathrm{data}}
 \newcommand{\snr}{[S/N]_\varpi}
+\newcommand{\eye}{\mathds{1}}
 
 % TODO
 \newcommand{\todo}[1]{{\color{red}TODO: #1}}
@@ -220,7 +222,14 @@ compute the tangential velocity difference
 physical separation plotted for all pairs that pass the above signal-to-noise
 cut. Pairs with small physical separation also tend to have small velocity
 differences. Intriguingly, there appear to be an abundance of pairs with small
-velocity separation at separations $|\delta\bs{x}| \gtrsim 1~{\rm pc}$.
+velocity separation at separations $|\delta\bs{x}| \gtrsim 1~{\rm pc}$. Of
+course, this figure really only highlights close pairs with small angular
+separations:
+At large angular separations, the tangential velocity differences will be large
+because of projection effects.
+To select a more representative population of co-moving stars, we must instead
+model the 3-space velocities of the stars given observations of just two
+components.
 
 \begin{figure*}[p]
 \begin{center}
@@ -233,8 +242,6 @@ difference. Note the points with small velocity difference: these are likely
 widely-separated binary stars.
 \label{fig:dv-sep}}
 \end{figure*}
-
-\todo{More naive visualizations, or save for the full sample?}
 
 \section{Methods} \label{sec:methods}
 
@@ -249,85 +256,167 @@ parameters):
 \begin{itemize}
   \item We assume that the uncertainties in the data---parallax, $\varpi$, and
     two proper motion components, $\propm = (\begin{array}[t]{c c} \mu_\alpha &
-    \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances.
-  \item We assume that the tangential velocities of a given pair of stars in the
-    \tgas\ sample (relative to the solar system barycenter) are either (1)
-    co-moving with velocities equal to the circular velocity of a $2~\msun$
-    binary star system with the given physical separation, (2) co-moving with
-    velocities drawn from a zero-mean Gaussian with velocity dispersion $\sigma
-    = 1~\kms$, or (3) drawn from a mixture of three isotropic, zero-mean
-    Gaussian distributions with velocity dispersions equal to $(\sigma_1,
-    \sigma_2, \sigma_3) = (8, 32, 128)~\kms$ meant to represent young disk
-    stars, old disk stars, and halo stars.
+    \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances
+    $\matrx{C}$.
+  \item We assume that the 3-space velocities of a given pair of stars
+    $(\bs{v}_i, \bs{v}_j)$ in the \tgas\ sample (relative to the solar system
+    barycenter) are either (1) co-moving with velocity drawn from a velocity
+    prior $p(\bs{v})$ and  velocity difference drawn from a zero-mean Gaussian
+    with velocity dispersion $s$, or (2) individually drawn from a velocity
+    prior $p(\bs{v})$.
 \end{itemize}
 
-Under these assumptions, the likelihood function for the proper-motion data for
-a star given true distance, $d$, and true tangential velocity, $\bs{v}^\perp =
+Under these assumptions, the likelihood of a proper motion measurement for a
+star given true distance, $d$, and true tangential velocity, $\bs{v}^\perp =
 (\begin{array}[t]{c c} v_\alpha & v_\delta\end{array})^\mathsf{T}$ is
 \begin{align}
-  L(\bs{v}^\perp, d) &=
-    \left[\det\left(\frac{\matrx{C}^{-1}}{2\pi}\right)\right]^{1/2} \,
+  L(\bs{v}, d, s^2) &=
+    \left[\det\left(\frac{\tilde{\matrx{C}}^{-1}}{2\pi}\right)\right]^{1/2} \,
     \exp \left[ -\frac{1}{2} \transp{\left(\bs{\mu} - \bs{x}_\theta \right)} \,
-    \matrx{C}^{-1} \,
+    \tilde{\matrx{C}}^{-1} \,
     \left(\bs{\mu} - \bs{x}_\theta \right) \right] \\
   \bs{x}_\theta &= d^{-1} \, \bs{v}^\perp
 \end{align}
+where the tangential velocity $\bs{v}^\perp$ is related to the 3-space velocity
+$\bs{v}$ through projection onto a tangent plane at a given star's sky position
+$(\alpha, \delta)$
+\begin{align}
+  \bs{v}^\perp &= \matrx{M}\,\bs{v} \\
+  & = \left(
+      \begin{array}{c c c}
+        -\sin\alpha & \cos\alpha & 0 \\
+        -\sin\delta \, \cos\alpha & -\sin\delta \, \sin\alpha & \cos\delta
+      \end{array}
+    \right) \,
+    \left(\begin{array}{c} v_x \\ v_y \\ v_z \end{array}\right)
+\end{align}
+and the modified covariance matrix $\tilde{\matrx{C}}$ is
+\begin{equation}
+  \tilde{\matrx{C}} = \matrx{C} + \eye\,s^2
+\end{equation}
 
-\todo{APW is working on this text...}
-We compute the fully
-marginalized likelihood (FML) that the pair has the same 3-space velocity
-(hypothesis 1, $\mathcal{L}_1$) and the FML of the stars having different
-3-space velocities (hypothesis 2, $\mathcal{L}_2$). We use the ratio of these
-FMLs as a scalar for selecting candidate co-moving stars, as described below in
-more detail. The likelihood functions $L_1, L_2$ are marginalized over true
-3-space velocity and distance for each star in the pair.
+We compute the fully marginalized likelihood (FML) that a given pair of stars
+has the same 3-space velocity with a small velocity difference drawn from a
+zero-mean Gaussian with variance $s^2$ (hypothesis 1, $\mathcal{L}_1$), and
+the FML of the stars having different 3-space velocities (hypothesis 2,
+$\mathcal{L}_2$).
+We use the FML ratio $\mathcal{L}_1/\mathcal{L}_2$ as a scalar for selecting
+candidate co-moving stars, as described below in more detail.
+To compute these FMLs, the likelihood functions $L_i, L_j$ are marginalized
+over true 3-space velocity and distance for each star in the pair $(i,j)$.
 \begin{align}
   \mathcal{L}_1 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v} \,
-    L_i(\bs{v}, d_i) \,
-    L_j(\bs{v}, d_j) \,
+    L_i(\bs{v}, d_i, s^2) \,
+    L_j(\bs{v}, d_j, s^2) \,
     p(\bs{v}) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j) \\
   \mathcal{L}_2 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \bs{v}_i \, \dd^3 \bs{v}_j \,
-    L_i(\bs{v}_i, d_i) \,
-    L_j(\bs{v}_j, d_j) \,
-    p(\bs{v}_i) \, p(\bs{v}_j) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j) \label{eq:hyp2}
+    L_i(\bs{v}_i, d_i, 0) \,
+    L_j(\bs{v}_j, d_j, 0) \,
+    p(\bs{v}_i) \, p(\bs{v}_j) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j). \label{eq:hyp2}
 \end{align}
-where
-
-and we compute the posterior pdfs for the true distances, $p(d\given\varpi)$,
-using a uniform space density prior \citep{Astraatmadja:2016} on heliocentric
-distance
+The marginalization integral for hypothesis 2 can be split into the product of
+two simpler integrals $\mathcal{L}_2 = Q_i \, Q_j$ where
 \begin{equation}
-  p(d) \propto d^2
+  Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d, 0) \, p(\bs{v}) \, p(d\given\varpi)
 \end{equation}
-We assume Gaussian priors on the true velocity components
+If the velocity prior $p(\bs{v})$ is also Gaussian, the integrals over velocity
+in both cases can be performed analytically:
+\todo{SMOH: is this what we do?}
+We use an equal-weight mixture of three isotropic, zero-mean Gaussian
+distributions
 \begin{equation}
-  p(\bs{v}) = \normal(0,25)~\kms
+  p(\bs{v}) = \frac{1}{3} \, \sum_{m=1}^3 \, \mathcal{N}(0, \sigma_m^2)
 \end{equation}
-
-For hypothesis 1, the integral over velocity is non-trivial because the same
-``true'' 3-space velocity vector projects into tangential velocity components
-differently depending on sky position ($v_\alpha = v_\alpha(\bs{v}, \alpha,
-\delta)$). The marginalization integral for hypothesis 2 is simpler because the
-integral in \eqname~\ref{eq:hyp2} can be split into the product of two simpler
-integrals $\mathcal{L}_2 = Q_i \, Q_j$ where
-\begin{equation}
-  Q = \int \, \dd d \, \dd^3 \bs{v} \, L(\bs{v}, d) \, p(\bs{v}) \, p(d\given\varpi)
-\end{equation}
-In either case, the marginalization over true 3-space velocity can be performed
-analytically; we derive the relevant expressions in
-\sectionname~\ref{sec:appendix}. After marginalizing over velocity, the
-likelihood integrands only depend on distance; we numerically compute the
-integrals over the true distances to each star in a pair, $d_1,d_2$, using Monte
-Carlo integration with $K$ samples from the distance posterior pdfs:
+with velocity dispersions $(\sigma_1, \sigma_2, \sigma_3) = (8, 32, 128)~\kms$
+meant to represent young disk stars, old disk stars, and halo stars.
+We derive the relevant expressions in Appendix~\ref{sec:appendix}.
+After marginalizing over velocity, the likelihood integrands only depend on
+distance; we numerically compute the integrals over the true distances to each
+star in a pair, $d_1,d_2$, using Monte Carlo integration with $K$ samples from
+the distance posterior pdfs:
 \begin{equation}
   \int \, \dd d \, \tilde{L}(d) \, p(d\given\varpi) \approx
     \frac{1}{K} \, \sum_k^K \, \tilde{L}(d_k)
 \end{equation}
+where $\tilde{L}(d)$ is the velocity-marginalized likelihood function.
 Through experimentation, we have found that $K=128$ samples are sufficient for
 estimating the above integrals for stars with a wide range in parallax
 signal-to-noise.
+
+\todo{APW/SMOH: in results, specify what we set $s^2$ to:}
+To search for wide binaries, we set $s^2 = \frac{2 \, G \, \msun}{|\bs{x}_i-\bs{x}_j|}$.
+To search for dissolving open clusters, we set $s^2 = 1~(\kms)^2$.
+
+\section{Results 1: A catalog of candidate wide binaries}
+
+\todo{Galactic context / orbits}
+
+\section{Results 2: Star clusters and cluster remnants}
+
+\section{Conclusions}
+
+\acknowledgements
+
+This research was partially supported by the \acronym{NSF} (grants
+  \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
+  \acronym{NASA} (grant \acronym{NNX12AI50G}),
+  and the Moore-Sloan Data Science Environment at \acronym{NYU}. The data
+analysis presented in this article was partially performed on computational
+resources supported by the Princeton Institute for Computational Science and
+Engineering (PICSciE) and the Office of Information Technology's High
+Performance Computing Center and Visualization Laboratory at Princeton
+University.
+
+\software{The code used in this project is available from
+\url{https://github.com/smoh/gaia-wide-binaries} under the MIT open-source
+software license. This version was generated at git commit
+\texttt{\githash\,(\gitdate)}.
+This research additionally utilized:
+    \texttt{Astropy} (\citealt{Astropy-Collaboration:2013}),
+    %\texttt{emcee} (\citealt{Foreman-Mackey:2013}),
+    \texttt{IPython} (\citealt{Perez:2007}),
+    \texttt{matplotlib} (\citealt{Hunter:2007}),
+    and \texttt{numpy} (\citealt{Van-der-Walt:2011}).}
+
+% \facility{\sdssiii, \apogee}
+
+\bibliographystyle{aasjournal}
+\bibliography{refs}
+
+\appendix
+
+\section{Some mathematics relevant to the above} \label{sec:appendix}
+
+\todo{APW will clean this up}
+
+In what follows, all vectors are column vectors, unless we have transposed them.
+We indicate whether a symbol represents a scalar, vector, or tensor
+(matrix) by context, not typesetting.
+Properties of the squared exponential:
+\begin{eqnarray}
+  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] - \Delta)\,\dd x\right]
+  &=& +\frac{1}{2}\ln ||2\pi\,A|| -\Delta
+  \quad ,
+\end{eqnarray}
+where $x$ and $\nu$ are $D$-dimensional vectors, $A$ is a positive definite
+matrix, $\Delta$ is a scalar, and the integral is implicitly over all
+of $D$-dimensional $x$-space.
+We will need to complete squares.
+If we equate
+\begin{eqnarray}
+  \frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] + \Delta
+  &=& \frac{1}{2}\,\transp{x}\,\inv{A}\,x + \transp{x}\,B\,b + C
+  \quad ,
+\end{eqnarray}
+where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
+\begin{eqnarray}
+  \nu &=& -A\,B\,b
+  \\
+  \Delta & = & C - \frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
+  \quad .
+\end{eqnarray}
 
 Now in this case, we want to write down the probability density for the data
 given the distances and velocity (the likelihood), and the prior pdf for
@@ -437,74 +526,5 @@ two independent integrals $Q$ each constructed as follows:
 where again there are two options for the dimensionality of $y$ and
 $M$, and once the vectors and $\Sigma$ are properly truncated to one
 star, everything else follows.
-
-\section{Results 1: A catalog of candidate wide binaries}
-
-\todo{Galactic context / orbits}
-
-\section{Results 2: Star clusters and cluster remnants}
-
-\section{Conclusions}
-
-\acknowledgements
-
-This research was partially supported by the \acronym{NSF} (grants
-  \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
-  \acronym{NASA} (grant \acronym{NNX12AI50G}),
-  and the Moore-Sloan Data Science Environment at \acronym{NYU}. The data
-analysis presented in this article was partially performed on computational
-resources supported by the Princeton Institute for Computational Science and
-Engineering (PICSciE) and the Office of Information Technology's High
-Performance Computing Center and Visualization Laboratory at Princeton
-University.
-
-\software{The code used in this project is available from
-\url{https://github.com/smoh/gaia-wide-binaries} under the MIT open-source
-software license. This version was generated at git commit
-\texttt{\githash\,(\gitdate)}.
-This research additionally utilized:
-    \texttt{Astropy} (\citealt{Astropy-Collaboration:2013}),
-    %\texttt{emcee} (\citealt{Foreman-Mackey:2013}),
-    \texttt{IPython} (\citealt{Perez:2007}),
-    \texttt{matplotlib} (\citealt{Hunter:2007}),
-    and \texttt{numpy} (\citealt{Van-der-Walt:2011}).}
-
-% \facility{\sdssiii, \apogee}
-
-\bibliographystyle{aasjournal}
-\bibliography{refs}
-
-\appendix
-
-\section{Some mathematics relevant to the above} \label{sec:appendix}
-
-\todo{clean this up}
-
-In what follows, all vectors are column vectors, unless we have transposed them.
-We indicate whether a symbol represents a scalar, vector, or tensor
-(matrix) by context, not typesetting.
-Properties of the squared exponential:
-\begin{eqnarray}
-  \ln\left[\int\exp(-\frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] - \Delta)\,\dd x\right]
-  &=& +\frac{1}{2}\ln ||2\pi\,A|| -\Delta
-  \quad ,
-\end{eqnarray}
-where $x$ and $\nu$ are $D$-dimensional vectors, $A$ is a positive definite
-matrix, $\Delta$ is a scalar, and the integral is implicitly over all
-of $D$-dimensional $x$-space.
-We will need to complete squares.
-If we equate
-\begin{eqnarray}
-  \frac{1}{2}\,\transp{[x-\nu]}\,\inv{A}\,[x-\nu] + \Delta
-  &=& \frac{1}{2}\,\transp{x}\,\inv{A}\,x + \transp{x}\,B\,b + C
-  \quad ,
-\end{eqnarray}
-where $B\,b$ is a $d$-vector, and $C$ is a scalar, then we find
-\begin{eqnarray}
-  \nu &=& -A\,B\,b
-  \\
-  \Delta & = & C - \frac{1}{2}\,\transp{\nu}\,\inv{A}\,\nu
-  \quad .
-\end{eqnarray}
 
 \end{document}
