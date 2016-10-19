@@ -5,8 +5,8 @@
 *.brf
 *.log
 *.out
-*.pdf
 *.synctex.gz
 *Notes.bib
+ms.pdf
 
 gitstuff.tex
