@@ -3,6 +3,7 @@ import numpy as np
 from numpy import pi, log, deg2rad, rad2deg
 from astropy import units as u
 import emcee
+import corner
 from .data import TGASStar
 from .coords import get_tangent_basis
 
@@ -55,6 +56,13 @@ def lnprob_samev(p, star1, star2):
     lp = lnprior_distance_constdens(d1) + lnprior_distance_constdens(d2) + lnprior_velocity_gaussian(vx, vy, vz)
     return ll1+ll2+lp
 
+def lnprob_nsamev(p, stars):
+    vx, vy, vz = p[-3:]
+    assert len(stars) == len(p) -3, 'boom'
+    ll = [lnprior_distance_constdens(d) + lnlike(np.array([d,vx,vy,vz]), star) for d, star in zip(p[:-3], stars)]
+    lpv = lnprior_velocity_gaussian(vx, vy, vz)
+    return lpv + np.sum(ll)
+
 get_A = lambda star: get_tangent_basis(deg2rad(star._data['ra']), deg2rad(star._data['dec']))
 
 class FitMCMC(object):
@@ -90,8 +98,8 @@ class FitMCMC(object):
         self.samples_d = np.vstack([
             1./d,
             vra/d/4.74,
-            vdec/d/4.74]).T
-            # vr]).T
+            vdec/d/4.74,
+            vr]).T
 
 class FitMCMC_samev(object):
     ndim = 5
@@ -136,3 +144,58 @@ class FitMCMC_samev(object):
             1./d2,
             vra2/d2/4.74,
             vdec2/d2/4.74]).T
+
+class FitMCMCn_samev(object):
+    ndim = None
+    lnprob = lnprob_nsamev
+    def __init__(self, stars, nwalkers=10, nsteps=5000, nburn=50):
+        for star in stars:
+            if not isinstance(star, TGASStar):
+                raise ValueError('stars must be an instance of TGASStar class')
+        self.walkers = nwalkers
+        self.stars = stars
+        self.nsteps = nsteps
+        self.nburn = nburn
+
+        # p0 should have shape (nwalkers, ndim)
+        p0 = np.vstack(
+            [np.random.normal(1./star.parallax.value, (star.parallax_error/star.parallax**2).value, nwalkers) for star in stars] \
+            + [np.random.normal(0, 30, nwalkers), np.random.normal(0, 30, nwalkers), np.random.normal(0, 30, nwalkers)]).T
+        ndim = p0.shape[1]
+
+        sampler = emcee.EnsembleSampler(nwalkers, ndim, FitMCMCn_samev.lnprob, args=(stars,))
+        out = sampler.run_mcmc(p0, nsteps)
+        self.out = out
+        samples = sampler.chain[:, nburn:, :].reshape((-1, ndim))
+        self.sampler = sampler
+        self.samples = samples
+
+        samples_ds = []
+        for i in range(len(stars)):
+            d = samples[:,i]
+            A1 = get_A(stars[i])
+            vra, vdec, vr = A1.dot(samples[:,ndim-3:].T)
+            samples_d = np.vstack([
+                1./d,
+                vra/d/4.74,
+                vdec/d/4.74,
+                vr ]).T
+            samples_ds.append(samples_d)
+        self.samples_ds = np.array(samples_ds)
+
+    def corner(self, *args, **kwargs):
+        truths = None
+        labels = ['d%i' % (i) for i in range(len(self.stars))] + ['vx', 'vy', 'vz']
+        return corner.corner(
+            self.samples,
+            truths=truths,
+            labels=labels)
+
+    def corner_d(self, i, *args, **kwargs):
+        star = self.stars[i]
+        truths = [star.parallax.value, star.pmra.value, star.pmdec.value, 0.]
+        labels = ['p%i' % (i)] + ['pmra', 'pmdec', 'v_r']
+        return corner.corner(
+            self.samples_ds[i],
+            truths=truths,
+            labels=labels)
