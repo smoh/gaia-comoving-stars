@@ -32,6 +32,13 @@ def lnprior_velocity_gaussian(vx, vy, vz, V=None):
     invV = np.linalg.inv(V)
     return float(np.linalg.det(invV/(2.*pi)))*0.5 - 0.5* v[np.newaxis].dot(invV).dot(v[np.newaxis].T)
 
+def lnprior_velocity_uniform(vx, vy, vz,):
+    vlim = 200.
+    if (abs(vx)<vlim) & (abs(vy)<vlim) & (abs(vz)<vlim):
+        return 0.
+    else:
+        return -np.inf
+
 def lnlike(p, star):
     d, vx, vy, vz = p
     ra, dec = star.ra.to(u.rad).value, star.dec.to(u.rad).value
@@ -60,7 +67,7 @@ def lnprob_nsamev(p, stars):
     vx, vy, vz = p[-3:]
     assert len(stars) == len(p) -3, 'boom'
     ll = [lnprior_distance_constdens(d) + lnlike(np.array([d,vx,vy,vz]), star) for d, star in zip(p[:-3], stars)]
-    lpv = lnprior_velocity_gaussian(vx, vy, vz)
+    lpv = lnprior_velocity_uniform(vx, vy, vz)
     return lpv + np.sum(ll)
 
 get_A = lambda star: get_tangent_basis(deg2rad(star._data['ra']), deg2rad(star._data['dec']))
