@@ -63,12 +63,24 @@ def lnprob_samev(p, star1, star2):
     lp = lnprior_distance_constdens(d1) + lnprior_distance_constdens(d2) + lnprior_velocity_gaussian(vx, vy, vz)
     return ll1+ll2+lp
 
+def lnprior_sigmav(sigv):
+    if sigv>10 or sigv<0:
+        return -np.inf
+    else:
+        return 0.
+
 def lnprob_nsamev(p, stars):
-    vx, vy, vz = p[-3:]
-    assert len(stars) == len(p) -3, 'boom'
-    ll = [lnprior_distance_constdens(d) + lnlike(np.array([d,vx,vy,vz]), star) for d, star in zip(p[:-3], stars)]
+    vx, vy, vz, sigv = p[-4:]
+    assert len(stars) == len(p) -4, 'boom'
+    ll = []
+    for d, star in zip(p[:-4], stars):
+        vxc = np.random.normal(vx, sigv)
+        vyc = np.random.normal(vy, sigv)
+        vzc = np.random.normal(vz, sigv)
+        ll.append( lnprior_distance_constdens(d)  + lnlike([d, vxc, vyc, vzc], star) )
     lpv = lnprior_velocity_uniform(vx, vy, vz)
-    return lpv + np.sum(ll)
+    lpsigv = lnprior_sigmav(sigv)
+    return lpv + np.sum(ll) + lpsigv
 
 get_A = lambda star: get_tangent_basis(deg2rad(star._data['ra']), deg2rad(star._data['dec']))
 
@@ -167,7 +179,7 @@ class FitMCMCn_samev(object):
         # p0 should have shape (nwalkers, ndim)
         p0 = np.vstack(
             [np.random.normal(1./star.parallax.value, (star.parallax_error/star.parallax**2).value, nwalkers) for star in stars] \
-            + [np.random.normal(0, 30, nwalkers), np.random.normal(0, 30, nwalkers), np.random.normal(0, 30, nwalkers)]).T
+            + [np.random.normal(0, 30, nwalkers), np.random.normal(0, 30, nwalkers), np.random.normal(0, 30, nwalkers), np.random.normal(0.1, 3, nwalkers)]).T
         ndim = p0.shape[1]
 
         sampler = emcee.EnsembleSampler(nwalkers, ndim, FitMCMCn_samev.lnprob, args=(stars,))
@@ -181,7 +193,7 @@ class FitMCMCn_samev(object):
         for i in range(len(stars)):
             d = samples[:,i]
             A1 = get_A(stars[i])
-            vra, vdec, vr = A1.dot(samples[:,ndim-3:].T)
+            vra, vdec, vr = A1.dot(samples[:,ndim-4:-1].T)
             samples_d = np.vstack([
                 1./d,
                 vra/d/4.74,
