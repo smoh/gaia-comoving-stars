@@ -156,7 +156,7 @@ class TGASStar(TGASData):
     def __str__(self):
         infostr = '\n'.join([
             # 'index    = %i' %(i),
-            'ra       = %s' % (self.dec),
+            'ra       = %s' % (self.ra),
             'dec      = %s' % (self.dec),
             'parallax = %s (snr = %.1f)' % (self.parallax, self.parallax_snr),
             'pmra     = %s (snr = %.1f)' % (self.pmra, self.pmra/self.pmra_error),
@@ -200,4 +200,3 @@ class TGASStar(TGASData):
 
         self._cov = C
         return self._cov
-
