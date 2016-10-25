@@ -204,9 +204,9 @@ if __name__ == "__main__":
                                          delta_v_cut=args.delta_v_cut,
                                          overwrite=args.overwrite)
 
-    required_names = ['star1', 'star2', 'delta_v', 'sep', 'nni']
+    required_names = ['star1', 'star2', 'delta_v', 'sep']
     for name in required_names:
-        assert name in tbl.dtype.names
+        assert name in tbl.dtype.names, '%s not found' % (name)
 
     hdu = fits.BinTableHDU(tbl)
     hdu.writeto(output_file, clobber=True)
