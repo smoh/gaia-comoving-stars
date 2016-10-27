@@ -1,4 +1,4 @@
-"""codes related to maximul likelihood esimation"""
+"""codes related to maximum likelihood esimation"""
 import numpy as np
 from numpy import pi, log, deg2rad, rad2deg
 from astropy import units as u
