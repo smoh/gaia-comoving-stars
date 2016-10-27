@@ -39,7 +39,6 @@ def main(pool, N_singles=None, seed=1234,
         pair_file='../data/snr8_dv10_llr7.5.fits'):
 
 
-
     tbl = fits.getdata(pair_file)
     inds_binary = ['{}-{}'.format(s1, s2) for s1, s2 in zip(tbl.star1, tbl.star2)]
 
