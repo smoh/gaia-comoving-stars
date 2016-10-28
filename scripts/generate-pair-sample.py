@@ -205,6 +205,13 @@ if __name__ == "__main__":
                           type=int, help="Number of nearest neighbors to process for each star.")
     parser_b.add_argument("--dv", "--deltav-cut", dest="delta_v_cut", default=8,
                           type=float, help="perpendicular velocity cut in km/s")
+    # parser for 'radius'
+    parser_c = subparsers.add_parser('radius', help='Cut on physical radius')
+    parser_c.set_defaults(case='radius')
+    parser_c.add_argument("--radius", dest="radius_cut", default=10,
+                          type=float, help="radius cut [pc]")
+    parser_c.add_argument("--dv", "--deltav-cut", dest="delta_v_cut", default=8,
+                          type=float, help="perpendicular velocity cut in km/s")
 
     args = parser.parse_args()
 
@@ -218,9 +225,6 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.abspath(args.stacked_tgas_path)):
         raise IOError("Stacked TGAS data file '{}' does not exist.".
                       format(args.stacked_tgas_path))
-    if not os.path.exists(os.path.abspath(args.outname)):
-        raise IOError("Specified output path '{}' does not exist.".
-                      format(args.outname))
     if os.path.exists(args.outname) and not overwrite:
         raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.".
                       format(args.outname))
@@ -235,7 +239,7 @@ if __name__ == "__main__":
                                          signal_to_noise_cut=args.signal_to_noise_cut,
                                          n_neighbors=args.n_neighbors,
                                          delta_v_cut=args.delta_v_cut)
-    elif args.case = 'radius':
+    elif args.case == 'radius':
         tbl = main_radius(stacked_tgas_path=args.stacked_tgas_path,
                           signal_to_noise_cut=args.signal_to_noise_cut,
                           radius_cut=args.radius_cut,
