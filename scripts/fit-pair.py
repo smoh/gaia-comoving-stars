@@ -3,6 +3,10 @@ from __future__ import print_function, division
 import sys, os
 import time
 
+# To make figures on compute servers
+import matplotlib
+matplotlib.use('AGG')
+
 from gwb.starmodels import TGASWideBinaryStarModel, STARMODELDIR
 
 star1 = int(sys.argv[1])
