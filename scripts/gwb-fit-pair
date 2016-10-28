@@ -81,7 +81,8 @@ if __name__=='__main__':
         logger.setLevel(logging.INFO)
 
     for i in range(len(args.stars)//2):
-        star1, star2 = args.stars[2*i,2*i+2]
+        star1 = args.stars[2*i]
+        star2 = args.stars[2*i + 1]
         try:
             main(star1, star2)
         except:
