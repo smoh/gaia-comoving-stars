@@ -26,7 +26,7 @@ else:
 setup(
     name="gwb",
     version='v0.1',
-    author="Semyeong Oh, Adrian Price-Whelan, David W. Hogg",
+    author="Semyeong Oh, Adrian Price-Whelan, Timothy D. Morton, David W. Hogg",
     author_email="semyeong@astro.princeton.edu, adrn@princeton.edu",
     packages=["gwb", "gwb.tests"],
     url="https://github.com/smoh/gaia-wide-binaries",
