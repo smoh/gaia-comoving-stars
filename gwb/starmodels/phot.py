@@ -32,7 +32,8 @@ def get_photometry(source_id):
              W3=(s.w2mpro, s.w2mpro_error),
              parallax=(s.parallax, s.parallax_error))
     
-    systematics = dict(G=0.005, J=0.01, H=0.01, K=0.01, W1=0.01, W2=0.01, W3=0.01,
+    systematics = dict(G=0.01, 
+                        J=0.02, H=0.02, K=0.02, W1=0.02, W2=0.02, W3=0.02,
                       parallax=0.3)
     
     for k,v in systematics.items():
@@ -41,5 +42,6 @@ def get_photometry(source_id):
             d.pop(k)
         else:
             d[k] = (val, np.sqrt(unc**2 + v**2))        
-            
+
+    d.pop('G') # no Gaia G band for now
     return d

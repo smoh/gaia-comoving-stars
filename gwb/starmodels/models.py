@@ -6,6 +6,7 @@ from .phot import get_photometry
 try:
     from isochrones.starmodel import ResolvedBinaryStarModel
     from isochrones.mist import MIST_Isochrone
+    from isochrones.extinction import get_AV_infinity
 except ImportError:
     class ResolvedBinaryStarModel(object):
         pass
@@ -26,8 +27,16 @@ def get_source_id(idx):
 
     return tgas.iloc[idx].source_id
 
+def get_radec(idx):
+    global tgas
+    if tgas is None:
+        from .cfg import TGASFILE
+        tgas = pd.read_hdf(TGASFILE, 'df')
+
+    return tgas.iloc[idx].ra, tgas.iloc[idx].dec
+
 class TGASWideBinaryStarModel(ResolvedBinaryStarModel):
-    def __init__(self, idx1, idx2):
+    def __init__(self, ic, idx1, idx2):
         self.idx1 = idx1
         self.idx2 = idx2
                 
@@ -39,8 +48,12 @@ class TGASWideBinaryStarModel(ResolvedBinaryStarModel):
         star1 = get_photometry(get_source_id(idx1))
         star2 = get_photometry(get_source_id(idx2))
         
-        global mist
-        if mist is None:
-            mist = MIST_Isochrone()
-        super(TGASWideBinaryStarModel, self).__init__(mist, star1, star2, name=name)
+        ra1, dec1 = get_radec(idx1)
+        ra2, dec2 = get_radec(idx2)
+
+        AV1 = get_AV_infinity(ra1, dec1)
+        AV2 = get_AV_infinity(ra2, dec2)
+
+        super(TGASWideBinaryStarModel, self).__init__(ic, star1, star2, 
+                                                    name=name, maxAV=max(AV1, AV2))
         
