@@ -130,8 +130,8 @@ def main_radius(stacked_tgas_path, signal_to_noise_cut,
 
     index0_snr, tgas, X = get_tgas(stacked_tgas_path, signal_to_noise_cut)
     tree = KDTree(X)
-    tree_i = tree.query(X, radius_cut)
-    counts = array([s.size-1 for s in tree_i])
+    tree_i = tree.query_radius(X, radius_cut)
+    counts = np.array([s.size-1 for s in tree_i])
     logger.info("N stars with no other stars within {:.2f} pc {:d}".
                 format(radius_cut, np.sum(counts==0)))
     logger.info("N stars with 1 star within {:.2f} pc {:d}".
@@ -151,14 +151,18 @@ def main_radius(stacked_tgas_path, signal_to_noise_cut,
                 allpairs.add((j,i))
     logger.info("total number of unique pairs {:d}".
                 format(len(allpairs)))
-    pairidx = array([(ii,jj) for ii,jj in allpairs])
+    pairidx = np.array([(ii,jj) for ii,jj in allpairs])
+    vtan = tgas.get_vtan().value
+    delta_v = np.linalg.norm(vtan[pairidx[:,0]] - vtan[pairidx[:,1]], axis=1)
+    sep = np.linalg.norm(X[pairidx[:,0]] - X[pairidx[:,1]], axis=1)
     star1 = index0_snr[pairidx[:,0]]
     star2 = index0_snr[pairidx[:,1]]
-    sep = np.norm(X[pairidx[:,0]] - X[pairidx[:,1]], axis=1)
-    vtan = tgas.get_vtan().value
-    delta_v = norm(vtan[star1] - vtan[star2], axis=1)
 
-    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(star1, star2, delta_v, sep)]
+    cond = delta_v < delta_v_cut
+    logger.info("total number of unique pairs with dvtan < {:.2f} {:d}".
+                format(delta_v_cut, cond.sum()))
+    rows = [(i1,i2,x,y) for i1,i2,x,y in \
+            zip(star1[cond], star2[cond], delta_v[cond], sep[cond])]
     tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
                                 ('delta_v', 'f8'), ('sep', 'f8')])
     return tbl
