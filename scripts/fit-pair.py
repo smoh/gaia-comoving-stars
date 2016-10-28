@@ -24,7 +24,7 @@ except:
 
 sys.stdout.write('Fitting binary star model for {}...'.format(mod.name))
 start = time.time()
-mod.fit(nlive=2000)
+mod.fit()
 end = time.time()
 sys.stdout.write('Fit took {:.2f} min.\n'.format((end-start)/60.))
 
