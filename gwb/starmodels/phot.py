@@ -37,6 +37,9 @@ def get_photometry(source_id):
     
     for k,v in systematics.items():
         val, unc = d[k]
-        d[k] = (val, np.sqrt(unc**2 + v**2))
-    
+        if np.isnan([val, unc]).any():
+            d.pop(k)
+        else:
+            d[k] = (val, np.sqrt(unc**2 + v**2))        
+            
     return d
