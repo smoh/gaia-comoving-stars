@@ -7,36 +7,77 @@ import time
 import matplotlib
 matplotlib.use('AGG')
 
+from astropy import log as logger
+
 from gwb.starmodels import TGASWideBinaryStarModel, STARMODELDIR
 
-star1 = int(sys.argv[1])
-star2 = int(sys.argv[2])
+def main(star1, star2):
 
-model_dir = os.path.join(STARMODELDIR, 'models')
-fig_physical_dir = os.path.join(STARMODELDIR, 'figures', 'physical')
-fig_observed_dir = os.path.join(STARMODELDIR, 'figures', 'observed')
-for d in [model_dir, fig_physical_dir, fig_observed_dir]:
-    if not os.path.exists(d):
-        os.makedirs(d)
+    model_dir = os.path.join(STARMODELDIR, 'models')
+    fig_physical_dir = os.path.join(STARMODELDIR, 'figures', 'physical')
+    fig_observed_dir = os.path.join(STARMODELDIR, 'figures', 'observed')
+    for d in [model_dir, fig_physical_dir, fig_observed_dir]:
+        if not os.path.exists(d):
+            os.makedirs(d)
 
-mod = TGASWideBinaryStarModel(star1, star2)
+    mod = TGASWideBinaryStarModel(star1, star2)
 
-try:
-    mod.obs.print_ascii()
-except:
-    pass
+    try:
+        mod.obs.print_ascii()
+    except:
+        pass
 
-sys.stdout.write('Fitting binary star model for {}...'.format(mod.name))
-start = time.time()
-mod.fit(verbose=False)
-end = time.time()
-sys.stdout.write('Fit took {:.2f} min.\n'.format((end-start)/60.))
+    sys.stdout.write('Fitting binary star model for {}...'.format(mod.name))
+    start = time.time()
+    mod.fit(verbose=False)
+    end = time.time()
+    sys.stdout.write('Fit took {:.2f} min.\n'.format((end-start)/60.))
 
-sys.stdout.write('Writing corner plots...')
-fig1 = mod.corner_physical()
-fig1.savefig(os.path.join(fig_physical_dir, '{}-physical.png'.format(mod.name)))
-fig2 = mod.corner_observed()
-fig2.savefig(os.path.join(fig_observed_dir, '{}-observed.png'.format(mod.name)))
-h5file = os.path.join(model_dir, '{}.h5'.format(mod.name))
-mod.save_hdf(h5file)
-sys.stdout.write('Done.  Starmodel saved to {}.\n'.format(h5file))
+    sys.stdout.write('Writing corner plots...')
+    try:
+        fig1 = mod.corner_physical()
+        fig1.savefig(os.path.join(fig_physical_dir, '{}-physical.png'.format(mod.name)))
+    except:
+        logging.error('Cannot make corner_physical for {}'.format(mod.name))
+    try:
+        fig2 = mod.corner_observed()
+        fig2.savefig(os.path.join(fig_observed_dir, '{}-observed.png'.format(mod.name)))
+    except:
+        logging.error('Cannot make corner_observed for {}'.format(mod.name))
+
+    h5file = os.path.join(model_dir, '{}.h5'.format(mod.name))
+    mod.save_hdf(h5file, overwrite=True)
+    sys.stdout.write('Done.  Starmodel saved to {}.\n'.format(h5file))
+
+if __name__=='__main__':
+    
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Fit coeval binary model to two stars")
+
+    parser.add_argument('star1', type=int)
+    parser.add_argument('star2', type=int)
+
+    vq_group = parser.add_mutually_exclusive_group()
+    vq_group.add_argument('-v', '--verbose', action='count', default=0, dest='verbosity')
+    vq_group.add_argument('-q', '--quiet', action='count', default=0, dest='quietness')
+
+    args = parser.parse_args()
+
+    # Set logger level based on verbose flags
+    if args.verbosity != 0:
+        if args.verbosity == 1:
+            logger.setLevel(logging.DEBUG)
+        else: # anything >= 2
+            logger.setLevel(1)
+
+    elif args.quietness != 0:
+        if args.quietness == 1:
+            logger.setLevel(logging.WARNING)
+        else: # anything >= 2
+            logger.setLevel(logging.ERROR)
+
+    else: # default
+        logger.setLevel(logging.INFO)
+
+    main(args.star1, args.star2)
