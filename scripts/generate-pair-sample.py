@@ -26,15 +26,22 @@ from sklearn.neighbors import KDTree
 # Project
 from gwb.data import TGASData
 
-def check_paths(stacked_tgas_path, output_path, output_file, overwrite):
-    if not os.path.exists(os.path.abspath(stacked_tgas_path)):
-        raise IOError("Stacked TGAS data file '{}' does not exist.".format(stacked_tgas_path))
+def set_logger_verbosity(args):
+    # Set logger level based on verbose flags
+    if args.verbosity != 0:
+        if args.verbosity == 1:
+            logger.setLevel(logging.DEBUG)
+        else: # anything >= 2
+            logger.setLevel(1)
 
-    if not os.path.exists(os.path.abspath(output_path)):
-        raise IOError("Specified output path '{}' does not exist.".format(output_path))
+    elif args.quietness != 0:
+        if args.quietness == 1:
+            logger.setLevel(logging.WARNING)
+        else: # anything >= 2
+            logger.setLevel(logging.ERROR)
 
-    if os.path.exists(output_file) and not overwrite:
-        raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.")
+    else: # default
+        logger.setLevel(logging.INFO)
 
 def get_tgas(stacked_tgas_path, signal_to_noise_cut):
     # the full TGAS data table
@@ -54,11 +61,7 @@ def get_tgas(stacked_tgas_path, signal_to_noise_cut):
 
     return index0_snr, tgas, X
 
-def main_random(stacked_tgas_path, output_path, signal_to_noise_cut, size, overwrite=False):
-
-    output_file = os.path.join(output_path, "snr{:.0f}_random{:d}.fits"
-                               .format(signal_to_noise_cut, size))
-    check_paths(stacked_tgas_path, output_path, output_file, overwrite)
+def main_random(stacked_tgas_path, signal_to_noise_cut, size):
 
     index0_snr, tgas, X = get_tgas(stacked_tgas_path, signal_to_noise_cut)
 
@@ -71,15 +74,10 @@ def main_random(stacked_tgas_path, output_path, signal_to_noise_cut, size, overw
     rows = [(i1,i2,x,y) for i1,i2,x,y in zip(index0_out[:,0], index0_out[:,1], dv, sep)]
     tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
                                 ('delta_v', 'f8'), ('sep', 'f8')])
+    return tbl
 
-    return output_file, tbl
-
-def main_neighbors(stacked_tgas_path, output_path, signal_to_noise_cut, n_neighbors, delta_v_cut,
-                   overwrite=False):
-
-    output_file = os.path.join(output_path, "snr{:.0f}_n{}_dv{:.0f}.fits"
-                               .format(signal_to_noise_cut, n_neighbors, delta_v_cut))
-    check_paths(stacked_tgas_path, output_path, output_file, overwrite)
+def main_neighbors(stacked_tgas_path, signal_to_noise_cut, n_neighbors,
+                   delta_v_cut):
 
     index0_snr, tgas, X = get_tgas(stacked_tgas_path, signal_to_noise_cut)
 
@@ -125,8 +123,46 @@ def main_neighbors(stacked_tgas_path, output_path, signal_to_noise_cut, n_neighb
     tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
                                 ('delta_v', 'f8'), ('sep', 'f8'),
                                 ('nni', 'i8')])
+    return tbl
 
-    return output_file, tbl
+def main_radius(stacked_tgas_path, signal_to_noise_cut,
+                radius_cut, delta_v_cut):
+
+    index0_snr, tgas, X = get_tgas(stacked_tgas_path, signal_to_noise_cut)
+    tree = KDTree(X)
+    tree_i = tree.query(X, radius_cut)
+    counts = array([s.size-1 for s in tree_i])
+    logger.info("N stars with no other stars within {:.2f} pc {:d}".
+                format(radius_cut, np.sum(counts==0)))
+    logger.info("N stars with 1 star within {:.2f} pc {:d}".
+                format(radius_cut, np.sum(counts==1)))
+    logger.info("maximum number within {:.2f} pc {:d}".
+                format(radius_cut, counts.max()))
+    logger.info("total number of pairs (with duplicates) {:d}".
+                format(counts.sum()))
+
+    # remove duplicates by making a set
+    allpairs = set()
+    for i, indsi in enumerate(tree_i):
+        for j in indsi:
+            if i < j:
+                allpairs.add((i,j))
+            elif j < i:
+                allpairs.add((j,i))
+    logger.info("total number of unique pairs {:d}".
+                format(len(allpairs)))
+    pairidx = array([(ii,jj) for ii,jj in allpairs])
+    star1 = index0_snr[pairidx[:,0]]
+    star2 = index0_snr[pairidx[:,1]]
+    sep = np.norm(X[pairidx[:,0]] - X[pairidx[:,1]], axis=1)
+    vtan = tgas.get_vtan().value
+    delta_v = norm(vtan[star1] - vtan[star2], axis=1)
+
+    rows = [(i1,i2,x,y) for i1,i2,x,y in zip(star1, star2, delta_v, sep)]
+    tbl = np.array(rows, dtype=[('star1', 'i8'), ('star2', 'i8'),
+                                ('delta_v', 'f8'), ('sep', 'f8')])
+    return tbl
+
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
@@ -136,21 +172,25 @@ if __name__ == "__main__":
     parser = ArgumentParser(description="")
 
     vq_group = parser.add_mutually_exclusive_group()
-    vq_group.add_argument('-v', '--verbose', action='count', default=0, dest='verbosity')
-    vq_group.add_argument('-q', '--quiet', action='count', default=0, dest='quietness')
+    vq_group.add_argument('-v', '--verbose',
+                          action='count', default=0, dest='verbosity')
+    vq_group.add_argument('-q', '--quiet',
+                          action='count', default=0, dest='quietness')
 
     parser.add_argument('-s', '--seed', dest='seed', default=None,
                         type=int, help='Random number generator seed.')
-    parser.add_argument('-o', '--overwrite', action='store_true', dest='overwrite',
+    parser.add_argument('-o', '--overwrite',
+                        action='store_true', dest='overwrite',
                         default=False, help='Destroy everything.')
 
-    parser.add_argument("--tgas-file", dest="stacked_tgas_path", default="../data/stacked_tgas.fits",
+    parser.add_argument("--tgas-file", dest="stacked_tgas_path",
+                        default="data/stacked_tgas.fits",
                         type=str, help="Path to stacked TGAS data file.")
     parser.add_argument("--snr-cut", dest="signal_to_noise_cut", default=8,
                         type=float, help="Minimum signal-to-noise ratio in parallax.")
-    parser.add_argument("--output-path", dest="output_path", default="../data/",
-                        type=str, help="Path to write output.")
-
+    parser.add_argument("--outname", dest="outname",
+                        default="./pairinds.fits",
+                        type=str, help="Output filename")
     subparsers = parser.add_subparsers()
 
     # parser for the "random" command
@@ -158,7 +198,6 @@ if __name__ == "__main__":
     parser_a.set_defaults(case='random')
     parser_a.add_argument("--size", dest="size", help="Number of random pairs to generate",
                           type=int, default=10000)
-
     # parser for the "neighbors" command
     parser_b = subparsers.add_parser('neighbors', help='Find indices for pairs of nearest neighbors')
     parser_b.set_defaults(case='neighbors')
@@ -169,44 +208,42 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    # Set logger level based on verbose flags
-    if args.verbosity != 0:
-        if args.verbosity == 1:
-            logger.setLevel(logging.DEBUG)
-        else: # anything >= 2
-            logger.setLevel(1)
-
-    elif args.quietness != 0:
-        if args.quietness == 1:
-            logger.setLevel(logging.WARNING)
-        else: # anything >= 2
-            logger.setLevel(logging.ERROR)
-
-    else: # default
-        logger.setLevel(logging.INFO)
-
+    set_logger_verbosity(args)
+    
     if args.seed is not None:
         np.random.seed(args.seed)
 
     # --
+    # check paths
+    if not os.path.exists(os.path.abspath(args.stacked_tgas_path)):
+        raise IOError("Stacked TGAS data file '{}' does not exist.".
+                      format(args.stacked_tgas_path))
+    if not os.path.exists(os.path.abspath(args.outname)):
+        raise IOError("Specified output path '{}' does not exist.".
+                      format(args.outname))
+    if os.path.exists(args.outname) and not overwrite:
+        raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.".
+                      format(args.outname))
 
     if args.case == 'random':
-        output_file,tbl = main_random(stacked_tgas_path=args.stacked_tgas_path,
-                                      output_path=args.output_path,
+        tbl = main_random(stacked_tgas_path=args.stacked_tgas_path,
                                       signal_to_noise_cut=args.signal_to_noise_cut,
-                                      size=args.size, overwrite=args.overwrite)
+                                      size=args.size)
 
     elif args.case == 'neighbors':
-        output_file,tbl = main_neighbors(stacked_tgas_path=args.stacked_tgas_path,
-                                         output_path=args.output_path,
+        tbl = main_neighbors(stacked_tgas_path=args.stacked_tgas_path,
                                          signal_to_noise_cut=args.signal_to_noise_cut,
                                          n_neighbors=args.n_neighbors,
-                                         delta_v_cut=args.delta_v_cut,
-                                         overwrite=args.overwrite)
+                                         delta_v_cut=args.delta_v_cut)
+    elif args.case = 'radius':
+        tbl = main_radius(stacked_tgas_path=args.stacked_tgas_path,
+                          signal_to_noise_cut=args.signal_to_noise_cut,
+                          radius_cut=args.radius_cut,
+                          delta_v_cut=args.delta_v_cut)
 
     required_names = ['star1', 'star2', 'delta_v', 'sep']
     for name in required_names:
         assert name in tbl.dtype.names, '%s not found' % (name)
 
     hdu = fits.BinTableHDU(tbl)
-    hdu.writeto(output_file, clobber=True)
+    hdu.writeto(args.outname, clobber=True)
