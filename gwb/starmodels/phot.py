@@ -43,5 +43,5 @@ def get_photometry(source_id, skip=['G', 'W3']):
             d[k] = (val, np.sqrt(unc**2 + v**2))        
 
     # Skip these bands
-    [d.pop(b) for b in skip]
+    [d.pop(b, None) for b in skip]
     return d
