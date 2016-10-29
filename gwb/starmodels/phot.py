@@ -15,7 +15,7 @@ def get_xdf():
     xdf.index = xdf.source_id
     return xdf
 
-def get_photometry(source_id):
+def get_photometry(source_id, skip=['G', 'W3']):
     """Returns dictionary of photometry
     """
     global xdf
@@ -32,8 +32,7 @@ def get_photometry(source_id):
              W3=(s.w2mpro, s.w2mpro_error),
              parallax=(s.parallax, s.parallax_error))
     
-    systematics = dict(G=0.01, 
-                        J=0.02, H=0.02, K=0.02, W1=0.02, W2=0.02, W3=0.02,
+    systematics = dict(G=0.01, J=0.02, H=0.02, K=0.02, W1=0.02, W2=0.02, W3=0.02,
                       parallax=0.3)
     
     for k,v in systematics.items():
@@ -43,5 +42,6 @@ def get_photometry(source_id):
         else:
             d[k] = (val, np.sqrt(unc**2 + v**2))        
 
-    d.pop('G') # no Gaia G band for now
+    # Skip these bands
+    [d.pop(b) for b in skip]
     return d

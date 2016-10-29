@@ -67,7 +67,7 @@ if __name__=='__main__':
 
     parser.add_argument('stars', nargs='*', type=int, help='pairs of stars')
     parser.add_argument('-o','--overwrite', action='store_true')
-    parser.add_argument('--correct_extinction', action='store_true')
+    parser.add_argument('--simple_extinction', action='store_true')
 
     vq_group = parser.add_mutually_exclusive_group()
     vq_group.add_argument('-v', '--verbose', action='count', default=0, dest='verbosity')
@@ -93,7 +93,7 @@ if __name__=='__main__':
 
     from isochrones import get_ichrone
 
-    ic = get_ichrone('mist', simple_extinction=not args.correct_extinction)
+    ic = get_ichrone('mist', simple_extinction=args.simple_extinction)
 
     for i in range(len(args.stars)//2):
         star1 = args.stars[2*i]
