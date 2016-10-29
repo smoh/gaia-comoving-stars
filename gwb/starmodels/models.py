@@ -61,5 +61,5 @@ class TGASWideBinaryStarModel(ResolvedBinaryStarModel):
         AV2 = get_AV(idx2)
 
         super(TGASWideBinaryStarModel, self).__init__(ic, star1, star2, 
-                                                    name=name, maxAV=max(AV1, AV2))
+                                                    name=name, maxAV=2*max(AV1, AV2))
         
