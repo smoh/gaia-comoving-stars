@@ -8,6 +8,7 @@ import logging
 import matplotlib
 matplotlib.use('AGG')
 
+import tables
 from astropy import log as logger
 
 from gwb.starmodels import TGASWideBinaryStarModel, STARMODELDIR
@@ -104,3 +105,5 @@ if __name__=='__main__':
             logging.error('Error with pair {} {}!'.format(star1, star2))
             import traceback
             traceback.print_exc()
+
+        tables.file._open_files.close_all()
