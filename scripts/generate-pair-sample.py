@@ -33,13 +33,11 @@ def set_logger_verbosity(args):
             logger.setLevel(logging.DEBUG)
         else: # anything >= 2
             logger.setLevel(1)
-
     elif args.quietness != 0:
         if args.quietness == 1:
             logger.setLevel(logging.WARNING)
         else: # anything >= 2
             logger.setLevel(logging.ERROR)
-
     else: # default
         logger.setLevel(logging.INFO)
 
@@ -78,7 +76,15 @@ def main_random(stacked_tgas_path, signal_to_noise_cut, size):
 
 def main_neighbors(stacked_tgas_path, signal_to_noise_cut, n_neighbors,
                    delta_v_cut):
+    """Pair stars by nearest neighbor search
 
+    signal_to_noise_cut : float, applied for all TGAS stars
+    n_neighbors : int, maximum number of neighbors to find
+    delta_v_cut : float, applied to (star,neighbor) pairs, in km/s
+
+    Returns
+        np.recarray with columns (star1, star2, delta_v, sep, nni)
+    """
     index0_snr, tgas, X = get_tgas(stacked_tgas_path, signal_to_noise_cut)
 
     # next, built the KD Tree using the XYZ positions
@@ -127,7 +133,15 @@ def main_neighbors(stacked_tgas_path, signal_to_noise_cut, n_neighbors,
 
 def main_radius(stacked_tgas_path, signal_to_noise_cut,
                 radius_cut, delta_v_cut):
+    """Pair stars within a fixed radius
 
+    signal_to_noise_cut : float, applied for all TGAS stars
+    radius_cut : float, search radius around each star in pc
+    delta_v_cut : float, applied to pairs, in km/s
+
+    Returns
+        np.recarray with columns (star1, star2, delta_v, sep, nni)
+    """
     index0_snr, tgas, X = get_tgas(stacked_tgas_path, signal_to_noise_cut)
     tree = KDTree(X)
     tree_i = tree.query_radius(X, radius_cut)

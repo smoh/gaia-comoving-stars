@@ -34,6 +34,7 @@ def get_u_vec(lon, lat):
 def get_tangent_basis(ra, dec):
     """
     row vectors are the tangent-space basis at (alpha, delta, r)
+    ra, dec in radians
     """
     ra = np.atleast_1d(ra)
     dec = np.atleast_1d(dec)
