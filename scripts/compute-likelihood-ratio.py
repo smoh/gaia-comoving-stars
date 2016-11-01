@@ -95,7 +95,6 @@ def main(pool, stacked_tgas_path, pair_indices_path,
 
 if __name__ == "__main__":
     from argparse import ArgumentParser
-    import logging
 
     # Define parser object
     parser = ArgumentParser(description="")
