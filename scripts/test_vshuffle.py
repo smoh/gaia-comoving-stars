@@ -80,13 +80,15 @@ def prepare(tgasfile, outname, snr_cut, radius_cut, radius_cut_vshuf, dvtan_cut)
     Npairs = pairijk.shape[0]
 
     # record indices and aux info
+    # yikes, is this safe with mpi?
     logger.info("writing pair indices in %s" % (outname))
-    with h5py.File(outname, 'w') as f:
-        f.create_dataset('ijk', data=ind0_ijk)
-        f.create_dataset('sep', data=sep)
-        f.create_dataset('dvtan', data=dvtan)
-        f.create_dataset('lnH1', dtype='f8', shape=(Npairs,))
-        f.create_dataset('lnH2', dtype='f8', shape=(Npairs,))
+    if not os.path.exists(outname):
+        with h5py.File(outname, 'w') as f:
+            f.create_dataset('ijk', data=ind0_ijk)
+            f.create_dataset('sep', data=sep)
+            f.create_dataset('dvtan', data=dvtan)
+            f.create_dataset('lnH1', dtype='f8', shape=(Npairs,))
+            f.create_dataset('lnH2', dtype='f8', shape=(Npairs,))
     return tgas, pairijk
 
 if __name__ == "__main__":
