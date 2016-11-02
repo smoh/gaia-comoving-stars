@@ -11,7 +11,7 @@ matplotlib.use('AGG')
 import tables
 from astropy import log as logger
 
-from gwb.starmodels import TGASWideBinaryStarModel, STARMODELDIR
+from gwb.starmodels import TGASWideBinaryStarModel, TGASStarModel, STARMODELDIR
 
 def main(ic, star1, star2, group='', overwrite=False, figs_only=False,
          single=False):
