@@ -44,7 +44,7 @@
 \newcommand{\propm}{\bs{\mu}}
 \newcommand{\mat}[1]{\mathbf{#1}}
 \renewcommand{\vec}[1]{\bs{#1}}
-\newcommand{\kms}{\rm km~s^{-1}}
+\newcommand{\kms}{\ensuremath{\rm km~s^{-1}}}
 \newcommand{\msun}{{\rm M}_\odot}
 \newcommand{\data}{\mathrm{data}}
 \newcommand{\snr}{[S/N]_\varpi}
@@ -195,61 +195,85 @@ fraction of the \project{Tycho-2} catalog \citep{2000A&A...355L..27H} with media
 astrometric precision comparable to that of the \project{Hipparcos} catalog
 \citep[$\approx 0.3~{\rm mas}$;][]{2007ASSL..350.....V}. In terms of parallax
 signal-to-noise ($\snr = \varpi/\sigma_\varpi$), the \tgas\ catalog contains
-42385 high-precision stars with $\snr > 32$: here we visualize quantities
-computed from this high-precision sample to emphasize the quality of the data.
-In the sections that follow, we construct a statistical model that propagates
+42385 high-precision stars with $\snr > 32$.
+
+We construct a sample of candidate pair list as follows.
+We first apply a global parallax S/N cut of 8 to \tgas, which leaves 619,618 stars.
+Then, for each star, we search a potential co-moving partner star with a
+difference in tangential velocity $\Delta v_t < 10$~\kms\ within 10 pc
+using RA, DEC, a point-estimate of distance, and the proper motions.
+Throughout this \documentname\, we use the following estimator for
+the point-estimate of distance applying a correction for the Lutz-Kelker bias
+(\citealt{lutzkelker}):
+\begin{equation}
+  d = 1000 \, \left[\frac{\varpi}{2} \,
+    \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
+\end{equation}
+where $\varpi$ is the parallax in mas.
+The difference in tangential velocity between two stars is, then,
+\begin{equation}
+  |\Delta \vec{v}_{\rm t}| = |d_1 \vec\mu_1 - d_2 \vec\mu_2|
+\end{equation}
+where $\vec\mu = (\mu_\alpha, \mu_\delta)$.
+
+Figure~\ref{fig:dv-sep} shows $|\Delta v_t|$ against the physical separation
+for the resulting 271,232 unique candidate pairs.
+A few key observations can be made:
+
+\begin{itemize}
+  \item At small separation ($<1$~pc), there is a population of pairs with
+  very small tangential velocity difference ($<2$~km/s). Given that these pairs
+  are very close in both positions and proper motions,
+  it is highly probable that they are actually co-moving e.g., as wide binaries.
+  
+  \item  However, it is not only (wide) binaries which are gravitationally
+  bound that are expected to appear as co-moving.
+  OB associations, moving groups, and open clusters are also of consideration.
+  Since the basic unit of our choice is a pair of stars, we can expect that these astrophysical objects may be detected as networks of pairs.
+  As the pair separation increases, the nature of co-moving pairs
+  will change from binaries to those related to these larger objects,
+  which will tend to subtend a larger angle in sky.
+  Under the assumption of having the same 3D velocity,
+  two stars of a co-moving pair can essentially be thought of as projections
+  of this velocity onto sphere at different viewing angles.
+  The larger the difference in viewing angles is, the larger the difference in tangential 
+  velocities will be.
+  Due to this projection effect, a population of genuine co-moving pairs
+  will extend to larger $\Delta v_t$ at larger separation.
+  This indeed can be seen in Figure~\ref{fig:dv-sep} as an over-density
+  in lower right corner that gets thinner as $\Delta v_t$ increases.
+  
+  \item Finally, there is a population of “random” pairs of field stars
+  which are not actually co-moving, but still has $\Delta v_t < 10$~\kms\
+  by chance.
+  As $\Delta v_t$ increases, this population will dominate.
+  However, it is clear from this Figure that there is an overlap between
+  genuine co-moving pairs and “random” pairs.
+\end{itemize}
+
+In the following section, we construct a statistical model that propagates
 the non-trivial uncertainties in the data to our beliefs about the likelihood
 that a given pair of stars is co-moving.
 
-For each star with $\snr > 32$, we use the reported parallax and parallax
-error to compute a distance corrected for the Lutz-Kelker bias
-(\citealt{lutzkelker}):
-\begin{equation}
-  d_{\rm LK} = 1000 \, \left[\frac{\varpi}{2} \,
-    \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
-\end{equation}
-We use this distance and the sky positions of each source to compute 3D
-Cartesian positions, $\boldsymbol{x}$, for all stars and find the nearest
-neighbor to each source in 3-space using the KDTree implementation in
-\project{scikit-learn} (\citealt{scikit-learn}). We remove duplicates from
-this sample and are left with 29870 pairs of stars. For all pairs, we then
-compute the tangential velocity difference
-\begin{equation}
-  |\Delta \vec{v}_{\rm t}| = d_{\rm LK} \,
-                            \sqrt{(\mu_{\alpha,1}-\mu_{\alpha,2})^2 +
-                                  (\mu_{\delta,1}-\mu_{\delta,2})^2}
-\end{equation}
-\figname~\ref{fig:dv-sep} shows the tangential velocity difference against the
-physical separation plotted for all pairs that pass the above signal-to-noise
-cut. Pairs with small physical separation also tend to have small velocity
-differences. Intriguingly, there appear to be an abundance of pairs with small
-velocity separation at separations $|\delta\vec{x}| \gtrsim 1~{\rm pc}$. Of
-course, this figure really only highlights close pairs with small angular
-separations:
-At large angular separations, the tangential velocity differences will be large
-because of projection effects.
-To select a more representative population of co-moving stars, we must instead
-model the 3-space velocities of the stars given observations of just two
-components.
-
 \begin{figure*}[p]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/dv-sep.pdf}
+    \includegraphics[width=\textwidth]{figures/sep_dvtan.pdf}
   \end{center}
   \caption{%
-    Difference in tangential velocity vs. physical separation for pairs of stars
-    selected to be nearest neighbors in separation. Dashed line shows zero velocity
-    difference. Note the points with small velocity difference: these are likely
-    widely-separated binary stars.
+    Difference in tangential velocity vs. physical separation for candidate
+    pairs of stars with separation $< 10$~pc and $|\Delta v_t| < 10$~\kms.
+    % Note the points with small velocity difference: these are likely
+    % widely-separated binary stars.
     \label{fig:dv-sep}}
 \end{figure*}
 
 \section{Methods} \label{sec:methods}
 
-The abundance of pairs of stars with small velocity difference in the
-high-precision sample of \figname~\ref{fig:dv-sep} suggests that there are a
-significant number of co-moving stars in the \tgas\ data at separations as large
-as a few parsecs. Here we develop a method to select high-confidence co-moving
+The abundance of pairs of stars with small velocity difference in
+\figname~\ref{fig:dv-sep} suggests that there are a
+significant number of co-moving stars in the \tgas\ data at a range
+of separations.
+Here we develop a method to select high-confidence co-moving
 stars that properly incorporates the complex uncertainties associated with the
 \gaia\ data. We make the following assumptions in order to construct a
 statistical model (a likelihood function with explicit priors on our
@@ -351,13 +375,25 @@ signal-to-noise.
 To search for wide binaries, we set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
 To search for dissolving open clusters, we set $s^2 = 1~(\kms)^2$.
 
-\section{Results 1: A catalog of candidate wide binaries}
+
+\section{Results}
+
+This section is divided into three parts. First, we discuss and justify a cut of
+the likelihood ratio to select candidate co-moving pairs.
+Second, we present the statistics and properties of co-moving pairs, and discuss its nature.
+Finally, we describe our catalog.
+
+\subsection{Selecting candidate co-moving pairs}
+
 In this section, we examine the distribution of likelihood ratios
 $\ln \mathcal{L}_1 /\mathcal{L}_2$, and come up with a reasonable cut
 for this quantities to select co-moving pairs from candidate pairs list.
-We present the statistics of the resulting co-moving pairs.
-We also match the pairs with known open clusters in the Milky Way to
-provide information on cluster membership.
+
+
+
+
+With these remarks in mind, we discuss the likelihood ratio distribution.
+
 
 Figure~\ref{fig:likelihoodratios} shows the likelihood ratios for all 2.6 million
 candidate pairs.
@@ -390,6 +426,12 @@ Table~\ref{tab:candidatecounts}.
 Because the likelihood ratio $\ln \mathcal{L}_1 /\mathcal{L}_2$ asymtotically
 is chi-square distribution, the power-law fall off makes the number of resulting
 pairs sensitive to the cut.
+
+\subsection{Statistics, properties, and nature of co-moving pairs}
+
+We present the statistics of the resulting co-moving pairs.
+We also match the pairs with known open clusters in the Milky Way to
+provide information on cluster membership.
 
 Once we have decided the co-moving pairs from candidate pair list,
 we can count how many co-moving neighbors a star has.
@@ -458,13 +500,10 @@ consider mutually exclusive pairs (bottom panel).
 
 \begin{figure*}[p]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/hist_Nneighbors.pdf}
+    \includegraphics[width=\textwidth]{figures/dist_networksize.pdf}
   \end{center}
   \caption{%
-    Histogram of the number of co-moving neighbors to a star for varying
-    degrees of contamination due to random pairs.
-    \todo{SMOH: What is the optimal bins for this histogram to separate
-    small number cases e.g., binary case (N=1) appropriately?}
+    Histogram of co-moving network sizes.
     \label{fig:hist_Nneighbors}}
 \end{figure*}
 
@@ -485,28 +524,41 @@ consider mutually exclusive pairs (bottom panel).
 
 \begin{figure*}[p]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/glon_d_pairlines.pdf}
-    \includegraphics[width=\textwidth]{figures/glon_d_pairlines_mutexc.pdf}
+    \includegraphics[width=\textwidth]{figures/glon_d_pie.pdf}
   \end{center}
   \caption{%
-    Top: Distribution of co-moving pairs in galactic longitude and
-    distance. Each co-moving pair is connected by a line.
-    Red circles mark the locations of 135 known Milky Way open clusters within
-    $d<600$~pc from \citealt{Kharchenko:2016aa} while
-    stars in known OB associations \citep{de-Zeeuw:1999aa} are colored
-    by which association they belong.
-    We see that some of the aggregates of co-moving pairs are clearly
-    associated with known open clusters, and OB associations.
-    Bottom: Same as the previous plot but only for mutually exclusive pairs.
-    The mutually exclusive pairs no longer traces any known co-moving structures
-    strongly.
+    Panoramic view of co-moving pairs of stars. The angle is the Galactic
+    longitude, and the distance is in pc.
+    Pair networks of size 2 and 3 are connected by gray and blue lines.
+    Pair networks of size 4 and larger are plotted with a unique color.
+    Black circles mark the positions of known Milky Way star clusters
+    from \citet{Kharchenko:2016aa}.
     \label{fig:glon_d_pairlines}}
 \end{figure*}
 
+% \begin{figure*}[p]
+%   \begin{center}
+%     \includegraphics[width=\textwidth]{figures/glon_d_pairlines.pdf}
+%     \includegraphics[width=\textwidth]{figures/glon_d_pairlines_mutexc.pdf}
+%   \end{center}
+%   \caption{%
+%     Top: Distribution of co-moving pairs in galactic longitude and
+%     distance. Each co-moving pair is connected by a line.
+%     Red circles mark the locations of 135 known Milky Way open clusters within
+%     $d<600$~pc from \citealt{Kharchenko:2016aa} while
+%     stars in known OB associations \citep{de-Zeeuw:1999aa} are colored
+%     by which association they belong.
+%     We see that some of the aggregates of co-moving pairs are clearly
+%     associated with known open clusters, and OB associations.
+%     Bottom: Same as the previous plot but only for mutually exclusive pairs.
+%     The mutually exclusive pairs no longer traces any known co-moving structures
+%     strongly.
+%     \label{fig:glon_d_pie}}
+% \end{figure*}
 
 \todo{Galactic context / orbits}
 
-\section{Results 2: Star clusters and cluster remnants}
+\subsection{Catalog of candidate co-moving pairs}
 
 \section{Conclusions}
 
