@@ -5,7 +5,7 @@ import logging
 from .phot import get_photometry
 
 try:
-    from isochrones.starmodel import ResolvedBinaryStarModel
+    from isochrones.starmodel import StarModel, ResolvedBinaryStarModel
     from isochrones.mist import MIST_Isochrone
 except ImportError:
     class ResolvedBinaryStarModel(object):
@@ -43,6 +43,17 @@ def get_AV(idx):
         AVs = pd.read_table(AVFILE, index_col=0, delim_whitespace=True, 
                      names=['tgas_index','AV'])
     return AVs.ix[idx].AV
+
+class TGASStarModel(StarModel):
+    def __init__(self, ic, idx):
+        self.idx = idx
+
+        name = str(idx)
+        mags = get_photometry(get_source_id(idx))
+        AV = get_AV(idx)
+
+        super(TGASStarModel, self).__init__(ic, name=name, maxAV=AV, **mags)
+
 
 class TGASWideBinaryStarModel(ResolvedBinaryStarModel):
     def __init__(self, ic, idx1, idx2):
