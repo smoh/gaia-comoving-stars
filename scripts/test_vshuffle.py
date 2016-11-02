@@ -50,9 +50,10 @@ class Worker(object):
 def prepare(tgasfile, outname, snr_cut, radius_cut, radius_cut_vshuf, dvtan_cut):
     """
     """
-    tgas = gwb.TGASData(tgasfile)
+    tgas0 = gwb.TGASData(tgasfile)
     ind0 = np.arange(len(tgas))
-    tgas = tgas[tgas.parallax_snr > snr_cut]
+    tgas = tgas0[tgas0.parallax_snr > snr_cut]
+    ind0 = ind0[tgas0.parallax_snr > snr_cut]
     logger.info("%i stars with S/N > %.2f" % (len(tgas), snr_cut))
     coords = tgas.get_coord()
     xyz  = coords.cartesian.xyz.T.value
