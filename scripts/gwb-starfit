@@ -12,6 +12,7 @@ import tables
 from astropy import log as logger
 
 from gwb.starmodels import TGASWideBinaryStarModel, TGASStarModel, STARMODELDIR
+from isochrones import StarModel
 
 def main(ic, star1, star2, group='', overwrite=False, figs_only=False,
          single=False):
@@ -35,21 +36,25 @@ def main(ic, star1, star2, group='', overwrite=False, figs_only=False,
         logging.info('{} exists; skipping.'.format(h5file))
         return 
 
-    if not single:
-        mod = TGASWideBinaryStarModel(ic, star1, star2)
+    if figs_only:
+        mod = StarModel.load_hdf(h5file)
     else:
-        mod = TGASStarModel(ic, star1)
 
-    try:
-        mod.obs.print_ascii()
-    except:
-        pass
+        if not single:
+            mod = TGASWideBinaryStarModel(ic, star1, star2)
+        else:
+            mod = TGASStarModel(ic, star1)
 
-    sys.stdout.write('Fitting star model for {}...'.format(mod.name))
-    start = time.time()
-    mod.fit(verbose=False, overwrite=overwrite)
-    end = time.time()
-    sys.stdout.write('Fit took {:.2f} min.\n'.format((end-start)/60.))
+        try:
+            mod.obs.print_ascii()
+        except:
+            pass
+
+        sys.stdout.write('Fitting star model for {}...'.format(mod.name))
+        start = time.time()
+        mod.fit(verbose=False, overwrite=overwrite)
+        end = time.time()
+        sys.stdout.write('Fit took {:.2f} min.\n'.format((end-start)/60.))
 
     sys.stdout.write('Writing corner plots...')
     try:
