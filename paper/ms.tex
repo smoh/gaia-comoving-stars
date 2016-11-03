@@ -262,8 +262,6 @@ that a given pair of stars is co-moving.
   \caption{%
     Difference in tangential velocity vs. physical separation for candidate
     pairs of stars with separation $< 10$~pc and $|\Delta v_t| < 10$~\kms.
-    % Note the points with small velocity difference: these are likely
-    % widely-separated binary stars.
     \label{fig:dv-sep}}
 \end{figure*}
 
@@ -284,6 +282,7 @@ parameters):
     \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances
     $\mat{C}$.
     \todo{SMOH: mention GAIA paper that says Gaussian is good approximation?}
+    % http://adsabs.harvard.edu/abs/2012A&A...538A..78L
   \item We assume that the 3-space velocities of a given pair of stars
     $(\vec{v}_i, \vec{v}_j)$ in the \tgas\ sample (relative to the solar system
     barycenter) are either (1) co-moving with velocity drawn from a velocity
@@ -349,14 +348,13 @@ two simpler integrals $\mathcal{L}_2 = Q_i \, Q_j$ where
 \end{equation}
 If the velocity prior $p(\vec{v})$ is also Gaussian, the integrals over velocity
 in both cases can be performed analytically:
-\todo{SMOH: is this what we do?}
-We use an equal-weight mixture of three isotropic, zero-mean Gaussian
-distributions
+We use a mixture of three isotropic, zero-mean Gaussian distributions
 \begin{equation}
-  p(\vec{v}) = \frac{1}{3} \, \sum_{m=1}^3 \, \mathcal{N}(0, \sigma_{v,m}^2)
+  p(\vec{v}) = \sum_{m=1}^3 \, w_m \mathcal{N}(0, \sigma_{v,m}^2)
 \end{equation}
-with velocity dispersions $(\sigma_{v,1}, \sigma_{v,2}, \sigma_{v,3}) = (8, 32,
-128)~\kms$ meant to represent young disk stars, old disk stars, and halo stars.
+with velocity dispersions $(\sigma_{v,1}, \sigma_{v,2}, \sigma_{v,3}) = (15, 30, 50)
+~\kms$ and weights $(w_1,w_2,w_3) = (0.3, 0.55, 0.15)$
+meant to encompass young thin disk stars to halo stars.
 We derive the relevant expressions in Appendix~\ref{sec:appendix}.
 After marginalizing over velocity, the likelihood integrands only depend on
 distance; we numerically compute the integrals over the true distances to each
@@ -369,7 +367,9 @@ the distance posterior pdfs:
 where $\tilde{L}(d)$ is the velocity-marginalized likelihood function.
 Through experimentation, we have found that $K=128$ samples are sufficient for
 estimating the above integrals for stars with a wide range in parallax
-signal-to-noise.
+signal-to-noise. \todo{(SMOH: still unsure about this)} 
+
+\todo{discuss vorbit}
 
 \todo{APW/SMOH: in results, specify what we set $s^2$ to:}
 To search for wide binaries, we set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
@@ -387,45 +387,46 @@ Finally, we describe our catalog.
 
 In this section, we examine the distribution of likelihood ratios
 $\ln \mathcal{L}_1 /\mathcal{L}_2$, and come up with a reasonable cut
-for this quantities to select co-moving pairs from candidate pairs list.
+for this quantity to select co-moving pairs from candidate pairs list.
 
+\begin{figure*}[p]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/likelihoodratios.pdf}
+  \end{center}
+  \caption{%
+    Left: Density histogram of likelihood ratios for candidate pairs and random pairs.
+    Along with the distribution for the entire candidate pairs (black thick line),
+    we show the distribution for subsets in slices of $\Delta v_t$.
+    Right: $\Delta v_t$ vs separation in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$.
+    \label{fig:likelihoodratios}}
+\end{figure*}
 
-
-
-With these remarks in mind, we discuss the likelihood ratio distribution.
-
-
-Figure~\ref{fig:likelihoodratios} shows the likelihood ratios for all 2.6 million
-candidate pairs.
-Because we do not carry over the normalizations of all probabilities involved
-in $L_1$ and $L_2$, the absolute values of the likelihood ratio is not
-a meaningful quantity.
-Given our crude way of coming up with candidate pair list, we expect
-a huge number of pairs that are not genuinely co-moving, compared to
-the smaller number of pairs that are.
-In order to gauge an appropriate cut on the likelihood ratios,
+Figure~\ref{fig:likelihoodratios} shows the likelihood ratios for all
+271k candidate pairs examined.
+As discussed in \S~\ref{sec:data}, we expect a correlation between likelihood
+ratios of pairs, and their distribution in $\Delta v_t$ vs separation plane.
+Specifically, as we sweep through from small $\Delta v_t$ to large, we expect
+the population of pairs to change from genuinely co-moving to random.
+This becomes clear when we look at the distribution of likelihood ratios for
+slices of $\Delta v_t$ at 0.5, 5, and 9.5~\kms.
+Pairs with $|\Delta v_t-0.5|<0.5$ are most likely actual co-moving pairs, and
+their likelihood distribution is narrowly peaked above 6.
+The distribution peaks at lower values and gets broader as $\Delta v_t$ increases,
+and the number of random pairs increasingly dominate.
+On the right panel of Figure~\ref{fig:likelihoodratios}, we show
+how the distribution of pairs on $\Delta v_t$ vs separation plane changes
+with high to low $\ln \mathcal{L}_1 /\mathcal{L}_2$ ratios.
+This is in agreement with our discussion in \S~\ref{sec:data}.
+Finally, as a test,
 we compute the likelihood ratios for 200,000 random pairs of stars with the same
-signal-to-noise ratio cut as candidate pairs.
-Additionally, we select from candidate pair list, those with very small
-difference in tangential velocities ($\Delta v_t < 0.5$~km/s) in
-two minimum signal-to-noise ratio\footnote{lower of the two stars in a pair}
-bins (S/N$>32$ and S/N$<32$) that are highly probable
-to be genuine co-moving pairs.
-As expected, we see that the likelihood ratio $\ln \mathcal{L}_1 /\mathcal{L}_2$
-distribution peaks at higher values, favoring hypothesis 1, for highly probable
-co-moving pairs than the random pairs.
-We also see that the values are even higher for higher minimum signal-to-noise ratio pairs.
+parallax signal-to-noise ratio cut as candidate pairs ($S/N > 8$).
+Shown as gray shaded histogram, this distribution peaks at lower value ($\approx 2$),
+and is clearly separated from highly probable co-moving pairs.
 
-Based on the comparison with random pairs, we can come up with a cut
-on the likelihood ratios that reduces the cumulative contamination due to random pairs
-to a given threshold.
-The value of the cut, the resulting number of pairs, and
-its fraction of the total number of candidate pairs
-depending on the contamination rate are listed in
-Table~\ref{tab:candidatecounts}.
-Because the likelihood ratio $\ln \mathcal{L}_1 /\mathcal{L}_2$ asymtotically
-is chi-square distribution, the power-law fall off makes the number of resulting
-pairs sensitive to the cut.
+Based on these comparisons, we select pairs with
+$\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as co-moving pair candidates.
+Out of 271,232 candidate pairs examined, 13,058 pairs (4.8\%)
+satisfy this condition.
 
 \subsection{Statistics, properties, and nature of co-moving pairs}
 
@@ -445,42 +446,6 @@ co-moving neighbor to the other member (``mutually exclusive pairs'').
 The number of mutually exclusive pairs is listed on the last column of
 Table~\ref{tab:candidatecounts}.
 
-\begin{table}[tbh]
-  \caption{Number of pairs}
-  \label{tab:candidatecounts}
-  \centering
-
-  \begin{tabular}{l|c|c|c|r}
-  \hline
-
-  \hline
-  \textbf{Contamination} & \textbf{$\ln \mathcal{L}_1 /\mathcal{L}_2$ cut} &
-    \textbf{Count} & \textbf{Fraction} & \textbf{$N_\textrm{me}$} \\
-  \hline
-    0.01    \% & 5.33 & 92458 & 0.462 \% & 5055 \\
-    0.001   \% & 6.53 & 13354 & 0.067 \% & 1549 \\
-    0.0001  \% & 7.29 &  2832 & 0.014 \% & 582  \\
-    0.00001 \% & 7.35 &  2495 & 0.012 \% & 532  \\
-  \hline
-  \end{tabular}
-\end{table}
-
-
-\begin{figure*}[p]
-  \begin{center}
-    \includegraphics[width=\textwidth]{figures/likelihoodratios.pdf}
-  \end{center}
-  \caption{%
-    Density histogram of likelihood ratios for candidate pairs and random pairs.
-    We also show the distribution for highly probable genuine co-moving pairs with
-    $\Delta v_t < 0.5$~km/s in high ($S/N>32$) and low ($S/N<32$) signal-to-noise ratio
-    bins. In both $S/N$ bins, the highly probable co-moving pairs are clearly
-    separated from random pairs while the distribution of $\ln \mathcal{L}_1 /\mathcal{L}_2$
-    for candidate pairs is expected to be a combination of
-    a huge number of ``random'' pairs that are not actually co-moving, and
-    a smaller number of genuine co-moving pairs with varying $S/N$.
-    \label{fig:likelihoodratios}}
-\end{figure*}
 
 We now examine the separation distribution of co-moving pairs in
 Figure~\ref{fig:hist_separation}.
