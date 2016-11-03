@@ -37,7 +37,13 @@ def main(ic, star1, star2, group='', overwrite=False, figs_only=False,
         return 
 
     if figs_only:
-        mod = StarModel.load_hdf(h5file)
+        try:
+            mod = StarModel.load_hdf(h5file)
+        except:
+            import traceback
+            traceback.print_exc()
+            logging.error('Cannnot load StarModel from {}'.format(h5file))
+            return
     else:
 
         if not single:
