@@ -26,6 +26,7 @@
 \newcommand{\gaia}{\project{Gaia}}
 \newcommand{\rave}{\project{\acronym{RAVE}}}
 \newcommand{\apogee}{\project{\acronym{APOGEE}}}
+\newcommand{\tmass}{\project{\acronym{2MASS}}}
 \newcommand{\documentname}{\textsl{Article}}
 \newcommand{\sectionname}{Section}
 \newcommand{\figname}{Figure}
@@ -101,14 +102,22 @@ works in the observable space and uses the \gaia\ noise model
 responsibly.
 % Results
 We find pairs of co-moving stars out to very wide
-separations, including separations of a few parsecs! There does not
-seem to be any tidal-disruption feature in the separation distribution
-at sub-parsec scales. Pairs at separations beyond a
-parsec---whether they are bound in a multiple system or drifting
-apart---must be very short-lived. The photometric properties of the
-members of these pairs are consistent with youth. The prospects for
-testing stellar models and chemical abundance measurements are
-superficially discussed.
+separations up to 10~pc, the limit of our search.
+Some of these pairs form larger networks through mutual co-moving neighbors,
+many of which correspond to the known open clusters, and stars in the OB associations.
+However, there still is a huge number of very wide ($>3$~pc) separation pairs of
+stars that are co-moving.
+We discuss their nature, and the prospects for testing stellar models and chemical
+abundance measurements using our catalog.
+
+% HOGG:
+% There does not seem to be any tidal-disruption feature in the separation distribution
+% at sub-parsec scales. Pairs at separations beyond a
+% parsec---whether they are bound in a multiple system or drifting
+% apart---must be very short-lived. The photometric properties of the
+% members of these pairs are consistent with youth. The prospects for
+% testing stellar models and chemical abundance measurements are
+% superficially discussed.
 \end{abstract}
 
 \keywords{
@@ -127,68 +136,67 @@ superficially discussed.
 
 \section{Introduction} \label{sec:intro}
 
-Two stars moving with similar full-space velocity vectors (``co-moving stars'')
-are either members of a widely-separated stellar multiplet, or remnants of a
-dispersing stellar system.
+Stars that are roughly co-located, and moving with similar space velocity (``co-moving stars'')
+are of special interest in many branches of astrophysics.
 
-Widely-separated binary stars are weakly bound binary star systems with
-semi-major axes larger than $a \gtrsim 10^{-3}~{\rm pc}$. It is generally
-assumed that the stars in a wide binary form from gas with the same chemical
-composition and are separated enough that there is no interaction or minimal
-cross-pollution as the more massive star evolves (\citealt{todo}). Because the
-binding energy of these systems is so low, if wide binary stars survive for many
-Gigayears their existence alone places limits on the tidal field of the Galaxy
-(\citealt{todo}) and the graininess of the gravitational field (\citealt{todo}).
-In this picture, a remaining puzzle is how these systems survive the dense
-stellar environments of the birth clusters in which they form. Wide binaries are
-therefore important tools for studying small-scale star formation and the
-large-scale Galactic mass distribution. These stars will appear to be co-moving
-with velocity differences comparable to the binary orbital velocity at the
-given separation.
+At small scales ($0.001-1$~pc), they correspond to wide binaries (and triples, or
+multiples) that are
+either weakly gravitationally bound or currently being dispersed.
+Because they have low binding energies,
+a sample of wide binaries is valuable for investigating
+the Galactic dynamical environment.
+These systems must have survived their dynamic birth environment which
+provides a window to the star formation process.
+They may also be disrupted by Galactic tides, or other massive objects
+such as other stars, molecular clouds, or MACHOs \citep{Yoo:2004aa,Allen:2014aa}.
+Wide binaries are also good testbeds for stellar evolution models.
+For example, main sequence-red giant wide binaries are especially valuable
+in testing consistency between stellar atmosphere models of these two types
+as the two stars were born at the same time with the same chemical compositions,
+but remained isolated since due to wide separation.
+Finally, calibration of stellar parameters of low-mass stars (e.g., M dwarfs),
+which dominate the stellar content of the Galaxy by number, can benefit from
+a larger sample of widely separated binaries containing a low mass star and a
+much brighter FGK star whose stellar parameters are easier to measure
+\citep[e.g.,][]{Rojas-Ayala:2012aa}.
 
-At the largest separations, $a \gtrsim 1~{\rm pc}$, co-moving stars are likely
-either remnants of disrupting stellar systems or young wide binary stars: at
-these extreme separations, the Galactic tidal field would disrupt binary stars
-within $t_{\rm disrupt} \lesssim XX~{\rm Gyr}$. Unbound open clusters with
-velocity dispersions $\sigma_v \lesssim 1~\kms$ in the Galactic disk disrupt
-quickly leaving small streams of stars with the same chemical abundances
-(\citealt{chemicaltaggingstuff}). Disrupting or disrupted globular clusters and
-dwarf galaxies also produce streams of stars with similar chemical properties
-but with larger velocity differences (\citealt{streampeeps}). Stars from such
-systems at similar orbital phases will appear to be co-moving with velocity
-differences comparable to the internal velocity dispersions, $\sigma_v \approx
-1$--$10~\kms$.
+At larger scales ($\gtrsim 1$~pc), they include moving groups, associations, and star clusters.
+The origin of moving groups is still under active debate: are they remnants of a coeval
+star formation event with similar chemical composition? Or are they formed by
+dynamical effects of non-axisymmetric features of the Galaxy such as spirals
+and bars? With the recent improvements in measuring chemical abundances
+using high and low resolution spectroscopy, we can now start to explore these questions
+in unprecedented width (statistics) and depth (detail). 
+The dynamics of cluster dissolution provides important clues to understanding
+the star formation history and the dynamical evolution of the Milky Way.
+In the halo, we have known the presence of disrupting globular clusters and dwarf galaxies
+\citep[e.g.,][]{Ibata:1994aa}.
+The tidal streams formed during this process are modeled to infer the
+parameters of the Galactic potential at large scales.
+Similar process is at work with star clusters in the disk. However, the dynamical
+time is much shorter, and the dynamics will be much more complex due to other
+perturbers in the disk.
 
 To date, thousands of candidate co-moving star pairs have been identified by
-searching for stars with common proper motions (\citealt{Luyten:1979,
-Poveda:1994, Allen:2000, Gould:2003, Chaname:2004, Lepine:2007,
-Alonso-Floriano:2015}). \todo{how is our search different? (1) we have distance, (2) bigger volume than Hipparcos, (3) we use the data properly, (4) we don't cut on distance or on magnitude of proper motion -- we cut on parallax S/N}
-% Cite:
-% Tokovinin & Lepine 2012
-% https://ui.adsabs.harvard.edu/#abs/2012ApJ...757..170A/abstract
-% https://ui.adsabs.harvard.edu/#abs/2012AJ....144..102T/abstract
-% https://ui.adsabs.harvard.edu/#abs/2014ApJ...790..158A/abstract
+searching for stars with common proper motions
+(\citealt{Poveda:1994aa,Allen:2000aa,Chaname:2004aa,Lepine:2007aa,Alonso-Floriano:2015aa}).
+Here, we use the recent first data release of \gaia\ which includes precise distances,
+enabling us to ask whether two stars share the same {\it physical} velocity rather than
+just the projections in the proper motion space.
+
+%TODO: highlight the merits of this search:
+% - we have distance,
+% - bigger volume than Hipparcos,
+% - we use the data properly, 
+% - we don't cut on distance or on magnitude of proper motion -- we cut on parallax S/N}
 
 % Many searches find things close in angular separation, but need pms / distance
-
-% Two stars moving with full-space velocity vector differences $\lesssim 1~\kms$
-% with orbital semi-major axes $a \gtrsim 10^-3~{\rm pc}$.
-
-Useful for:
-- star cluster disruption and dispersal
-- chemical abundance comparison (no interaction)
-- dynamics
-
-In either case, co-moving stars are of great interest
-for studying the destruction of star clusters and dwarf galaxies, the tidal
-field and small-scale properties of the mass distribution in the Milky Way, and
-chemical uniformity and star formation processes.
 
 \section{Data} \label{sec:data}
 
 The primary data set used in this \documentname\ is the Tycho-Gaia Astrometric
 Solution (\tgas), released as a part of Data Release 1 (\dr) of the Gaia mission
-\citep{2016arXiv160904172G,2016arXiv160904303L}.
+\citep{Gaia-Collaboration:2016aa,Lindegren:2016aa}.
 \tgas\ contains astrometric measurements (sky position,
 parallax, and proper motions) and associated covariance matrices for a large
 fraction of the \project{Tycho-2} catalog \citep{2000A&A...355L..27H} with median
@@ -201,10 +209,10 @@ We construct a sample of candidate pair list as follows.
 We first apply a global parallax S/N cut of 8 to \tgas, which leaves 619,618 stars.
 Then, for each star, we search a potential co-moving partner star with a
 difference in tangential velocity $\Delta v_t < 10$~\kms\ within 10 pc
-using RA, DEC, a point-estimate of distance, and the proper motions.
+using RA, DEC, a point-estimate of the distance, and the proper motions.
 Throughout this \documentname\, we use the following estimator for
-the point-estimate of distance applying a correction for the Lutz-Kelker bias
-(\citealt{lutzkelker}):
+the point-estimate of the distance applying a correction for the Lutz-Kelker bias
+(\citealt{Lutz:1973aa}):
 \begin{equation}
   d = 1000 \, \left[\frac{\varpi}{2} \,
     \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
@@ -232,11 +240,11 @@ A few key observations can be made:
   Since the basic unit of our choice is a pair of stars, we can expect that these astrophysical objects may be detected as networks of pairs.
   As the pair separation increases, the nature of co-moving pairs
   will change from binaries to those related to these larger objects,
-  which will tend to subtend a larger angle in sky.
-  Under the assumption of having the same 3D velocity,
-  two stars of a co-moving pair can essentially be thought of as projections
-  of this velocity onto sphere at different viewing angles.
-  The larger the difference in viewing angles is, the larger the difference in tangential 
+  which generally subtend a larger angle in sky.
+  Since the proper motions of two stars with same 3D velocity
+  are essentially projections of this velocity onto sphere at
+  two different viewing angles,
+  the larger the difference in viewing angles is, the larger the difference in tangential 
   velocities will be.
   Due to this projection effect, a population of genuine co-moving pairs
   will extend to larger $\Delta v_t$ at larger separation.
@@ -255,7 +263,7 @@ In the following section, we construct a statistical model that propagates
 the non-trivial uncertainties in the data to our beliefs about the likelihood
 that a given pair of stars is co-moving.
 
-\begin{figure*}[p]
+\begin{figure*}[htbp]
   \begin{center}
     \includegraphics[width=\textwidth]{figures/sep_dvtan.pdf}
   \end{center}
@@ -280,9 +288,8 @@ parameters):
   \item We assume that the uncertainties in the data---parallax, $\varpi$, and
     two proper motion components, $\propm = (\begin{array}[t]{c c} \mu_\alpha &
     \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances
-    $\mat{C}$.
-    \todo{SMOH: mention GAIA paper that says Gaussian is good approximation?}
-    % http://adsabs.harvard.edu/abs/2012A&A...538A..78L
+    $\mat{C}$. The values of covariances are provided by the \gaia\ data
+    \citep{Lindegren:2012aa,Lindegren:2016aa}.
   \item We assume that the 3-space velocities of a given pair of stars
     $(\vec{v}_i, \vec{v}_j)$ in the \tgas\ sample (relative to the solar system
     barycenter) are either (1) co-moving with velocity drawn from a velocity
@@ -323,10 +330,10 @@ and the modified covariance matrix $\tilde{\mat{C}}$ is
 We compute the fully marginalized likelihood (FML) that a given pair of stars
 has the same 3-space velocity with a small velocity difference drawn from a
 zero-mean Gaussian with variance $s^2$ (hypothesis 1, $\mathcal{L}_1$), and
-the FML of the stars having different 3-space velocities (hypothesis 2,
+the FML of the stars having independent 3-space velocities (hypothesis 2,
 $\mathcal{L}_2$).
 We use the FML ratio $\mathcal{L}_1/\mathcal{L}_2$ as a scalar for selecting
-candidate co-moving stars, as described below in more detail.
+candidate co-moving stars, as described in $\S~\ref{sub:selection}$ in more detail.
 To compute these FMLs, the likelihood functions $L_i, L_j$ are marginalized
 over true 3-space velocity and distance for each star in the pair $(i,j)$.
 \begin{align}
@@ -367,29 +374,40 @@ the distance posterior pdfs:
 where $\tilde{L}(d)$ is the velocity-marginalized likelihood function.
 Through experimentation, we have found that $K=128$ samples are sufficient for
 estimating the above integrals for stars with a wide range in parallax
-signal-to-noise. \todo{(SMOH: still unsure about this)} 
+signal-to-noise.
+%TODO: SMOH: still unsure about this
 
-\todo{discuss vorbit}
+\begin{figure*}[htbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/a_vorb.pdf}
+  \end{center}
+  \caption{%
+    Binary orbital velocity as a function of semi-major axis for $2~M_\odot$
+    binary.
+    \label{fig:vorbit}}
+\end{figure*}
 
-\todo{APW/SMOH: in results, specify what we set $s^2$ to:}
-To search for wide binaries, we set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
-To search for dissolving open clusters, we set $s^2 = 1~(\kms)^2$.
-
+For wide binaries, the assumption of same 3D velocity can break down
+for high precision proper motion measurements because of the orbital
+velocity (Figure~\ref{fig:vorbit}).
+To account for this, we set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
 
 \section{Results}
 
 This section is divided into three parts. First, we discuss and justify a cut of
 the likelihood ratio to select candidate co-moving pairs.
 Second, we present the statistics and properties of co-moving pairs, and discuss its nature.
-Finally, we describe our catalog.
+Finally, we describe our catalog of candidate co-moving pairs, the main product
+of this study.
 
 \subsection{Selecting candidate co-moving pairs}
+\label{sub:selection}
 
 In this section, we examine the distribution of likelihood ratios
 $\ln \mathcal{L}_1 /\mathcal{L}_2$, and come up with a reasonable cut
 for this quantity to select co-moving pairs from candidate pairs list.
 
-\begin{figure*}[p]
+\begin{figure*}[htbp]
   \begin{center}
     \includegraphics[width=\textwidth]{figures/likelihoodratios.pdf}
   \end{center}
@@ -408,19 +426,20 @@ ratios of pairs, and their distribution in $\Delta v_t$ vs separation plane.
 Specifically, as we sweep through from small $\Delta v_t$ to large, we expect
 the population of pairs to change from genuinely co-moving to random.
 This becomes clear when we look at the distribution of likelihood ratios for
-slices of $\Delta v_t$ at 0.5, 5, and 9.5~\kms.
+slices of $\Delta v_t$ centered at 0.5, 5, and 9.5~\kms.
 Pairs with $|\Delta v_t-0.5|<0.5$ are most likely actual co-moving pairs, and
 their likelihood distribution is narrowly peaked above 6.
 The distribution peaks at lower values and gets broader as $\Delta v_t$ increases,
 and the number of random pairs increasingly dominate.
 On the right panel of Figure~\ref{fig:likelihoodratios}, we show
 how the distribution of pairs on $\Delta v_t$ vs separation plane changes
-with high to low $\ln \mathcal{L}_1 /\mathcal{L}_2$ ratios.
+with decreasing $\ln \mathcal{L}_1 /\mathcal{L}_2$ ratios.
 This is in agreement with our discussion in \S~\ref{sec:data}.
 Finally, as a test,
 we compute the likelihood ratios for 200,000 random pairs of stars with the same
 parallax signal-to-noise ratio cut as candidate pairs ($S/N > 8$).
-Shown as gray shaded histogram, this distribution peaks at lower value ($\approx 2$),
+Shown as gray shaded histogram in Figure~\ref{fig:likelihoodratios},
+this distribution peaks at a much lower value ($\approx 2$),
 and is clearly separated from highly probable co-moving pairs.
 
 Based on these comparisons, we select pairs with
@@ -430,40 +449,7 @@ satisfy this condition.
 
 \subsection{Statistics, properties, and nature of co-moving pairs}
 
-We present the statistics of the resulting co-moving pairs.
-We also match the pairs with known open clusters in the Milky Way to
-provide information on cluster membership.
-
-Once we have decided the co-moving pairs from candidate pair list,
-we can count how many co-moving neighbors a star has.
-This is presented in Figure~\ref{fig:hist_Nneighbors}.
-It is clear from this figure that we have many aggregates of co-moving stars, most
-likely an open cluster or a moving group. We also see that there is still
-a large number of stars which only one or two co-moving neighbors.
-In order to select pairs that are not associated with any other pair,
-we separate a subset of co-moving pairs whose member is a mutually exclusive
-co-moving neighbor to the other member (``mutually exclusive pairs'').
-The number of mutually exclusive pairs is listed on the last column of
-Table~\ref{tab:candidatecounts}.
-
-
-We now examine the separation distribution of co-moving pairs in
-Figure~\ref{fig:hist_separation}.
-
-Finally, we show the distribution co-moving pairs in galactic longitude and
-distance in Figure~\ref{fig:glon_d_pairlines}.
-In the top panel, we show all co-moving pairs with contamination rate of $0.01~\%$
-(undersampled by a factor of 4 in order to unclutter the plot) as connected line segments.
-We find many aggregates of co-moving pairs, which coincides with the positions of
-known Milky Way star clusters \citep{Kharchenko:2016aa} indicated by red circles.
-Clumps of co-moving pairs at $l=300-360$~degrees and $d=100-200$~pc correspond
-to the location of OB associations
-Upper Scorpius, Upper Centaurus Lupus, and Lower Centaurus Crux
-\citep{de-Zeeuw:1999aa}.
-The strong correlation with known co-moving structures disappears when we only
-consider mutually exclusive pairs (bottom panel).
-
-\begin{figure*}[p]
+\begin{figure*}[htbp]
   \begin{center}
     \includegraphics[width=\textwidth]{figures/dist_networksize.pdf}
   \end{center}
@@ -472,62 +458,271 @@ consider mutually exclusive pairs (bottom panel).
     \label{fig:hist_Nneighbors}}
 \end{figure*}
 
-\begin{figure*}[p]
+\begin{figure*}[htbp]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/hist_separation.pdf}
-    \includegraphics[width=\textwidth]{figures/hist_separation_mutexc.pdf}
+    \includegraphics[width=\textwidth]{figures/graphviz_examples.pdf}
   \end{center}
   \caption{%
-    Top: Separation distribution of co-moving pairs of stars for varying degrees
-    of contamination due to random pairs. The distribution peaks around 10~pc,
-    which is similar to the typical tidal radius of clusters in the Milky Way
-    \citep{Kharchenko:2013aa}.
-    Bottom: Same as the previous plot but only for mutually exclusive pairs.
-    \label{fig:hist_separation}}
+    Visualizations of a few example networks of co-moving pairs of stars.
+    Each star (node) is marked as red circles, and a line (edge) is drawn
+    between two stars if they are co-moving by our selection criteria
+    (see \S~\ref{sub:selection}). On left, we show the largest network
+    found in this study corresponding to the Pleiades star cluster.
+    \label{fig:graphviz_examples}}
 \end{figure*}
 
-
-\begin{figure*}[p]
+\begin{figure*}[htbp]
   \begin{center}
     \includegraphics[width=\textwidth]{figures/glon_d_pie.pdf}
   \end{center}
   \caption{%
     Panoramic view of co-moving pairs of stars. The angle is the Galactic
     longitude, and the distance is in pc.
-    Pair networks of size 2 and 3 are connected by gray and blue lines.
-    Pair networks of size 4 and larger are plotted with a unique color.
-    Black circles mark the positions of known Milky Way star clusters
-    from \citet{Kharchenko:2016aa}.
+    Pair networks of sizes less 6 are connected by gray lines.
+    Pair networks of size larger than 6 are plotted with a unique color per network.
+    We also show the positions of known Milky Way star clusters
+    from \citet{Kharchenko:2016aa} as empty purple circles,
+    and stars in OB associations from \citet{de-Zeeuw:1999aa} as
+    black circles.
     \label{fig:glon_d_pairlines}}
 \end{figure*}
 
-% \begin{figure*}[p]
-%   \begin{center}
-%     \includegraphics[width=\textwidth]{figures/glon_d_pairlines.pdf}
-%     \includegraphics[width=\textwidth]{figures/glon_d_pairlines_mutexc.pdf}
-%   \end{center}
-%   \caption{%
-%     Top: Distribution of co-moving pairs in galactic longitude and
-%     distance. Each co-moving pair is connected by a line.
-%     Red circles mark the locations of 135 known Milky Way open clusters within
-%     $d<600$~pc from \citealt{Kharchenko:2016aa} while
-%     stars in known OB associations \citep{de-Zeeuw:1999aa} are colored
-%     by which association they belong.
-%     We see that some of the aggregates of co-moving pairs are clearly
-%     associated with known open clusters, and OB associations.
-%     Bottom: Same as the previous plot but only for mutually exclusive pairs.
-%     The mutually exclusive pairs no longer traces any known co-moving structures
-%     strongly.
-%     \label{fig:glon_d_pie}}
-% \end{figure*}
+Once we have decided the co-moving pairs from the candidate pair list,
+these pairs form an undirected graph where stars are nodes, and
+edges between the nodes exist for co-moving pairs of stars.
+A star may have multiple co-moving neighbors, and two stars may either
+be directly or indirectly connected by a set of edges.
+We divide the network into connected components\footnote{A connected component of an undirected graph $G$
+is a subgraph of $G$ in which any two nodes are connected to each other by a path.
+We use the term ``network'' loosely to refer to a graph or its connected components.},
+and show the distribution of their sizes in Figure~\ref{fig:hist_Nneighbors}.
+The most common are size 2 networks, which mean mutually exclusive co-moving
+pairs. However, it is clear that there are many aggregates of co-moving stars
+discovered by looking for co-moving pairs.
+These aggregates are likely moving groups, OB associations or star clusters.
+There are 4555 connected components among 10,606 unique stars.
+The maximum size of connected components is 151.
+We show this largest network along with four randomly selected
+examples of networks with sizes greater than 4 in Figure~\ref{fig:graphviz_examples}.
+The largest network corresponds to the Pleiades open cluster.
+One particular star in this network, TYC 1799-272-1, has 94 directly connected
+co-moving neighbors, and is located at the center of the network.
 
-\todo{Galactic context / orbits}
+We show the distribution co-moving pairs in galactic longitude and
+distance in Figure~\ref{fig:glon_d_pairlines}.
+The connection between known co-moving structures and the networks of co-moving
+pairs found in this work becomes immediately clear when
+we overplot the positions of known Milky Way star clusters \citep{Kharchenko:2016aa},
+and stars in OB associations \citep{de-Zeeuw:1999aa}.
+Many of the larger networks are clearly associated with known star clusters.
+The most prominent is Melotte 111 at
+$(l,d)\approx (220\arcdeg, 87~\textrm{pc})$ otherwise known as the Coma star cluster.
+Clumps of co-moving pairs at $(l,d)\approx (300-360\arcdeg, 100-200~\textrm{pc})$
+seem to strongly correlate with the locations of OB associations
+Upper Scorpius, Upper Centaurus Lupus, and Lower Centaurus Crux
+\citep{de-Zeeuw:1999aa}.
+
+Ultimately, any candidate co-moving pair found in this work
+needs to be verified using radial velocities.
+Here, we use 210,368 cross-matches of \tgas\ with
+the Radial Velocity Experiment (\rave) to
+assess the false positive rates of our selection.
+We have 283 pairs with both stars matched with \rave.
+Figure~\ref{fig:raverv} shows the difference in radial velocities
+between the two stars in a pair, $\Delta v_r$, as a function of their physical separation.
+We show $\Delta v_r$ in units of $\sigma_{\Delta v_r}$ which we estimate
+as the quadrature sum of $\sigma _{v_r}$ for each star.
+The fraction of pairs with good agreement in radial velocity decreases with
+increasing separation.
+This, after all, is not surprising because we are only using
+2D velocity information (proper motions) with errors.
+However, the contamination becomes significant only at $>1$~pc
+(which depends on the local stellar number density and velocity dispersion).
+Given the excellent correspondence between co-moving pair networks of larger sizes
+and known genuine co-moving structures (Figure~\ref{fig:glon_d_pairlines}),
+we may expect that pairs in these larger networks which will often have
+separations $>1$~pc to have less contamination.
+We divide pairs into those mutually exclusively connected (i.e., in a network of
+size 2), and those in a larger network.
+We indeed find that many pairs in larger networks are at $>1$~pc, yet
+the fraction of pairs that have identical radial velocities within $3\sigma$ is
+higher than mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc.
+
+\begin{figure*}[htbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/raverv.pdf}
+  \end{center}
+  \caption{%
+    Radial velocity differences of 283 pairs with \rave\ measurements.
+    Left: $\Delta v_r$ in units of $\sigma_{\Delta v_r} = \sqrt{\sigma_{v_r,1}^2 + \sigma_{v_r,2}^2}$
+    as a function of physical separation.
+    We highlight $3\sigma$ limit in gray shades.
+    Right: Fraction of pairs with $\Delta v_r/\sigma_{\Delta v_r} <3$
+    as a function of physical separation. We calculate the fraction with a running
+    bin containing 31 data points at a time.
+    The median, and the minimum and maximum separation of pairs in each bin are
+    indicated with a marker, and its errorbars.
+    We separate pairs with network size of 2 (i.e., mutually exclusively connected)
+    from those in larger networks.
+    \label{fig:raverv}}
+\end{figure*}
+
+We now examine the separation distribution of co-moving pairs in
+Figure~\ref{fig:hist_separation}.
+As expected, pairs in larger networks are mostly found with separations
+larger than 1~pc.
+Surprisingly, however, we also find a huge number of mutually exclusive pairs
+at $>1$~pc as well. Even if we consider the increasing false positive rate at large
+separations, the distribution is not significantly changed as the number of pairs
+at $>1$~pc is in fact increasing much faster (as a power-law)
+than the decrease due to the false positives (right panel of Figure~\ref{fig:raverv}).
+The nature of these very large separation, mutually exclusive pairs,
+which cannot be gravitationally bound to each other, needs further investigation.
+Can they be remnants of escaped binaries that are drifting apart?
+In a study of the evolution of wide binaries including the Galactic tidal field
+as well as passing field stars, \citet{Jiang:2010aa} found that we expect 
+to find a peak at $\sim 100-300$~pc in the projected separation due to
+stars that were once in a wide binary system, but are drifting apart with small
+relative velocities ($\sim 0.1$~\kms).
+Our search which stops on the maximum radius of 10~pc is obviously insufficient
+to clearly detect this peak, but it shows such hint, and demonstrates
+that such large scale phase-space correlations may now be looked for and studied within the \gaia\ data.
+
+\begin{figure*}[htbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/hist_sep.pdf}
+  \end{center}
+  \caption{%
+    Separation distribution of co-moving pairs of stars. 
+    We divide the pairs into those mutually exclusively connected
+    (network size $=2$), and those connected to larger networks (size $>2$).
+    \label{fig:hist_separation}
+    }
+\end{figure*}
+
+Finally, we present the color-magnitude diagrams of co-moving pairs
+using the cross-matches with \tmass.
+A more detailed study of stellar parameters using photometry from various sources
+will follow. Figure~\ref{fig:cmd_large} and \ref{fig:cmd_me} shows $G-J$ vs $G$
+color-magnitude diagrams for stars in larger networks (size$>2$) and in mutually
+exclusive pairs (networks of size 2), respectively.
+The networks shown in Figure~\ref{fig:cmd_large} correspond to those visualized
+in Figure~\ref{fig:graphviz_examples}.
+For stars in larger networks, there is a noticeable lack of evolved, off-main sequence
+stars, in agreement with these kinematic structures being young.
+For mutually exclusive pairs, we divide the pairs by separation at 1~pc
+above which the false positive rate due to random pairs starts to increase.
+While many pairs are located along the main sequence, we also find
+quite a few of main sequence-red giant pairs,
+which will be valuable to anchoring stellar atmospheric models together.
+%TODO: SMOH: what else can i discuss?
+
+\begin{figure*}[htbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/gjg_graphviz_examples.png}
+  \end{center}
+  \caption{
+    Color-magnitude diagrams of stars in larger networks presented in
+    Figure~\ref{fig:graphviz_examples}. Each panel corresponds to the panel
+    at the same position in Figure~\ref{fig:graphviz_examples}.
+    We show the distribution of all stars common in \tgas\ and \tmass\
+    with parallax $S/N>16$ in blue for reference.
+    \label{fig:cmd_large}}
+\end{figure*}
+
+\begin{figure*}[htbp]
+  \begin{center}
+    \includegraphics[width=\textwidth]{figures/gjg_mepairs.png}
+  \end{center}
+  \caption{
+    Color-magnitude diagrams of stars in networks of size 2 (i.e., mutually exclusive)
+    in two separation bins.
+    We connect each pair by a line on the left for pairs with separations smaller than
+    1~pc.
+    We show the distribution of all stars common in \tgas\ and \tmass\
+    with parallax $S/N>16$ in blue for reference same as in Figure~\ref{fig:cmd_large}.
+    \label{fig:cmd_me}}
+\end{figure*}
 
 \subsection{Catalog of candidate co-moving pairs}
 
+In this section, we describe our catalog of candidate co-moving pairs of stars.
+For 13,058 pairs (10,606 unique stars) found in this work,
+we provide the following information:
+%
+\begin{itemize}
+  \item \tgas\ source id for the two stars in a pair; these may be used to easily
+  retrieve cross matches of \gaia\ with other surveys such as WISE, \tmass, and \rave
+  using the \gaia\ data archive.
+  \item physical separation between the two stars in pc
+  \item likelihood ratio, $\ln \mathcal{L}_1 /\mathcal{L}_2$
+  \item size of the network that the pair belongs to
+  \item unique ID of the network that the pair belongs to
+\end{itemize}
+%
+Additionally, given the strong correlation between the larger networks of pairs
+and the known star clusters and OB associations, we provide for each star
+%
+\begin{itemize}
+  \item index of the closest cluster in the Milky Way Star Cluster catalog of
+  \citet{Kharchenko:2016aa} using 3D separation
+  \item distance to the closest cluster in pc
+  \item the ID of the OB association (A-L) if the star is in the catalog of
+  stars in the known OB associations by \citet{de-Zeeuw:1999aa}
+\end{itemize}
+%
+A part of the entire table is presented in Table~\ref{tab:catalog}.
+
+\input{stub}
+
+We note a caveat on the completeness of the networks found in our catalog.
+Because we applied a simple cut in the likelihood ratio ($\ln \mathcal{L}_1 /\mathcal{L}_2>6$),
+there is a possibility that, for example, a star in a mutually exclusive pair in our catalog may
+still have another possibly co-moving companion which has been dropped because the likelihood ratio
+is slightly less than 6.
+
 \section{Conclusions}
 
+In this \documentname, we looked for co-moving pairs of stars in the
+\tgas\ data released as part of the \gaia\ DR1.
+Our method is to compare
+the fully marginalized likelihoods between the two hypotheses, that a pair of
+stars shares the same 3D velocity, and that the two stars have two independent
+3D velocities, incorporating the errors in parallax and proper motions.
+We argued for a reasonable cut of the likelihood ratio, and found
+13,058 candidate pairs of co-moving stars among 10,606 unique stars
+with separation ranging from 0.005~pc to 10~pc, the limit of our search.
+
+We examined the network of co-moving stars, and found that many of the larger
+networks of co-moving stars naturally corresponds to some of the known co-moving structures
+such as open clusters and stellar associations.
+We have also found a surprisingly large number of very wide separation ($>3$~pc)
+co-moving pairs which are not clearly associated to any known existing clusters.
+While their nature is yet unclear, they may be remnants of dissolving wide binaries and
+open clusters. If so, this population should still be relatively young compared
+to the general disk field population. Modeling the color-magnitude diagram
+distribution of these stars can shed some light on this issue.
+If they are truly dissolving stars that were born coeval,
+the sample of very wide separation co-moving pairs can potentially be used
+to measure the recent ($\lesssim 1$~Gyr)
+star formation history in the Solar neighborhood.
+Co-moving stars with separation less than 1~pc are very promising candidates
+for wide binaries. They are found to be pairs of stars of varying stellar types.
+Some of these pairs, such as main sequence-red giant or FGK-M dwarfs,
+will be particularly valuable for testing theoretical
+stellar models and calibrating observational measurements of low mass stars.
+
+
 \acknowledgements
+
+This work has made use of data from the European Space Agency (ESA)
+mission {\it Gaia} (\url{http://www.cosmos.esa.int/gaia}), processed by
+the {\it Gaia} Data Processing and Analysis Consortium (DPAC,
+\url{http://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding
+for the DPAC has been provided by national institutions, in particular
+the institutions participating in the {\it Gaia} Multilateral Agreement.
+This project was developed in part at the 2016 NYC Gaia Sprint,
+hosted by the Center for Computational Astrophysics at the Simons Foundation in New York City.
 
 This research was partially supported by the \acronym{NSF} (grants
   \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
@@ -538,6 +733,7 @@ resources supported by the Princeton Institute for Computational Science and
 Engineering (PICSciE) and the Office of Information Technology's High
 Performance Computing Center and Visualization Laboratory at Princeton
 University.
+
 
 \software{The code used in this project is available from
 \url{https://github.com/smoh/gaia-wide-binaries} under the MIT open-source
