@@ -223,6 +223,7 @@ the point-estimate of the distance applying a correction for the Lutz-Kelker bia
 \begin{equation}
   d = 1000 \, \left[\frac{\varpi}{2} \,
     \left(1 + \sqrt{1 - \frac{16}{\snr^2}} \right) \right]^{-1} \, {\rm pc}
+    \label{eq:dist}
 \end{equation}
 where $\varpi$ is the parallax in mas.
 The difference in tangential velocity between two stars is, then,
@@ -486,14 +487,17 @@ satisfy this condition.
     \includegraphics[width=\textwidth]{figures/glon_d_pie.pdf}
   \end{center}
   \caption{%
-    Panoramic view of co-moving pairs of stars. The angle is the Galactic
-    longitude, and the distance is in pc.
-    Pair networks of sizes less than 5 are connected by gray lines.
-    Pair networks of size $\geq 5$ are plotted with a unique color per network.
+    Panoramic view of co-moving pairs of stars. This is a cylindrical
+    projection of onto the Galactic plane. The angle is the Galactic
+    longitude, and the radius is $d\cos b$ in pc where $d$ is the point-estimate
+    of distance using Equation~\ref{eq:dist}.
+    Pairs in connected components of sizes less than 5 are connected by gray lines.
+    Pair in connected components of size $\geq 5$ are plotted with a unique color per network,
+    and their nodes (stars) are highlighted with small black circles.
     We also show the positions of known Milky Way star clusters
     from \citet{Kharchenko:2016aa} as empty purple circles,
     and stars in OB associations from \citet{de-Zeeuw:1999aa} as
-    black circles.
+    gray circles.
     \label{fig:glon_d_pairlines}}
 \end{figure*}
 
@@ -558,24 +562,26 @@ We indeed find that many pairs in larger networks are at $>1$~pc, yet
 the fraction of pairs that have identical radial velocities within $3\sigma$ is
 higher than mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc.
 
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/raverv.pdf}
+    % \includegraphics[width=\linewidth]{figures/raverv.pdf}
+    \includegraphics[width=.5\linewidth]{figures/raverv.pdf}
   \end{center}
   \caption{%
-    Radial velocity differences of 283 pairs with \rave\ measurements.
-    Left: $\Delta v_r$ in units of $\sigma_{\Delta v_r} = \sqrt{\sigma_{v_r,1}^2 + \sigma_{v_r,2}^2}$
+    Validation of candidate co-moving pairs using radial velocities from \rave.
+    Top: Radial velocity differences, $\Delta v_r$, of 283 pairs with \rave\ measurements.
+    $\Delta v_r$ is plotted in units of $\sigma_{\Delta v_r} = \sqrt{\sigma_{v_r,1}^2 + \sigma_{v_r,2}^2}$
     as a function of physical separation.
-    We highlight $3\sigma$ limit in gray shades.
-    Right: Fraction of pairs with $\Delta v_r/\sigma_{\Delta v_r} <3$
+    We highlight $3\sigma$ limit with two horizontal lines.
+    Bottom: Fraction of pairs with $\Delta v_r/\sigma_{\Delta v_r} <3$
     as a function of physical separation. We calculate the fraction with a running
     bin containing 31 data points at a time.
     The median, and the minimum and maximum separation of pairs in each bin are
     indicated with a marker, and its errorbars.
-    We separate pairs with network size of 2 (i.e., mutually exclusively connected)
-    from those in larger networks.
+    We separate pairs in connected components of size 2 (i.e., mutually exclusively connected)
+    from those in larger connected components.
     \label{fig:raverv}}
-\end{figure*}
+\end{figure}
 
 We now examine the separation distribution of co-moving pairs in
 Figure~\ref{fig:hist_separation}.
@@ -603,9 +609,10 @@ that such large scale phase-space correlations may now be looked for and studied
     \includegraphics[width=\textwidth]{figures/hist_sep.pdf}
   \end{center}
   \caption{%
-    Separation distribution of co-moving pairs of stars. 
-    We divide the pairs into those mutually exclusively connected
-    (network size $=2$), and those connected to larger networks (size $>2$).
+    Separation distribution of co-moving pairs of stars.
+    As with Figure~\ref{fig:raverv},
+    we divide the pairs into those mutually exclusively connected
+    (connected component size $=2$), and those connected to larger connected components (size $>2$).
     \label{fig:hist_separation}
     }
 \end{figure*}
