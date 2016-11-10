@@ -461,8 +461,8 @@ satisfy this condition.
     \includegraphics[width=\textwidth]{figures/dist_networksize.pdf}
   \end{center}
   \caption{%
-    Histogram of co-moving network sizes.
-    \label{fig:hist_Nneighbors}}
+    Histogram of the sizes of connected components.
+    \label{fig:hist_ccsize}}
 \end{figure*}
 
 \begin{figure*}[htbp]
@@ -470,11 +470,14 @@ satisfy this condition.
     \includegraphics[width=\textwidth]{figures/graphviz_examples.pdf}
   \end{center}
   \caption{%
-    Visualizations of a few example networks of co-moving pairs of stars.
+    Visualizations of a few example connected components of co-moving pairs of stars.
     Each star (node) is marked as a red circle, and a line (edge) is drawn
     between two stars if they are co-moving by our selection criteria
     (see \S~\ref{sub:selection}). On left, we show the largest network
     found in this study corresponding to the Pleiades star cluster.
+    On right, we show four examples of connected components with varying sizes.
+    The connected component on the upper left panel with a size of 58 corresponds
+    to NGC~2632, also known as the Beehive cluster.
     \label{fig:graphviz_examples}}
 \end{figure*}
 
@@ -502,7 +505,7 @@ be directly or indirectly connected by a set of edges.
 We divide the network into connected components\footnote{A connected component of an undirected graph $G$
 is a subgraph of $G$ in which any two nodes are connected to each other by a path.
 We use the term ``network'' loosely to refer to a graph or its connected components.},
-and show the distribution of their sizes in Figure~\ref{fig:hist_Nneighbors}.
+and show the distribution of their sizes in Figure~\ref{fig:hist_ccsize}.
 The most common are size 2 networks, which mean mutually exclusive co-moving
 pairs. However, it is clear that there are many aggregates of co-moving stars
 discovered by looking for co-moving pairs.
