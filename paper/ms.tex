@@ -50,6 +50,7 @@
 \newcommand{\data}{\mathrm{data}}
 \newcommand{\snr}{[S/N]_\varpi}
 \newcommand{\eye}{\mathbb{I}}
+\newcommand{\absdvtan}{\ensuremath{|\Delta\vec v_\mathrm{t}|}}
 
 % TODO
 \newcommand{\todo}[1]{{\color{red}TODO: #1}}
@@ -104,11 +105,17 @@ responsibly.
 We find pairs of co-moving stars out to very wide
 separations up to 10~pc, the limit of our search.
 Some of these pairs form larger networks through mutual co-moving neighbors,
-many of which correspond to the known open clusters, and stars in the OB associations.
+many of which correspond to the known open clusters, and stars in OB associations.
 However, there still is a huge number of very wide ($>3$~pc) separation pairs of
 stars that are co-moving.
 We discuss their nature, and the prospects for testing stellar models and chemical
 abundance measurements using our catalog.
+
+% change to probabilistic statement "co-moving"
+% we present a table of co-moving pairs
+% add dynamical inference 
+% the last line = the most important thing
+
 
 % HOGG:
 % There does not seem to be any tidal-disruption feature in the separation distribution
@@ -205,10 +212,10 @@ astrometric precision comparable to that of the \project{Hipparcos} catalog
 signal-to-noise ($\snr = \varpi/\sigma_\varpi$), the \tgas\ catalog contains
 42385 high-precision stars with $\snr > 32$.
 
-We construct a sample of candidate pair list as follows.
+We construct the initial sample of pairs as follows.
 We first apply a global parallax S/N cut of 8 to \tgas, which leaves 619,618 stars.
 Then, for each star, we search a potential co-moving partner star with a
-difference in tangential velocity $\Delta v_t < 10$~\kms\ within 10 pc
+difference in tangential velocity $\absdvtan < 10$~\kms\ within 10 pc
 using RA, DEC, a point-estimate of the distance, and the proper motions.
 Throughout this \documentname\, we use the following estimator for
 the point-estimate of the distance applying a correction for the Lutz-Kelker bias
@@ -220,12 +227,12 @@ the point-estimate of the distance applying a correction for the Lutz-Kelker bia
 where $\varpi$ is the parallax in mas.
 The difference in tangential velocity between two stars is, then,
 \begin{equation}
-  |\Delta \vec{v}_{\rm t}| = |d_1 \vec\mu_1 - d_2 \vec\mu_2|
+  \absdvtan = |d_1 \vec\mu_1 - d_2 \vec\mu_2|
 \end{equation}
 where $\vec\mu = (\mu_\alpha, \mu_\delta)$.
 
-Figure~\ref{fig:dv-sep} shows $|\Delta v_t|$ against the physical separation
-for the resulting 271,232 unique candidate pairs.
+Figure~\ref{fig:dv-sep} shows \absdvtan\ against the physical separation
+for the resulting 271,232 unique pairs in the initial sample.
 A few key observations can be made:
 
 \begin{itemize}
@@ -247,14 +254,14 @@ A few key observations can be made:
   the larger the difference in viewing angles is, the larger the difference in tangential 
   velocities will be.
   Due to this projection effect, a population of genuine co-moving pairs
-  will extend to larger $\Delta v_t$ at larger separation.
+  will extend to larger \absdvtan\ at larger separation.
   This indeed can be seen in Figure~\ref{fig:dv-sep} as an over-density
-  in lower right corner that gets thinner as $\Delta v_t$ increases.
+  in lower right corner that gets thinner as \absdvtan\ increases.
   
   \item Finally, there is a population of “random” pairs of field stars
-  which are not actually co-moving, but still has $\Delta v_t < 10$~\kms\
+  which are not actually co-moving, but still has $\absdvtan 10$~\kms\
   by chance.
-  As $\Delta v_t$ increases, this population will dominate.
+  As \absdvtan\ increases, this population will dominate.
   However, it is clear from this Figure that there is an overlap between
   genuine co-moving pairs and “random” pairs.
 \end{itemize}
@@ -268,8 +275,18 @@ that a given pair of stars is co-moving.
     \includegraphics[width=\textwidth]{figures/sep_dvtan.pdf}
   \end{center}
   \caption{%
-    Difference in tangential velocity vs. physical separation for candidate
-    pairs of stars with separation $< 10$~pc and $|\Delta v_t| < 10$~\kms.
+    Initial sample of pairs on the
+    difference in tangential velocity vs. physical separation plane.
+    For the initial sample, we look for stars
+    with separation $< 10$~pc and $\absdvtan < 10$~\kms\ for
+    every star in \tgas.
+    The blue solid line shows the magnitude of the 3D
+    orbital velocity as a function of semi-major axis for a $2~M_\odot$ binary system.
+    Note the stream of points that starts at small separation ($\lesssim 0.01$~pc),
+    small $\absdvtan$ ($\lesssim 2$~\kms),
+    but climbs to larger $\absdvtan$ at $|\Delta \vec{x}|\gtrsim 1$~pc, which
+    eventually merges with random pairs of field stars dominating in the upper right corner
+    (see \S~\ref{sec:data} for details).
     \label{fig:dv-sep}}
 \end{figure*}
 
@@ -377,19 +394,9 @@ estimating the above integrals for stars with a wide range in parallax
 signal-to-noise.
 %TODO: SMOH: still unsure about this
 
-\begin{figure*}[htbp]
-  \begin{center}
-    \includegraphics[width=\textwidth]{figures/a_vorb.pdf}
-  \end{center}
-  \caption{%
-    Binary orbital velocity as a function of semi-major axis for $2~M_\odot$
-    binary.
-    \label{fig:vorbit}}
-\end{figure*}
-
 For wide binaries, the assumption of same 3D velocity can break down
 for high precision proper motion measurements because of the orbital
-velocity (Figure~\ref{fig:vorbit}).
+velocity (blue solid line in Figure~\ref{fig:dv-sep}).
 To account for this, we set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
 
 \section{Results}
