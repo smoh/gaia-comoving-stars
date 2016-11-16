@@ -6,7 +6,6 @@
 *.log
 *.out
 *.synctex.gz
-*Notes.bib
 ms.pdf
-
+msNotes.bib
 gitstuff.tex
