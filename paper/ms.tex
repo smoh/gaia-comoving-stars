@@ -158,7 +158,7 @@ Wide binaries are also good testbeds for stellar evolution models.
 For example, main sequence-red giant wide binaries are especially valuable in
 testing consistency between stellar atmosphere models of these two types as the
 two stars were likely born at the same time with the same chemical compositions,
-but evolve indepdently becayse if their wide separation.
+but evolved indepdently because of their wide separation.
 Finally, calibration of stellar parameters of low-mass stars (e.g., M dwarfs),
 which dominate the stellar content of the Galaxy by number, can benefit from
 a larger sample of widely separated binaries containing a low mass star and a
@@ -222,7 +222,7 @@ signal-to-noise ($\snr = \varpi/\sigma_\varpi$), the \tgas\ catalog contains
 
 We construct an initial sample of star pairs to search for co-moving pairs as
 follows.
-We first apply a global parallax signal-to-noise cut, $\snr < 8$,  to \tgas,
+We first apply a global parallax signal-to-noise cut, $\snr > 8$,  to \tgas,
 which leaves 619,618 stars.
 For each surviving star, we then establish an initial sample of possible
 co-moving partners by selecting all other stars within 10 pc with a difference
@@ -436,29 +436,29 @@ for this quantity to select co-moving pairs from the initial pairs sample.
     \includegraphics[width=\textwidth]{figures/likelihoodratios.pdf}
   \end{center}
   \caption{%
+    \todo{
     Left: Density histogram of likelihood ratios for candidate pairs and random pairs.
     Along with the distribution for the entire candidate pairs (black thick line),
     we show the distribution for subsets in slices of $\Delta v_t$.
-    Right: $\Delta v_t$ vs separation in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$.
+    Right: $\Delta v_t$ vs separation in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$.}
     \label{fig:likelihoodratios}}
     \vspace{1em}
 \end{figure*}
 
 Figure~\ref{fig:likelihoodratios} shows the likelihood ratios for all
-$\approx$271k initial pairs examined.
+$\sim 271$k initial pairs examined.
 As discussed in \sectionname~\ref{sec:data}, we expect a correlation between likelihood
-ratios of pairs, and their distribution in $\Delta v_t$ vs separation plane.
-Specifically, as we sweep through from small $\Delta v_t$ to large, we expect
+ratios of pairs, and their distribution in \absdvtan\ vs separation plane.
+Specifically, as we sweep through from small \absdvtan\ to large, we expect
 the population of pairs to change from genuinely co-moving to random.
 This becomes clear when we look at the distribution of likelihood ratios for
-slices of $\Delta v_t$ centered at 0.5, 5, and 9.5~\kms.
-\todo{Fix in below and in the figure, $\Delta v_t$ should be $|\Delta v_t|$}
-Pairs with $|\Delta v_t-0.5|<0.5$ are most likely actual co-moving pairs, and
+slices of \absdvtan\ centered at 0.5, 5, and 9.5~\kms.
+Pairs with $|\absdvtan -0.5|<0.5$ are most likely actual co-moving pairs, and
 their likelihood distribution is narrowly peaked above 6.
-The distribution peaks at lower values and gets broader as $\Delta v_t$ increases,
+The distribution peaks at lower values and gets broader as \absdvtan\ increases,
 and the number of random pairs increasingly dominate.
 On the right panel of Figure~\ref{fig:likelihoodratios}, we show
-how the distribution of pairs on $\Delta v_t$ vs separation plane changes
+how the distribution of pairs on \absdvtan\ vs separation plane changes
 with decreasing $\ln \mathcal{L}_1 /\mathcal{L}_2$ ratios.
 This is in agreement with our discussion in \sectionname~\ref{sec:data}.
 Finally, as a test,
