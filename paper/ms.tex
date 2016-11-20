@@ -105,7 +105,7 @@ We find pairs of co-moving stars out to very wide
 separations up to 10~pc, the limit of our search.
 Some of these pairs form larger networks through mutual co-moving neighbors,
 many of which correspond to the known open clusters, and stars in OB associations.
-However, there still is a surprisingly large number (\todo{SMOH: give number})
+However, there still is a surprisingly large number
 of very wide ($>3$~pc) separation pairs of stars that are co-moving.
 We present a catalog of high-confidence co-moving pairs of stars in \tgas\
 with auxiliary information,
@@ -249,34 +249,32 @@ A few key observations can be made:
 
 \begin{itemize}
   \item At small separations ($<1$~pc), there is a population of pairs with
-  very small tangential velocity difference ($<2$~km/s). Given that these pairs
-  are very close in both position and proper motion,
-  it is highly probable that they are actually co-moving wide binaries.
+    very small tangential velocity difference ($<2$~km/s). Given that these
+    pairs are very close in both position and proper motion, it is highly
+    probable that they are actually co-moving wide binaries.
 
-  \item  However, it is not only (wide) binaries, which are gravitationally
-  bound, that are expected to appear as co-moving.
-  OB associations, moving groups, and open clusters are also of consideration.
-  Since the basic unit of our choice is a pair of stars, we can expect that
-  these astrophysical objects may be detected as networks of pairs.
-  As the pair separation increases, the nature of co-moving pairs
-  will change from binaries to those related to these larger objects,
-  which generally subtend a larger angle in sky.
-  Since the proper motions of two stars with the same 3D velocity
-  are essentially projections of this velocity onto sphere at
-  two different viewing angles,
-  the larger the difference in viewing angles is, the larger the difference in tangential
-  velocities will be.
-  Due to this projection effect, a population of genuine co-moving pairs
-  will extend to larger \absdvtan\ at larger separation.
-  This indeed can be seen in Figure~\ref{fig:dv-sep} as an over-density
-  in the lower right corner that gets thinner as \absdvtan\ increases.
+  \item  A sample of co-moving stars also include stars that are part of OB associations,
+    moving groups, and open clusters.
+    These astrophysical objects may be detected as a network of co-moving pairs.
+    As the pair separation increases, the nature of co-moving pairs
+    will change from binaries to those related to these larger objects,
+    which generally subtend a larger angle in sky.
+    Since the proper motions of two stars with the same 3D velocity
+    are essentially projections of this velocity onto sphere at
+    two different viewing angles,
+    the larger the difference in viewing angles is, the larger the difference in tangential
+    velocities will be.
+    Due to this projection effect, a population of genuine co-moving pairs
+    will extend to larger \absdvtan\ at larger separation.
+    This indeed can be seen in Figure~\ref{fig:dv-sep} as an over-density
+    in the lower right corner that gets thinner as \absdvtan\ increases.
 
   \item Finally, there is a population of “random” pairs of field stars
-  which are not actually co-moving, but still have $\absdvtan < 10$~\kms\
-  by chance.
-  As \absdvtan\ increases, this population will dominate.
-  However, it is clear from this Figure that there is an overlap between
-  genuine co-moving pairs and “random” pairs.
+    that are not co-moving, but still have $\absdvtan < 10$~\kms\
+    by chance.
+    As \absdvtan\ increases, this population will dominate.
+    Figure~\ref{fig:dv-sep} shows that there is an overlap between
+    genuine co-moving pairs and “random” pairs.
 \end{itemize}
 
 In the following section, we construct a statistical model that propagates
@@ -399,7 +397,8 @@ We derive the relevant expressions in Appendix~\ref{sec:appendix}.
 After marginalizing over velocity, the likelihood integrands only depend on
 distance; we numerically compute the integrals over the true distances to each
 star in a pair, $d_1,d_2$, using Monte Carlo integration with $K$ samples from
-the distance posterior pdfs \todo{Comment on the choice of distance prior}:
+the distance posterior pdfs assuming a uniform density prior
+\citep{Bailer-Jones:2015aa}
 \begin{equation}
   \int \, \dd d \, \tilde{L}(d) \, p(d\given\varpi) \approx
     \frac{1}{K} \, \sum_k^K \, \tilde{L}(d_k)
@@ -436,11 +435,11 @@ for this quantity to select co-moving pairs from the initial pairs sample.
     \includegraphics[width=\textwidth]{figures/likelihoodratios.pdf}
   \end{center}
   \caption{%
-    \todo{
-    Left: Density histogram of likelihood ratios for candidate pairs and random pairs.
-    Along with the distribution for the entire candidate pairs (black thick line),
-    we show the distribution for subsets in slices of $\Delta v_t$.
-    Right: $\Delta v_t$ vs separation in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$.}
+    Justification of the likelihood ratio cut.
+    On the top row, we show how the distribution of pairs on \absdvtan\ vs. separation changes
+    in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$ (sequentially color-coded in blue).
+    On the bottom row, we show how the distribution of $\ln \mathcal{L}_1 /\mathcal{L}_2$
+    changes in slices of \absdvtan\ (sequentially color-coded in red).
     \label{fig:likelihoodratios}}
     \vspace{1em}
 \end{figure*}
@@ -525,8 +524,7 @@ between the nodes exist for co-moving pairs of stars.
 A star may have multiple co-moving neighbors, and two stars may either
 be directly or indirectly connected by a set of edges.
 We divide the network into connected components\footnote{A connected component of an undirected graph $G$
-is a subgraph of $G$ in which any two nodes are connected to each other by a path.
-We use the term ``network'' loosely to refer to a graph or its connected components.},
+is a subgraph of $G$ in which any two nodes are connected to each other by a path.},
 and show the distribution of their sizes in Figure~\ref{fig:hist_ccsize}.
 The most common are size 2 networks, which mean mutually exclusive co-moving
 pairs. However, it is clear that there are many aggregates of co-moving stars
@@ -668,7 +666,7 @@ which will be valuable to anchoring stellar atmospheric models together.
 
 \begin{figure*}[htbp]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/gjg_mepairs.png}
+    \includegraphics[width=\textwidth]{figures/gjg_mepairs.pdf}
   \end{center}
   \caption{
     Color-magnitude diagrams of stars in networks of size 2 (i.e., mutually exclusive)
