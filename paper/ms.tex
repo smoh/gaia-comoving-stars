@@ -57,7 +57,8 @@
 
 \begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing % trust me
 
-\title{Co-moving stars in \textsl{Gaia DR1}}
+\title{Co-moving stars in \textsl{Gaia DR1}:\\
+  Abundance of very wide separation co-moving pairs}
 \author{Semyeong Oh\altaffilmark{\pu,\lead},
         Adrian M. Price-Whelan\altaffilmark{\pu},
         David W. Hogg\altaffilmark{\ccpp,\mpia,\cca},
@@ -94,22 +95,24 @@ rare binaries or sparsely populated groups.
 Here, we look for high-confidence co-moving pairs of stars using this data.
 % Methods
 We use a justified marginalized likelihood ratio test to separate
-pairs of stars with similar three-space velocities from
+pairs of stars with similar 3D velocities from
 those consistent with being drawn independently from the field
 population.  Although we perform some visualizations using a
 (bias-corrected) inverse parallax as a distance, the likelihood test
 works in the observable space and uses the \gaia\ noise model
 responsibly.
 % Results
-We find pairs of co-moving stars out to very wide
-separations up to 10~pc, the limit of our search.
-Some of these pairs form larger networks through mutual co-moving neighbors,
+We find 13,085 pairs of co-moving stars among 10,606 unique stars
+out to very wide separations up to 10~pc, the limit of our search.
+Some of these pairs form a larger group through mutual co-moving neighbors,
 many of which correspond to the known open clusters, and stars in OB associations.
-However, there still is a surprisingly large number
-of very wide ($>3$~pc) separation pairs of stars that are co-moving.
-We present a catalog of high-confidence co-moving pairs of stars in \tgas\
-with auxiliary information,
-and discuss its potential usage
+However, we also discover many co-moving groups of pairs for the first time.
+More surprisingly, we find a large number
+of very wide ($>3$~pc) separation co-moving pairs of stars.
+The number of these very wide separation pairs only increase with increasing
+separation, and cannot be merely due to false positives.
+We present a catalog of high-confidence co-moving pairs of stars in the \tgas\
+with auxiliary information, and discuss its potential usage
 for making dynamical inferences, and testing stellar models and chemical
 abundance measurements.
 
@@ -161,7 +164,7 @@ but evolved independently because of their wide separation.
 Finally, calibration of stellar parameters of low-mass stars (e.g., M dwarfs),
 which dominate the stellar content of the Galaxy by number, can benefit from
 a larger sample of widely separated binaries containing a low mass star and a
-much brighter FGK star whose stellar parameters are easier to measure
+much brighter F/G/K star whose stellar parameters are easier to measure
 \citep[e.g.,][]{Rojas-Ayala:2012aa}.
 
 At larger separation ($\gtrsim 1$~pc), co-moving stars are likely members of
@@ -171,11 +174,11 @@ star formation event with similar chemical composition? Or are they formed by
 dynamical effects of non-axisymmetric features of the Galaxy such as spirals
 and bars? With the recent improvements in measuring chemical abundances
 using high and low resolution spectroscopy, we can now start to explore these questions
-in unprecedented width (statistics) and depth (detail) \todo{What do you mean by this?}.
+with unprecedented statistics and in unexplored detail.
 The dynamics of cluster dissolution provides important clues to understanding
 the star formation history and the dynamical evolution of the Milky Way.
 In the halo, we know of more than 20 disrupting globular clusters and dwarf galaxies
-(see, e.g., \citealt{Grillmair:2016} for a summary of known streams).
+(``streams''; see, e.g., \citealt{Grillmair:2016} for a summary of known streams).
 These tidal streams are modeled to infer the parameters of the Galactic
 potential (e.g., \citealt{Kupper:2015}).
 Similar processes are at work with star clusters in the disk.
@@ -211,7 +214,7 @@ We conclude in \sectionname~\ref{sec:conclusions}.
 The primary data set used in this \documentname\ is the Tycho-Gaia Astrometric
 Solution (\tgas), released as a part of Data Release 1 (\dr) of the Gaia mission
 \citep{Gaia-Collaboration:2016aa,Lindegren:2016aa}.
-\tgas\ contains astrometric measurements (sky position,
+The \tgas\ contains astrometric measurements (sky position,
 parallax, and proper motions) and associated covariance matrices for a large
 fraction of the \project{Tycho-2} catalog \citep{2000A&A...355L..27H} with median
 astrometric precision comparable to that of the \project{Hipparcos} catalog
@@ -221,13 +224,13 @@ signal-to-noise ($\snr = \varpi/\sigma_\varpi$), the \tgas\ catalog contains
 
 We construct an initial sample of star pairs to search for co-moving pairs as
 follows.
-We first apply a global parallax signal-to-noise cut, $\snr > 8$,  to \tgas,
+We first apply a global parallax signal-to-noise cut, $\snr > 8$,  to the \tgas,
 which leaves 619,618 stars.
 For each surviving star, we then establish an initial sample of possible
 co-moving partners by selecting all other stars within 10 pc with a difference
 in tangential velocity below a threshold, $\absdvtan < 10$~\kms.
 We ultimately build a statistical model that incorporates the covariances of the
-data, but for this position cut and for visualizations we use a point-estimate
+data, but for these initial cuts and for visualizations we use a point-estimate
 of the distance by applying a correction for the Lutz-Kelker bias
 (\citealt{Lutz:1973aa}):
 \begin{equation}
@@ -250,17 +253,18 @@ A few key observations can be made:
 \begin{itemize}
   \item At small separations ($<1$~pc), there is a population of pairs with
     very small tangential velocity difference ($<2$~km/s). Given that these
-    pairs are very close in both position and proper motion, it is highly
+    pairs are very close in both 3D position and tangential velocities, it is highly
     probable that they are actually co-moving wide binaries.
 
   \item  A sample of co-moving stars also include stars that are part of OB associations,
     moving groups, and open clusters.
-    These astrophysical objects may be detected as a network of co-moving pairs.
+    These astrophysical objects may be detected as a network of co-moving pairs,
+    sharing some mutual co-moving neighbors.
     As the pair separation increases, the nature of co-moving pairs
     will change from binaries to those related to these larger objects,
     which generally subtend a larger angle in sky.
     Since the proper motions of two stars with the same 3D velocity
-    are essentially projections of this velocity onto sphere at
+    are essentially projections of this velocity onto the celestial sphere at
     two different viewing angles,
     the larger the difference in viewing angles is, the larger the difference in tangential
     velocities will be.
@@ -305,7 +309,7 @@ that a given pair of stars is co-moving.
 
 The abundance of pairs of stars with small velocity difference in
 \figname~\ref{fig:dv-sep} suggests that there are a
-significant number of co-moving stars in the \tgas\ data at a range
+significant number of co-moving pairs in the \tgas\ data at a range
 of separations.
 Here we develop a method to select high-confidence co-moving
 stars that properly incorporates the complex uncertainties associated with the
@@ -436,10 +440,15 @@ for this quantity to select co-moving pairs from the initial pairs sample.
   \end{center}
   \caption{%
     Justification of the likelihood ratio cut.
-    On the top row, we show how the distribution of pairs on \absdvtan\ vs. separation changes
-    in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$ (sequentially color-coded in blue).
-    On the bottom row, we show how the distribution of $\ln \mathcal{L}_1 /\mathcal{L}_2$
-    changes in slices of \absdvtan\ (sequentially color-coded in red).
+    On the top row, we show how the distribution of $\ln \mathcal{L}_1 /\mathcal{L}_2$
+    changes (left) in slices of \absdvtan\ (sequentially color-coded in pink on the right panel).
+    On the bottom row, we show how the distribution of pairs on \absdvtan\ vs. separation changes (right)
+    in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$ (sequentially color-coded in blue on the left).
+    The black dots (upper right) and lines (lower left) correspond to the entire initial sample of pairs.
+    For comparision, we also present the likelihood ratio distribution of random pairs
+    of stars in the \tgas\ with parallax $S/N>8$ in gray filled histogram.
+    Based on this, we choose $\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as our high-confidence
+    candidate co-moving pairs.
     \label{fig:likelihoodratios}}
     \vspace{1em}
 \end{figure*}
@@ -447,29 +456,30 @@ for this quantity to select co-moving pairs from the initial pairs sample.
 Figure~\ref{fig:likelihoodratios} shows the likelihood ratios for all
 $\sim 271$k initial pairs examined.
 As discussed in \sectionname~\ref{sec:data}, we expect a correlation between likelihood
-ratios of pairs, and their distribution in \absdvtan\ vs separation plane.
+ratios of pairs, and their distribution on \absdvtan\ vs separation plane.
 Specifically, as we sweep through from small \absdvtan\ to large, we expect
 the population of pairs to change from genuinely co-moving to random.
-This becomes clear when we look at the distribution of likelihood ratios for
-slices of \absdvtan\ centered at 0.5, 5, and 9.5~\kms.
-Pairs with $|\absdvtan -0.5|<0.5$ are most likely actual co-moving pairs, and
-their likelihood distribution is narrowly peaked above 6.
+This becomes clear when we look at the distribution of the likelihood ratios of pairs
+in slices of \absdvtan\ (top row of Figure~\ref{fig:likelihoodratios}).
+Pairs with $\absdvtan \in (0,2.5)~\kms$ are most likely actual co-moving pairs, and
+their likelihood ratio distribution is narrowly peaked at $\gtrsim 5$
+(darkest pink histogram in the upper left panel of Figure~\ref{fig:likelihoodratios}).
 The distribution peaks at lower values and gets broader as \absdvtan\ increases,
 and the number of random pairs increasingly dominate.
-On the right panel of Figure~\ref{fig:likelihoodratios}, we show
+On the bottom row of Figure~\ref{fig:likelihoodratios}, we show
 how the distribution of pairs on \absdvtan\ vs separation plane changes
 with decreasing $\ln \mathcal{L}_1 /\mathcal{L}_2$ ratios.
 This is in agreement with our discussion in \sectionname~\ref{sec:data}.
 Finally, as a test,
 we compute the likelihood ratios for 200,000 random pairs of stars with the same
-parallax signal-to-noise ratio cut as candidate pairs ($S/N > 8$).
-Shown as gray shaded histogram in Figure~\ref{fig:likelihoodratios},
+parallax signal-to-noise ratio cut as the initial sample ($S/N > 8$).
+Shown as the gray filled histogram in Figure~\ref{fig:likelihoodratios},
 this distribution peaks at a much lower value ($\approx 2$),
 and is clearly separated from highly probable co-moving pairs.
 
 Based on these comparisons, we select pairs with
-$\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as co-moving pair candidates.
-Out of 271,232 candidate pairs examined, 13,058 pairs (4.8\%)
+$\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as candidate co-moving pair.
+Out of 271,232 pairs in the initial sample, 13,058 pairs (4.8\%)
 satisfy this condition.
 
 \subsection{Statistics, properties, and nature of co-moving pairs}
@@ -506,55 +516,77 @@ satisfy this condition.
   \caption{%
     Panoramic view of co-moving pairs of stars. This is a cylindrical
     projection of onto the Galactic plane. The angle is the Galactic
-    longitude, and the radius is $d\cos b$ in pc where $d$ is the point-estimate
+    longitude, and the radius is $\hat d\cos b$ in pc where $\hat d$ is the point-estimate
     of distance using Equation~\ref{eq:dist}.
     Pairs in connected components of sizes less than 5 are connected by gray lines.
-    Pair in connected components of size $\geq 5$ are plotted with a unique color per network,
+    Pair in connected components of size $\geq 5$ are plotted with a unique random color,
     and their nodes (stars) are highlighted with small black circles.
     We also show the positions of known Milky Way star clusters
-    from \citet{Kharchenko:2016aa} as empty purple circles,
+    from \citet{Kharchenko:2016aa} as purple circles,
     and stars in OB associations from \citet{de-Zeeuw:1999aa} as
     gray circles.
+    Some of the larger connected components are clearly associated with known
+    clusters, but we also discover quite a few for the first time.
     \label{fig:glon_d_pairlines}}
 \end{figure*}
 
-Once we have identified candidate co-moving star pairs from the initial pair
+Once we have identified candidate co-moving pairs from the initial
 sample, these pairs form an undirected graph where stars are nodes, and edges
 between the nodes exist for co-moving pairs of stars.
 A star may have multiple co-moving neighbors, and two stars may either
-be directly or indirectly connected by a set of edges.
-We divide the network into connected components\footnote{A connected component of an undirected graph $G$
+be directly or indirectly connected by a sequence of edges (``path'').
+We divide the graph into connected components\footnote{A connected component of an undirected graph $G$
 is a subgraph of $G$ in which any two nodes are connected to each other by a path.},
 and show the distribution of their sizes in Figure~\ref{fig:hist_ccsize}.
-The most common are size 2 networks, which mean mutually exclusive co-moving
+The most common are connected components of size 2, which mean mutually exclusive co-moving
 pairs. However, it is clear that there are many aggregates of co-moving stars
 discovered by looking for co-moving pairs.
 These aggregates are likely moving groups, OB associations, or star clusters.
-There are 4555 connected components among 10,606 unique stars.
-The maximum size of connected components is 151.
-We show this largest network along with four randomly selected
-examples of networks with sizes greater than 4 in Figure~\ref{fig:graphviz_examples}.
-The largest network corresponds to the Pleiades open cluster.
-One particular star in this network, TYC 1799-272-1, has 94 directly connected
-co-moving neighbors, and is located at the center of the network.
+In 13,058 co-moving pairs that we identified,
+there are 4555 connected components among 10,606 unique stars.
+The maximum size of the connected components is 151.
+We show this largest connected component along with four other
+examples of varying sizes in Figure~\ref{fig:graphviz_examples}.
+The largest connected component corresponds to the Pleiades open cluster (left panel of Figure~\ref{fig:graphviz_examples})
+while the one on the upper left panel of the right column of Figure~\ref{fig:graphviz_examples}
+is NGC~2632, another known open cluster of the Milky Way \citep{Kharchenko:2016aa}.
+%One particular star in this network, TYC 1799-272-1, has 94 directly connected
+%co-moving neighbors, and is located at the center of the network.
 
 We show the distribution of co-moving pairs in galactic longitude and
 distance in Figure~\ref{fig:glon_d_pairlines}.
-The connection between known co-moving structures and the networks of co-moving
-pairs found in this work becomes immediately clear when
+The connection between known co-moving structures and
+the larger connected components found in this work becomes immediately clear when
 we overplot the positions of known Milky Way star clusters \citep{Kharchenko:2016aa},
 and stars in OB associations \citep{de-Zeeuw:1999aa}.
-Many of the larger networks are clearly associated with known star clusters.
-The most prominent is Melotte 111 at
-$(l,d)\approx (220\arcdeg, 87~\textrm{pc})$ otherwise known as the Coma star cluster.
+Many of the larger connected components are
+clearly associated with known star clusters:
+Melotte 22 (Pleiades) at $(l,d)\approx (167\arcdeg, 130~\textrm{pc})$,
+Melotte 20 at $(l,d)\approx (147\arcdeg, 175~\textrm{pc})$,
+Melotte 25 (Hyades) at $(l,d)\approx (180\arcdeg, 50~\textrm{pc})$, and
+NGC 2632 (Beehive) at $(l,d)\approx (206\arcdeg, 187~\textrm{pc})$
+to name a few.
 Clumps of co-moving pairs at $(l,d)\approx (300-360\arcdeg, 100-200~\textrm{pc})$
 seem to strongly correlate with the locations of OB associations
 Upper Scorpius, Upper Centaurus Lupus, and Lower Centaurus Crux
 \citep{de-Zeeuw:1999aa}.
 
+However, there are still many larger connected components that we
+discover for the first time.
+If we define a condition to associate a connected component to a known cluster
+as having more than 3 members within 10~pc of the nominal position of
+the cluster, for the 61 connected components with size larger than 5,
+we find that only 10 are associated with a cluster cataloged in
+\citet{Kharchenko:2016aa}.
+It is also worth noting that the positions of some of the known clusters
+are offset from those of the connected components associated with them,
+indicating that the \tgas\ data improves the distance estimates of these clusters.
+Finally, not all known star clusters are recovered in our search.
+This is primarily because of the non-uniform coverage of \tgas\ data.
+
 Ultimately, any candidate co-moving pair found in this work
 needs to be verified using radial velocities.
-Here, we use 210,368 cross-matches of \tgas\ with
+Here, we use 210,368 cross-matches of the \tgas\ with
 the Radial Velocity Experiment (\rave) to
 assess the false positive rates of our selection.
 We have 283 pairs with both stars matched with \rave.
@@ -568,15 +600,18 @@ This, after all, is not surprising because we are only using
 2D velocity information (proper motions) with errors.
 However, the contamination becomes significant only at $>1$~pc
 (which depends on the local stellar number density and velocity dispersion).
-Given the excellent correspondence between co-moving pair networks of larger sizes
+Given the excellent correspondence between
+aggregates of co-moving pairs (connected components)
 and known genuine co-moving structures (Figure~\ref{fig:glon_d_pairlines}),
-we may expect that pairs in these larger networks which will often have
-separations $>1$~pc to have less contamination.
-We divide pairs into those mutually exclusively connected (i.e., in a network of
-size 2), and those in a larger network.
-We indeed find that many pairs in larger networks are at $>1$~pc, yet
+we may expect that pairs in these larger connected components,
+which will often have separations $>1$~pc,
+to have less contamination from false positives.
+We divide the co-moving pairs into those
+mutually exclusively connected (i.e., in a connected component of
+size 2), and those in a larger group.
+We indeed find that many pairs in larger groups are at $>1$~pc, yet
 the fraction of pairs that have identical radial velocities within $3\sigma$ is
-higher than mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc.
+higher than the mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -589,7 +624,7 @@ higher than mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc
     $\Delta v_r$ is plotted in units of $\sigma_{\Delta v_r} = \sqrt{\sigma_{v_r,1}^2 + \sigma_{v_r,2}^2}$
     as a function of physical separation.
     We highlight $3\sigma$ limit with two horizontal lines.
-    Bottom: Fraction of pairs with $\Delta v_r/\sigma_{\Delta v_r} <3$
+    Bottom: Fraction of pairs with $|\Delta v_r/\sigma_{\Delta v_r}| <3$
     as a function of physical separation. We calculate the fraction with a running
     bin containing 31 data points at a time.
     The median, and the minimum and maximum separation of pairs in each bin are
@@ -601,13 +636,15 @@ higher than mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc
 
 We now examine the separation distribution of co-moving pairs in
 Figure~\ref{fig:hist_separation}.
-As expected, pairs in larger networks are mostly found with separations
-larger than 1~pc.
-Surprisingly, however, we also find a huge number of mutually exclusive pairs
+As expected, pairs in larger connected components are mostly
+found with separations larger than 1~pc.
+Surprisingly, however, we also find a large number of mutually exclusive co-moving
+pairs
 at $>1$~pc as well. Even if we consider the increasing false positive rate at large
 separations, the distribution is not significantly changed as the number of pairs
 at $>1$~pc is in fact increasing much faster (as a power-law)
-than the decrease due to the false positives (right panel of Figure~\ref{fig:raverv}).
+than the decrease due to the false positives
+(bottom panel of Figure~\ref{fig:raverv}).
 The nature of these very large separation, mutually exclusive pairs,
 which cannot be gravitationally bound to each other, needs further investigation.
 Can they be remnants of escaped binaries that are drifting apart?
@@ -637,11 +674,13 @@ Finally, we present the color-magnitude diagrams of co-moving pairs
 using the cross-matches with \tmass.
 A more detailed study of stellar parameters using photometry from various sources
 will follow. Figure~\ref{fig:cmd_large} and \ref{fig:cmd_me} shows $G-J$ vs $G$
-color-magnitude diagrams for stars in larger networks (size$>2$) and in mutually
-exclusive pairs (networks of size 2), respectively.
-The networks shown in Figure~\ref{fig:cmd_large} correspond to those visualized
+color-magnitude diagrams for stars in larger connected components (size$>2$)
+and in mutually exclusive pairs, respectively.
+The connected components shown in Figure~\ref{fig:cmd_large}
+correspond to those visualized
 in Figure~\ref{fig:graphviz_examples}.
-For stars in larger networks, there is a noticeable lack of evolved, off-main sequence
+For stars in larger co-moving groups, there is a noticeable
+lack of evolved, off-main sequence
 stars, in agreement with these kinematic structures being young.
 For mutually exclusive pairs, we divide the pairs by separation at 1~pc
 above which the false positive rate due to random pairs starts to increase.
@@ -655,12 +694,13 @@ which will be valuable to anchoring stellar atmospheric models together.
     \includegraphics[width=\textwidth]{figures/gjg_graphviz_examples.pdf}
   \end{center}
   \caption{
-    Color-magnitude diagrams of stars in larger networks presented in
-    Figure~\ref{fig:graphviz_examples}. Each panel shows the same network
-    visualized in the panel at the same position
+    Color-magnitude diagrams of stars in larger connected components presented in
+    Figure~\ref{fig:graphviz_examples}. Each panel shows the same group
+    of stars visualized in the panel at the same position
     in Figure~\ref{fig:graphviz_examples}.
-    We show the distribution of all stars common in \tgas\ and \tmass\
-    with parallax $S/N>16$ in blue for reference.
+    We show a reference distribution of stars randomly drawn to have
+    a matching distribution in distance as the stars in our co-moving pairs
+    in blue.
     \label{fig:cmd_large}}
 \end{figure*}
 
@@ -669,12 +709,13 @@ which will be valuable to anchoring stellar atmospheric models together.
     \includegraphics[width=\textwidth]{figures/gjg_mepairs.pdf}
   \end{center}
   \caption{
-    Color-magnitude diagrams of stars in networks of size 2 (i.e., mutually exclusive)
+    Color-magnitude diagrams of stars in mutually exclusive co-moving pairs
     in two separation bins.
-    We connect each pair by a line on the left for pairs with separations smaller than
-    1~pc.
-    We show the distribution of all stars common in \tgas\ and \tmass\
-    with parallax $S/N>16$ in blue for reference same as in Figure~\ref{fig:cmd_large}.
+    We connect each pair by a line on the left for pairs
+    with separations smaller than 1~pc.
+    We show a reference distribution of stars randomly drawn to have
+    a matching distribution in distance as the stars in our co-moving pairs
+    in blue, same as Figure~\ref{fig:cmd_large}.
     \label{fig:cmd_me}}
 \end{figure*}
 
@@ -686,15 +727,17 @@ we provide the following information:
 %
 \begin{itemize}
   \item \tgas\ source id for the two stars in a pair; these may be used to easily
-  retrieve cross matches of \gaia\ with other surveys such as WISE, \tmass, and \rave
-  using the \gaia\ data archive.
+    retrieve cross matches of \gaia\ with other surveys such as WISE, \tmass, and
+    \rave\ using the \gaia\ data archive.
   \item physical separation between the two stars in pc
   \item likelihood ratio, $\ln \mathcal{L}_1 /\mathcal{L}_2$
-  \item size of the network that the pair belongs to
-  \item unique ID of the network that the pair belongs to
+  \item size of the connected component that the pair belongs to
+  \item unique ID of the connected component that the pair belongs to; we assigned
+    a unique ID in descending order of size, thus ID~0 is the largest connected component with 151 stars that corresponds to the Pleiades.
 \end{itemize}
 %
-Additionally, given the strong correlation between the larger networks of pairs
+Additionally, given the strong correlation between the larger connected components
+of co-moving pairs
 and the known star clusters and OB associations, we provide for each star
 %
 \begin{itemize}
@@ -709,11 +752,12 @@ A part of the entire table is presented in Table~\ref{tab:catalog}.
 
 \input{stub}
 
-We note a caveat on the completeness of the networks found in our catalog.
-Because we applied a simple cut in the likelihood ratio ($\ln \mathcal{L}_1 /\mathcal{L}_2>6$),
-there is a possibility that, for example, a star in a mutually exclusive pair in our catalog may
-still have another possibly co-moving companion which has been dropped because the likelihood ratio
-is slightly less than 6.
+We note a caveat on the completeness of a connected component of co-moving
+pairs found in our catalog. Because we applied a simple cut in the likelihood
+ratio ($\ln \mathcal{L}_1 /\mathcal{L}_2>6$), there is a possibility that, for
+example, a star in a mutually exclusive pair in our catalog may still have
+another possibly co-moving companion which has been dropped because the
+likelihood ratio is slightly less than 6.
 
 \section{Conclusions}\label{sec:conclusions}
 
@@ -727,12 +771,16 @@ We argued for a reasonable cut of the likelihood ratio, and found
 13,058 candidate pairs of co-moving stars among 10,606 unique stars
 with separation ranging from 0.005~pc to 10~pc, the limit of our search.
 
-We examined the network of co-moving stars, and found that many of the larger
-networks of co-moving stars naturally corresponds to some of the known co-moving structures
+We examined the network of co-moving stars which forms an undirected graph,
+and found that many of the larger groups of 
+co-moving stars sharing one or more co-moving neighbor (connected components)
+naturally correspond to some of the known co-moving structures
 such as open clusters and stellar associations.
+Yet, still larger number of co-moving groups are discovered for the first time.
+
 We have also found a surprisingly large number of very wide separation ($>3$~pc)
 co-moving pairs which are not clearly associated to any known existing clusters.
-While their nature is yet unclear, they may be remnants of dissolving wide binaries and
+These are most likely remnants of dissolving wide binaries and
 open clusters. If so, this population should still be relatively young compared
 to the general disk field population. Modeling the color-magnitude diagram
 distribution of these stars can shed some light on this issue.
