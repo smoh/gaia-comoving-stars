@@ -86,14 +86,11 @@
 \altaffiltext{\cca}{Center for Computational Astrophysics, 162 5th Ave, New York, NY 10003, USA}
 
 \begin{abstract}
-% Context
 The primary sample of the \gaia\ \textsl{First Data Release} is the brand-new
 \textsl{Tycho-Gaia Astrometric Solution} (\tgas). The precision and size of this sample
 presents an opportunity to find new binary stars and moving groups, especially
 rare binaries or sparsely populated groups.
-% Aims
 Here, we look for high-confidence co-moving pairs of stars using this data.
-% Methods
 We use a justified marginalized likelihood ratio test to separate
 pairs of stars with similar 3D velocities from
 those consistent with being drawn independently from the field
@@ -101,12 +98,11 @@ population.  Although we perform some visualizations using a
 (bias-corrected) inverse parallax as a distance, the likelihood test
 works in the observable space and uses the \gaia\ noise model
 responsibly.
-% Results
 We find 13,085 pairs of co-moving stars among 10,606 unique stars
 out to very wide separations up to 10~pc, the limit of our search.
 Some of these pairs form larger groups through mutual co-moving neighbors,
 many of which correspond to the known open clusters, and stars in OB associations.
-However, we also discover many new co-moving groups of pairs.
+We also report many new co-moving groups of pairs.
 More surprisingly, we find a large number
 of very wide ($>3$~pc) separation co-moving pairs of stars.
 The number of these very wide separation pairs increase with increasing
@@ -115,15 +111,6 @@ We present a catalog of high-confidence co-moving pairs of stars in the \tgas\
 with auxiliary information, and discuss its potential use
 for making dynamical inferences, and testing stellar models and chemical
 abundance measurements.
-
-% HOGG:
-% There does not seem to be any tidal-disruption feature in the separation distribution
-% at sub-parsec scales. Pairs at separations beyond a
-% parsec---whether they are bound in a multiple system or drifting
-% apart---must be very short-lived. The photometric properties of the
-% members of these pairs are consistent with youth. The prospects for
-% testing stellar models and chemical abundance measurements are
-% superficially discussed.
 \end{abstract}
 
 \keywords{
@@ -200,7 +187,7 @@ In \sectionname~\ref{sec:methods}, we develop a statistical method to identify
 high-confidence co-moving stars in this catalog.
 In \sectionname~\ref{sec:results}, we present and discuss our resulting catalog
 of co-moving stars.
-We conclude in \sectionname~\ref{sec:conclusions}.
+We conclude in \sectionname~\ref{sec:summary}.
 
 %TODO: highlight the merits of this search:
 % - we have distance,
@@ -228,8 +215,9 @@ follows.
 We first apply a global parallax signal-to-noise cut, $\snr > 8$,  to the \tgas,
 which leaves 619,618 stars.
 For each surviving star, we then establish an initial sample of possible
-co-moving partners by selecting all other stars within 10 pc with a difference
-in tangential velocity below a threshold, $\absdvtan < 10$~\kms.
+co-moving partners by selecting all other stars that satisfy two criteria:
+separation less than 10~pc and difference
+in tangential velocity less than $\absdvtan < 10$~\kms.
 We ultimately build a statistical model that incorporates the covariances of the
 data, but for these initial cuts and for visualizations we use a point-estimate
 of the distance by applying a correction for the Lutz-Kelker bias
@@ -286,9 +274,9 @@ In the following section, we construct a statistical model that propagates
 the non-trivial uncertainties in the data to our beliefs about the likelihood
 that a given pair of stars is co-moving.
 
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/sep_dvtan.pdf}
+    \includegraphics[width=\linewidth]{figures/sep_dvtan.pdf}
   \end{center}
   \caption{%
     Point estimates of tangential velocity and physical separation computed for
@@ -304,7 +292,7 @@ that a given pair of stars is co-moving.
     eventually merges with random pairs of field stars dominating in the upper right corner
     (see \sectionname~\ref{sec:data} for details).
     \label{fig:dv-sep}}
-\end{figure*}
+\end{figure}
 
 \section{Methods} \label{sec:methods}
 
@@ -485,14 +473,14 @@ satisfy this condition.
 
 \subsection{Statistics, properties, and nature of co-moving pairs}
 
-\begin{figure*}[htbp]
+\begin{figure}[htbp]
   \begin{center}
-    \includegraphics[width=\textwidth]{figures/dist_networksize.pdf}
+    \includegraphics[width=\linewidth]{figures/dist_networksize.pdf}
   \end{center}
   \caption{%
     Histogram of the sizes of connected components.
     \label{fig:hist_ccsize}}
-\end{figure*}
+\end{figure}
 
 \begin{figure*}[htbp]
   \begin{center}
@@ -523,7 +511,7 @@ satisfy this condition.
     Pair in connected components of size $\geq 5$ are plotted with a unique random color,
     and their nodes (stars) are highlighted with small black circles.
     We also show the positions of known Milky Way star clusters
-    from \citet{Kharchenko:2016aa} as purple circles,
+    from \citet{Kharchenko:2016aa} as light blue circles,
     and stars in OB associations from \citet{de-Zeeuw:1999aa} as
     gray circles.
     Some of the larger connected components are clearly associated with known
@@ -760,27 +748,34 @@ example, a star in a mutually exclusive pair in our catalog may still have
 another possibly co-moving companion which has been dropped because the
 likelihood ratio is slightly less than 6.
 
-\section{Conclusions}\label{sec:conclusions}
+\section{Summary}\label{sec:summary}
 
 In this \documentname, we looked for co-moving pairs of stars in the
 \tgas\ data released as part of the \gaia\ DR1.
 Our method is to compare
 the fully marginalized likelihoods between the two hypotheses, that a pair of
 stars shares the same 3D velocity, and that the two stars have two independent
-3D velocities, incorporating the errors in parallax and proper motions.
+3D velocities, incorporating the covariances of parallax and proper motions.
 We argued for a reasonable cut of the likelihood ratio, and found
 13,058 candidate pairs of co-moving stars among 10,606 unique stars
 with separation ranging from 0.005~pc to 10~pc, the limit of our search.
 
-We examined the network of co-moving stars which forms an undirected graph,
-and found that many of the larger groups of 
-co-moving stars sharing one or more co-moving neighbor (connected components)
+We found that some co-moving pairs that we have identified are connected
+by sharing a common co-moving neighbor.
+This network of co-moving pairs, which forms an undirected graph,
+can be decomposed into connected components in which any two stars are connected
+by a path.
+The entire 13,058 candidate co-moving pairs are grouped into 4555 connected
+components. The most common is a size-2 connected component i.e., the two
+stars in these pairs are mutually exclusively linked.
+Many of the larger connected components 
 naturally correspond to some of the known co-moving structures
 such as open clusters and stellar associations.
-Yet, still larger number of co-moving groups are discovered for the first time.
+Some of these co-moving groups of stars are newly discovered.
 
 We have also found a surprisingly large number of very wide separation ($>3$~pc)
-co-moving pairs which are not clearly associated to any known existing clusters.
+mutually exclusive co-moving pairs, in which the stars are the only co-moving neighbor
+of each other, and not part of large connected components.
 These are most likely remnants of dissolving wide binaries and
 open clusters. If so, this population should still be relatively young compared
 to the general disk field population. Modeling the color-magnitude diagram
@@ -791,21 +786,35 @@ to measure the recent ($\lesssim 1$~Gyr)
 star formation history in the Solar neighborhood.
 Co-moving stars with separation less than 1~pc are very promising candidates
 for wide binaries. They are found to be pairs of stars of varying stellar types.
-Some of these pairs, such as main sequence-red giant or FGK-M dwarfs,
+Some of these pairs, such as main sequence-red giant or F/G/K-M dwarfs,
 will be particularly valuable for testing theoretical
 stellar models and calibrating observational measurements of low mass stars.
 
+We note that a similar search for wide binaries using the \tgas\ data is performed
+in a recent work by \citet{2016arXiv161107883O}. They find $\approx 1900$ wide binaries
+with separation typically less than 1.5~pc, and 256 pairs with separation larger than
+$\sim 1$~pc.
+We emphasize that our method is based on a probabilistic model for the assumptions
+on the \emph{3D velocities} of the two stars in a pair, and that we
+marginalize over the (unknown) three components of the velocities 
+in contrast to just working in the proper motion space.
+
+Finally, we make our catalog of 13,058 candidate co-moving pair available to the
+community.
+What we find using the \tgas\ is only a taste of what we will discover with
+the future releases of \gaia.
 
 \acknowledgements
 
-This work has made use of data from the European Space Agency (ESA)
-mission {\it Gaia} (\url{http://www.cosmos.esa.int/gaia}), processed by
-the {\it Gaia} Data Processing and Analysis Consortium (DPAC,
-\url{http://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding
-for the DPAC has been provided by national institutions, in particular
-the institutions participating in the {\it Gaia} Multilateral Agreement.
-This project was developed in part at the 2016 NYC Gaia Sprint,
-hosted by the Center for Computational Astrophysics at the Simons Foundation in New York City.
+This work has made use of data from the European Space Agency (ESA) mission
+{\it Gaia} (\url{http://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
+Data Processing and Analysis Consortium (DPAC,
+\url{http://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
+has been provided by national institutions, in particular the institutions
+participating in the {\it Gaia} Multilateral Agreement. This project was
+developed in part at the 2016 NYC Gaia Sprint, hosted by the Center for
+Computational Astrophysics at the Flatiron Institute in New York City. The
+Flatiron Institute is supported by the Simons Foundation.
 
 This research was partially supported by the \acronym{NSF} (grants
   \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
