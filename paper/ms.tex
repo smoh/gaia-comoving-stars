@@ -94,19 +94,21 @@ Here, we look for high-confidence co-moving pairs of stars using this data.
 We use a justified marginalized likelihood ratio test to separate
 pairs of stars with similar 3D velocities from
 those consistent with being drawn independently from the field
-population.  Although we perform some visualizations using a
-(bias-corrected) inverse parallax as a distance, the likelihood test
-works in the observable space and uses the \gaia\ noise model
-responsibly.
+population.  Although we perform some visualizations using
+(bias-corrected) inverse parallax as point-estimate of distance,
+the likelihood ratio test
+is based on a probabilistic model that includes the covariances
+of parallax and proper motions, and marginalizes the unknown
+distances and 3D velocities of stars.
 We find 13,085 pairs of co-moving stars among 10,606 unique stars
 out to very wide separations up to 10~pc, the limit of our search.
 Some of these pairs form larger groups through mutual co-moving neighbors,
-many of which correspond to the known open clusters, and stars in OB associations.
+many of which correspond to the known open clusters, and OB associations.
 We also report many new co-moving groups of pairs.
 More surprisingly, we find a large number
 of very wide ($>3$~pc) separation co-moving pairs of stars.
 The number of these very wide separation pairs increase with increasing
-separation; and cannot be explained purely by false-positives contamination.
+separation; and cannot be explained purely by false-positive contamination.
 We present a catalog of high-confidence co-moving pairs of stars in the \tgas\
 with auxiliary information, and discuss its potential use
 for making dynamical inferences, and testing stellar models and chemical
@@ -313,22 +315,21 @@ parameters):
     barycenter) are either (1) the same with a small (Gaussian) dispersion $s$
     or (2) independent.
     In both cases, velocity is drawn from
-    the velocity prior $p(\vec{v})$ that we describe later.
+    the velocity prior $p(\vec{v})$.
 \end{itemize}
 
 Under these assumptions, the likelihood of a proper motion measurement,
-$\bs{\mu}$, for a star with true distance, $d$, and true tangential velocity,
-$\vec{v}_t =
-(\begin{array}[t]{c c} v_\alpha & v_\delta\end{array})^\mathsf{T}$ is
+$\bs{\mu}$, for a star with true distance, $d$, and true 3D velocity $\vec{v}$ is
 \begin{align}
-  L(\vec{\mu} \given \vec{v}, d) &=
-    \left[\det\left(\frac{{\mat{C}}^{-1}}{2\pi}\right)\right]^{1/2} \,
+  L(\vec{\mu} \given \vec{v}, d, s^2) &=
+    \left[\det\left(\frac{\tilde{\mat{C}}^{-1}}{2\pi}\right)\right]^{1/2} \,
     \exp \left[ -\frac{1}{2} \transp{\left(\vec{\mu} - \vec{x}_\theta \right)} \,
-    {\mat{C}}^{-1} \,
+    \tilde{\mat{C}}^{-1} \,
     \left(\vec{\mu} - \vec{x}_\theta \right) \right] \label{eq:likefn} \\
   \vec{x}_\theta &= d^{-1} \, \vec{v}_t
 \end{align}
-where the tangential velocity $\vec{v}_t$ is related to the 3D velocity
+where the tangential velocity $\vec{v}_t = (\begin{array}[t]{c c} v_\alpha & v_\delta\end{array})^\mathsf{T}$
+is related to the 3D velocity
 $\vec{v}$ by projection matrix $\mat{M}$ at the star's sky position
 $(\alpha, \delta)$
 \begin{align}
@@ -341,10 +342,11 @@ $(\alpha, \delta)$
     \right) \,
     \left(\begin{array}{c} v_x \\ v_y \\ v_z \end{array}\right) \label{eq:transformation}
 \end{align}
-%and the modified covariance matrix $\tilde{\mat{C}}$ is
-%\begin{equation}
-%  \tilde{\mat{C}} = \mat{C} + s^2 \, \eye
-%\end{equation}
+and the modified covariance matrix $\tilde{\mat{C}}$ is
+\begin{equation}
+  \tilde{\mat{C}} = \mat{C} + (s/d)^2 \, \eye
+\end{equation}
+The parameter $s$ is added to allow for small tolerance in velocities which we discuss below.
 
 For a given pair, we compute the fully marginalized likelihood (FML) for the hypotheses (1) and (2),
 $\mathcal{L}_1$ and $\mathcal{L}_2$.
@@ -352,18 +354,18 @@ We use the FML ratio $\mathcal{L}_1/\mathcal{L}_2$ as the scalar quantity to sel
 candidate co-moving pairs, as described in $\sectionname~\ref{sub:selection}$ in
 more detail.
 To compute these FMLs, the likelihood functions for each star in a pair, $L_i,
-L_j$, are marginalized over the (unknown) true 3D velocity and distance for each star in
+L_j$, are marginalized over the (unknown) true distance and 3D velocity for each star in
 the pair $(i,j)$.
 \begin{align}
   \mathcal{L}_1 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \vec{v} \,
-    L_i(\vec{v}, d_i, s^2) \,
-    L_j(\vec{v}, d_j, s^2) \,
+    L_i(\vec{\mu_i} \given \vec{v}, d_i, s^2) \,
+    L_j(\vec{\mu_j} \given \vec{v}, d_j, s^2) \,
     p(\vec{v}) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j) \\
   \mathcal{L}_2 &=
     \int \, \dd d_i \, \dd d_j \, \dd^3 \vec{v}_i \, \dd^3 \vec{v}_j \,
-    L_i(\vec{v}_i, d_i, 0) \,
-    L_j(\vec{v}_j, d_j, 0) \,
+    L_i(\vec{\mu_i} \given \vec{v}_i, d_i, s^2) \,
+    L_j(\vec{\mu_j} \given \vec{v}_j, d_j, s^2) \,
     p(\vec{v}_i) \, p(\vec{v}_j) \, p(d_i \given \varpi_i) \, p(d_j \given \varpi_j). \label{eq:hyp2}
 \end{align}
 Here, $p(d_i \given \varpi_i)$ is the posterior distribution of distance given parallax measurement
@@ -371,9 +373,10 @@ $\varpi_i$ and its Gaussian error $\sigma_{\varpi,i}$.
 Note that the FML for the hypothesis (1) involves integration over one velocity $\vec{v}$ that
 generates the likelihoods for both stars, $L_i$ and $L_j$.
 The marginalization integral for hypothesis (2) can be split into the product of
-two simpler integrals $\mathcal{L}_2 = Q_i \, Q_j$ where
+two simpler integrals $\mathcal{L}_2 = Q(\vec{\mu_i}, \varpi_i) \, Q(\vec{\mu_j}, \varpi_j)$ where
 \begin{equation}
-  Q_i = \int \, \dd d \, \dd^3 \vec{v} \, L(\vec{v}, d, 0) \, p(\vec{v}) \, p(d\given\varpi_i)
+  Q(\vec{\mu}, \varpi) = \int \, \dd d \, \dd^3 \vec{v} \, L(\vec{\mu} \given \vec{v}, d, s^2) \,
+  p(\vec{v}) \, p(d \given \varpi)
 \end{equation}
 
 If the velocity prior $p(\vec{v})$ is also Gaussian, the integrals over velocity
@@ -406,7 +409,10 @@ For wide binaries, the assumption of the stars having the same 3D velocity for
 hypothesis (1) can
 break down for high precision proper motion measurements because of the orbital
 velocity (blue solid line in Figure~\ref{fig:dv-sep}).
-To account for this, we modify set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
+To account for this, we set $s^2 = \frac{2 \, G \, \msun}{|\vec{x}_i-\vec{x}_j|}$.
+Because $s^2$ is much smaller than the velocity dispersions of the velocity prior
+$p(\vec{v})$, it has minimal effect on the hypothesis (2).
+
 
 \section{Results} \label{sec:results}
 
@@ -422,7 +428,7 @@ of this study.
 
 In this section, we examine the distribution of (log-)likelihood ratios
 $\ln \mathcal{L}_1 /\mathcal{L}_2$, and come up with a reasonable cut
-for this quantity to select co-moving pairs from the initial pairs sample.
+for this quantity to select co-moving pairs from the initial sample.
 
 \begin{figure*}[htbp]
   \begin{center}
@@ -434,7 +440,8 @@ for this quantity to select co-moving pairs from the initial pairs sample.
     changes (left) in slices of \absdvtan\ (sequentially color-coded in pink on the right panel).
     On the bottom row, we show how the distribution of pairs on \absdvtan\ vs. separation changes (right)
     in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$ (sequentially color-coded in blue on the left).
-    The black dots (upper right) and lines (lower left) correspond to the entire initial sample of pairs.
+    The black dots in the upper right panel and
+    the black line in the lower lef panel correspond to the entire initial sample of pairs.
     For comparision, we also present the likelihood ratio distribution of random pairs
     of stars in the \tgas\ with parallax $S/N>8$ in gray filled histogram.
     Based on this, we choose $\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as our high-confidence
@@ -444,8 +451,8 @@ for this quantity to select co-moving pairs from the initial pairs sample.
 \end{figure*}
 
 Figure~\ref{fig:likelihoodratios} shows the likelihood ratios for all
-$\sim 271$k initial pairs examined.
-As discussed in \sectionname~\ref{sec:data}, we expect a correlation between likelihood
+$\sim 271$k pairs in the initial sample.
+As discussed in \sectionname~\ref{sec:data}, we expect a correlation between the likelihood
 ratios of pairs, and their distribution on \absdvtan\ vs separation plane.
 Specifically, as we sweep through from small \absdvtan\ to large, we expect
 the population of pairs to change from genuinely co-moving to random.
@@ -507,7 +514,7 @@ satisfy this condition.
     Panoramic view of co-moving pairs of stars. This is a cylindrical
     projection of onto the Galactic plane. The angle is the Galactic
     longitude, and the radius is $\hat d\cos b$ in pc where $\hat d$ is the point-estimate
-    of distance using Equation~\ref{eq:dist}.
+    of distance using \eqname~\ref{eq:dist}.
     Pairs in connected components of sizes less than 5 are connected by gray lines.
     Pair in connected components of size $\geq 5$ are plotted with a unique random color,
     and their nodes (stars) are highlighted with small black circles.
@@ -562,20 +569,20 @@ Upper Scorpius, Upper Centaurus Lupus, and Lower Centaurus Crux
 However, there are still many new larger connected components that we
 discover.
 If we define a condition to associate a connected component to a known cluster
-as having more than 3 members within 10~pc of the nominal position of
-the cluster, for the 61 connected components with size larger than 5,
+as having more than 3 members within 10~pc from the nominal position of
+the cluster, for the 61 connected components with sizes larger than 5,
 we find that only 10 are associated with a cluster cataloged in
 \citet{Kharchenko:2016aa}.
 It is also worth noting that the positions of some of the known clusters
 are offset from those of the connected components associated with them,
 indicating that the \tgas\ data improves the distance estimates of these clusters.
 Finally, not all known star clusters are recovered in our search.
-This is primarily because of the non-uniform coverage of \tgas\ data.
+This is primarily because of the non-uniform coverage of the \tgas\ data.
 
 Ultimately, any candidate co-moving pair found in this work
 needs to be verified using radial velocities.
 Here, we use 210,368 cross-matches of the \tgas\ with
-the Radial Velocity Experiment (\rave) to
+Radial Velocity Experiment (\rave) to
 assess the false-positive rates of our selection.
 We have 283 pairs with both stars matched with \rave.
 Figure~\ref{fig:raverv} shows the difference in radial velocities
@@ -632,7 +639,7 @@ separations, the distribution is not significantly changed as the number of pair
 at $>1$~pc is in fact increasing much faster (as a power-law)
 than the decrease due to the false-positives
 (bottom panel of Figure~\ref{fig:raverv}).
-The nature of these very large separation, mutually exclusive pairs,
+The nature of these very wide separation, mutually exclusive pairs,
 which cannot be gravitationally bound to each other, needs further investigation.
 Can they be remnants of escaped binaries that are drifting apart?
 In a study of the evolution of wide binaries including the Galactic tidal field
@@ -642,7 +649,7 @@ stars that were once in a wide binary system, but are drifting apart with small
 relative velocities ($\sim 0.1$~\kms).
 Our search which stops on the maximum radius of 10~pc is obviously insufficient
 to clearly detect this peak, but it shows such hint, and demonstrates
-that such large scale phase-space correlations may now be looked for and studied within the \gaia\ data.
+that such large scale phase-space correlations may now be looked for and studied using the \gaia\ data.
 
 \begin{figure*}[htbp]
   \begin{center}
@@ -674,7 +681,6 @@ above which the false-positive rate due to random pairs starts to increase.
 While many pairs are located along the main sequence, we also find
 quite a few of main sequence-red giant pairs,
 which will be valuable to anchoring stellar atmospheric models together.
-%TODO: SMOH: what else can i discuss?
 
 \begin{figure*}[htbp]
   \begin{center}
@@ -716,7 +722,8 @@ we provide the following information:
   \item \tgas\ source id for the two stars in a pair; these may be used to easily
     retrieve cross matches of \gaia\ with other surveys such as WISE, \tmass, and
     \rave\ using the \gaia\ data archive.
-  \item physical separation between the two stars in pc
+  \item physical separation between the two stars in pc. Note that this is calculated
+    using the point-estimates of distances (\eqname~\ref{eq:dist}) of the two stars.
   \item likelihood ratio, $\ln \mathcal{L}_1 /\mathcal{L}_2$
   \item size of the connected component that the pair belongs to
   \item unique ID of the connected component that the pair belongs to; we assigned
@@ -731,7 +738,7 @@ and the known star clusters and OB associations, we provide for each star
   \item index of the closest cluster in the Milky Way Star Cluster catalog of
   \citet{Kharchenko:2016aa} using 3D separation
   \item distance to the closest cluster in pc
-  \item the ID of the OB association (A-L) if the star is in the catalog of
+  \item ID of the OB association (A-L) if the star is in the catalog of
   stars in the known OB associations by \citet{de-Zeeuw:1999aa}
 \end{itemize}
 %
@@ -755,7 +762,7 @@ the fully marginalized likelihoods between the two hypotheses, that a pair of
 stars shares the same 3D velocity, and that the two stars have two independent
 3D velocities, incorporating the covariances of parallax and proper motions.
 We argued for a reasonable cut of the likelihood ratio, and found
-13,058 candidate pairs of co-moving stars among 10,606 unique stars
+13,058 candidate co-moving pairs among 10,606 stars
 with separation ranging from 0.005~pc to 10~pc, the limit of our search.
 
 We found that some co-moving pairs that we have identified are connected
@@ -774,11 +781,11 @@ Some of these co-moving groups of stars are newly discovered.
 We have also found a surprisingly large number of very wide separation ($>3$~pc)
 mutually exclusive co-moving pairs, in which the stars are the only co-moving neighbor
 of each other, and not part of large connected components.
-These are most likely remnants of dissolving wide binaries and
-open clusters. If so, this population should still be relatively young compared
+These are most likely remnants of dissolving wide binaries.
+If so, this population should still be relatively young compared
 to the general disk field population. Modeling the color-magnitude diagram
 distribution of these stars can shed some light on this issue.
-If they are truly dissolving stars that were born coeval,
+If they are remnants of dissolving systems that were born coeval,
 the sample of very wide separation co-moving pairs can potentially be used
 to measure the recent ($\lesssim 1$~Gyr)
 star formation history in the Solar neighborhood.
@@ -794,8 +801,8 @@ with separation typically less than 1.5~pc, and 256 pairs with separation larger
 $\sim 1$~pc.
 We emphasize that our method is based on a probabilistic model for the assumptions
 on the \emph{3D velocities} of the two stars in a pair, and that we
-marginalize over the (unknown) three components of the velocities 
-in contrast to just working in the proper motion space.
+marginalize over the (unknown) distances and velocities of the stars
+in contrast to just applying a cut in the proper motion space.
 
 Finally, we make our catalog of 13,058 candidate co-moving pair available to the
 community.
