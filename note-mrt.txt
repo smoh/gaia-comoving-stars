@@ -1,0 +1,46 @@
+# Making machine-readable table using the [online tool](https://authortools.aas.org/MRT/upload.html)
+
+1. Save csv with data only, no header
+2. Select comma-delimited
+3. Enter units
+```
+---
+---
+pc
+---
+---
+---
+---
+pc
+---
+---
+```
+
+4. Enter labels
+```
+sourceid1
+sourceid2
+Sep
+lnL1/L2
+NCC
+IDCC
+IDMWSC
+dMWSC
+OBAssc1
+OBAssc2
+```
+
+5. Enter explanations
+```
+Gaia source id of star 1
+Gaia source id of star 2
+separation between star 1 and 2
+natural log of likelihood ratio
+size of the connected component that the pair belongs to
+unique id of the connected component that the pair belongs to
+id of the closest Milky Way star cluster
+distance to the closest Milky Way star cluster
+[A-L]? id of the OB associations if matched for star 1
+[A-L]? id of the OB associations if matched for star 2
+```
+
