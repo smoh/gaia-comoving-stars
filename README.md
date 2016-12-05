@@ -1,5 +1,5 @@
 
-[![Build Status](https://travis-ci.com/smoh/gaia-comoving-stars.svg?token=snqHW5KtLdPNJV6qzcFr&branch=master)](https://travis-ci.com/smoh/gaia-wide-binaries)
+[![Build Status](https://travis-ci.com/smoh/gaia-comoving-stars.svg?token=snqHW5KtLdPNJV6qzcFr&branch=master)](https://travis-ci.com/smoh/gaia-comoving-stars)
 
 # Data
 
