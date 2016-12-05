@@ -29,7 +29,7 @@ setup(
     author="Semyeong Oh, Adrian Price-Whelan, Timothy D. Morton, David W. Hogg",
     author_email="semyeong@astro.princeton.edu, adrn@princeton.edu",
     packages=["gwb", "gwb.tests"],
-    url="https://github.com/smoh/gaia-wide-binaries",
+    url="https://github.com/smoh/gaia-comoving-stars",
     license="MIT",
     description="Gaia wide binaries.",
     long_description=rd("README.md"),
