@@ -25,3 +25,9 @@ clean:
 	${RM} aastexmods.aux
 	${RM} gitstuff.aux
 	${RM} *Notes.bib
+
+submit: ${NAME}.pdf
+	make
+	tar -czvf archive.tar.gz $$(git ls-tree --name-only HEAD | grep -v ".gitignore\|Makefile\|figures") -C ./figures/ $$(cd figures && git ls-files)
+	echo "archive.tar.gz created"
+
