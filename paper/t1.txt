@@ -19,9 +19,6 @@ Byte-by-byte Description of file: datafile1.txt
   71- 72 A2     ---     OBAssc1    [A-L]? id of the OB associations if matched for star 1
   74- 75 A2     ---     OBAssc2    [A-L]? id of the OB associations if matched for star 2
 --------------------------------------------------------------------------------
-Note (1):   ***ADD LENGTHY NOTES HERE***
-Note (2):   ***OR REMOVE THIS SECTION***
---------------------------------------------------------------------------------
  249282341403694592  441371523899475840  4.9  7.0 125    1  210   4.0 -- -- 
  249087281167662464  441901694662492928  8.3  7.1 125    1  210   5.0 -- -- 
   64933755122821120   66786500935624320  7.8  7.5 151    0  228  14.0 -- -- 
