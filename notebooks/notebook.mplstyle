@@ -1,11 +1,15 @@
 savefig.dpi : 100
 axes.labelsize : 20
+axes.linewidth : 2
 xtick.labelsize : 15
+xtick.major.size : 8
+xtick.minor.size : 4
 ytick.labelsize : 15
+ytick.major.size : 8
+ytick.minor.size : 4
 patch.edgecolor : None
 patch.facecolor : black
 lines.markeredgewidth : 0
 text.usetex : True
-text.latex.preamble : r"\usepackage{amsmath}"
+text.latex.preamble : \usepackage{amsmath},\usepackage{cmbright}
 font.family : sans-serif
-font.sans-serif : 'Helvetica Neue'
