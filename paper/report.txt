@@ -15,22 +15,35 @@ We thank the referee for his/her comments, and detail our response to each item 
 
     - p.3: begin of section 2: does "Article" need to be in italic?
 
+It has been de-italicized.
+
     - p.3: eq.(1): if S/N gets below 4 the sqrt becomes imaginary,
     is this correct? does this directly come out of the Lutz-Kelker
     bias or are more comments in order here?
 
-
+It is correct. The distance estimator including the Lutz-Kelker bias is
+the maximum of the posterior distribution assuming a prior proportional to parallax^-4
+(constant density without normalization).
+If the parallax S/N is less than 4, the posterior of distance does not have a
+maximum.
 
     - p.3: line below eq.(2): I assume you mean proper motion RA*cos(Dec)
     here instead of just mu_alpha, right?
 
+The symbol mu_alpha indeed refers to $\dot\alpha \cos(\delta)$ insead of just
+$\dot\alpha$.
 
+SMOH: hmm.. is $\mu_\alpha$ symbol incorrect?
 
     - p.6: eq.(7): might want to mention what "I" is (unit matrix)
+
+Fixed.
 
     - p.6: eq.(8): it is a bit unfortunate that we have so many
     different meanings for "d"; maybe the distance should be called
     "r" or "D"
+
+SMOH TODO swap d to r?
 
     - p.6: after eq.(11): it is not clear where those numbers for
     velocity dispersion and weights are coming from - any reference?
@@ -46,7 +59,11 @@ We thank the referee for his/her comments, and detail our response to each item 
     frankly I can see only sort of grey star cluster symbols,
     nothing light blue
 
+SMOH TODO select better colors
+
     - p.11: provide reference to RAVE project
+
+We added Kunder et al. 2016.
 
     - p.14: section 4.3: mention the headings of columns in Table 1
     explicitly in the description of that table in the text,

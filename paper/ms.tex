@@ -28,7 +28,7 @@
 \newcommand{\rave}{\project{\acronym{RAVE}}}
 \newcommand{\apogee}{\project{\acronym{APOGEE}}}
 \newcommand{\tmass}{\project{\acronym{2MASS}}}
-\newcommand{\documentname}{\textsl{Article}}
+\newcommand{\documentname}{Article}
 \newcommand{\sectionname}{Section}
 \newcommand{\figname}{Figure}
 \newcommand{\eqname}{Equation}
@@ -349,6 +349,7 @@ and the modified covariance matrix $\tilde{\mat{C}}$ is
 \begin{equation}
   \tilde{\mat{C}} = \mat{C} + (s/d)^2 \, \eye
 \end{equation}
+where $\eye$ is the identity matrix.
 The parameter $s$ is added to allow for small tolerance in velocities which we discuss below.
 
 For a given pair, we compute the fully marginalized likelihood (FML) for the hypotheses (1) and (2),
@@ -586,7 +587,7 @@ This is primarily because of the non-uniform coverage and magnitude limit of the
 Ultimately, any candidate co-moving pair found in this work
 needs to be verified using radial velocities.
 Here, we use 210,368 cross-matches of the \tgas\ with
-Radial Velocity Experiment (\rave) to
+Radial Velocity Experiment fifth data release (\rave DR~5; \citealt{2016arXiv160903210K}) to
 assess the false-positive rates of our selection.
 We have 283 pairs with both stars matched with \rave.
 Figure~\ref{fig:raverv} shows the difference in radial velocities
