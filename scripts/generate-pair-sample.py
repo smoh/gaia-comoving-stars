@@ -243,7 +243,7 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.abspath(args.stacked_tgas_path)):
         raise IOError("Stacked TGAS data file '{}' does not exist.".
                       format(args.stacked_tgas_path))
-    if os.path.exists(args.outname) and not overwrite:
+    if os.path.exists(args.outname) and not args.overwrite:
         raise IOError("Output file '{}' already exists. Use --overwrite to overwrite.".
                       format(args.outname))
 
