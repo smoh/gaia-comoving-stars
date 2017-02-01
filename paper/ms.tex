@@ -18,6 +18,7 @@
 \definecolor{cbblue}{HTML}{3182bd}
 \usepackage{microtype}  % ALWAYS!
 \usepackage{amsmath}
+\usepackage{tikz}
 \hypersetup{backref,breaklinks,colorlinks,urlcolor=cbblue,linkcolor=cbblue,citecolor=black}
 \graphicspath{{figures/}}
 
@@ -365,7 +366,7 @@ the pair $(i,j)$.
     \int \, \dd r_i \, \dd r_j \, \dd^3 \vec{v} \,
     L_i(\vec{\mu_i} \given \vec{v}, r_i, s^2) \,
     L_j(\vec{\mu_j} \given \vec{v}, r_j, s^2) \,
-    p(\vec{v}) \, p(r_i \given \varpi_i) \, p(r_j \given \varpi_j) \\
+    p(\vec{v}) \, p(r_i \given \varpi_i) \, p(r_j \given \varpi_j) \label{eq:hyp1}\\
   \mathcal{L}_2 &=
     \int \, \dd r_i \, \dd r_j \, \dd^3 \vec{v}_i \, \dd^3 \vec{v}_j \,
     L_i(\vec{\mu_i} \given \vec{v}_i, r_i, s^2) \,
@@ -392,6 +393,8 @@ We use a mixture of three isotropic, zero-mean Gaussian distributions
 with velocity dispersions $(\sigma_{v,1}, \sigma_{v,2}, \sigma_{v,3}) = (15, 30, 50)
 ~\kms$ and weights $(w_1,w_2,w_3) = (0.3, 0.55, 0.15)$
 meant to encompass young thin disk stars to halo stars.
+These numbers are empirically chosen to account for the distribution of one
+component velocities of the \tgas\ stars.
 We derive the relevant expressions in Appendix~\ref{sec:appendix}.
 After marginalizing over velocity, the likelihood integrands only depend on
 distance; we numerically compute the integrals over the true distances of each
@@ -587,7 +590,7 @@ This is primarily because of the non-uniform coverage and magnitude limit of the
 Ultimately, any candidate co-moving pair found in this work
 needs to be verified using radial velocities.
 Here, we use 210,368 cross-matches of the \tgas\ with
-Radial Velocity Experiment fifth data release (\rave DR~5; \citealt{2016arXiv160903210K}) to
+Radial Velocity Experiment fifth data release (\rave\ DR~5; \citealt{2016arXiv160903210K}) to
 assess the false-positive rates of our selection.
 We have 283 pairs with both stars matched with \rave.
 Figure~\ref{fig:raverv} shows the difference in radial velocities
@@ -719,36 +722,47 @@ which will be valuable to anchoring stellar atmospheric models together.
 \subsection{Catalog of candidate co-moving pairs}
 
 In this section, we describe our catalog of candidate co-moving pairs of stars.
-For 13,058 pairs (10,606 unique stars) found in this work,
-we provide the following information:
+For 13,058 pairs (10,606 unique stars) found in this work.
+The catalog is composed of three tables of stars, pairs, and groups.
+We summarize the content of each table in Table~\ref{tab:table_meta}, and
+the relationships between the tables in Figure~\ref{fig:schema}.
+The star table contains all 10,606 stars that has at least one co-moving neighbor
+by our selection. We provide the TGAS source id, which may be used to easily
+retrieve cross matches of \gaia\ with other surveys
+using the \gaia\ data archive (\todo{cite}).
+For each star, we also include the positional measurements from \tgas,
+\gaia\ $G$-band and \tmass\ $J$, $H$-band magnitudes as well as
+\rave\ radial velocities.
+The co-moving relationship between the stars is described in the pair table.
+We also list the angular and physical separation of pairs, and the likelihood ratio,
+$\ln \mathcal{L}_1 /\mathcal{L}_2>6$ (see \eqname~\ref{eq:hyp1} and \ref{eq:hyp2})
+computed in this work.
+
+Finally, the information about the connected components found in these co-moving
+star graph is in the group table. We assign a unique index to each group
+in descending order of its size. Thus, group 0 is the largest group
+that contains 151 stars.
+Each star or pair is associated with a group that it is a member of, listed
+in the group id column of the star and pair table.
+Additionally, given the strong correlation between the larger connected 
+components of co-moving pairs and the known star clusters,
+we provided
 %
 \begin{itemize}
-  \item \tgas\ source id for the two stars in a pair; these may be used to easily
-    retrieve cross matches of \gaia\ with other surveys such as WISE, \tmass, and
-    \rave\ using the \gaia\ data archive.
-  \item physical separation between the two stars in pc. Note that this is calculated
-    using the point-estimates of distances (\eqname~\ref{eq:dist}) of the two stars.
-  \item likelihood ratio, $\ln \mathcal{L}_1 /\mathcal{L}_2$
-  \item size of the connected component that the pair belongs to
-  \item unique ID of the connected component that the pair belongs to; we assigned
-    a unique ID in descending order of size, thus ID~0 is the largest connected component with 151 stars that corresponds to the Pleiades.
-\end{itemize}
-%
-Additionally, given the strong correlation between the larger connected components
-of co-moving pairs
-and the known star clusters and OB associations, we provide for each star
-%
-\begin{itemize}
-  \item index of the closest cluster in the Milky Way Star Cluster catalog of
+  \item index and name of the closest cluster in the Milky Way Star Cluster catalog of
   \citet{Kharchenko:2016aa} using 3D separation
   \item distance to the closest cluster in pc
-  \item ID of the OB association (A-L) if the star is in the catalog of
-  stars in the known OB associations by \citet{de-Zeeuw:1999aa}
+  % \item ID of the OB association (A-L) if the star is in the catalog of
+  % stars in the known OB associations by \citet{de-Zeeuw:1999aa}
 \end{itemize}
-%
-A part of the entire table is presented in Table~\ref{tab:catalog}.
 
-\input{stub}
+
+
+% The distances and physical separations are calculated using the point-estimate
+% of distances (\eqname~\ref{eq:dist}).
+
+% \input{stub}
+\input{table_meta}
 
 We note a caveat on the completeness of a connected component of co-moving
 pairs found in our catalog. Because we applied a simple cut in the likelihood
@@ -814,6 +828,13 @@ Finally, we make our catalog of 13,058 candidate co-moving pair available to the
 community.
 What we find using the \tgas\ is only a taste of what we will discover with
 the future releases of the \gaia\ mission.
+
+\begin{figure}[htb]
+  \centering
+  \input{schema.tex}
+  \caption{Schematic diagram of the relationship between the tables.}
+  \label{fig:schema}
+\end{figure}
 
 \acknowledgements
 

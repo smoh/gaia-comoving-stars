@@ -1,0 +1,38 @@
+\begin{table}[htb]
+\centering
+\caption{Candidate co-moving pairs catalog description} \label{tab:table_meta}
+\begin{tabular}{l|l|l}
+\hline\hline
+Column                                & Unit   & Description                         \\
+\hline
+\multicolumn{3}{c}{Table: Star (10,606 rows)}                                         \\
+\hline
+row id                                &        & zero-based row index                \\
+TGAS source id                        &        & unique source id from \tgas          \\
+RA                         & deg       & right ascension from \tgas          \\
+DEC                        & deg       & declination from \tgas          \\
+parallax                       & mas     & unique source id from \tgas          \\
+distance                       & pc     & unique source id from \tgas          \\
+$G$                               & mag    & \gaia\ $G$-band magnitudes            \\
+$J$                               & mag    & \tmass\ $J$-band magnitudes            \\
+$H$                               & mag    & \tmass\ $H$-band magnitudes            \\
+RAVE OBS ID                           &        & unique id of the \rave\ match            \\
+RV                                    & \kms   & radial velocity from \rave\           \\
+eRV                                   & \kms   & uncertainty of radial velocity from \rave            \\
+group id & & Id of the group this star belongs to\\
+\hline
+\multicolumn{3}{c}{Table: Pair (13,058 rows)}                                            \\
+\hline
+angsep                                & arcmin & angular separation                  \\
+separation                            & pc     & physical separation                 \\
+$\ln\mathcal{L}_1/\mathcal{L}_2$ &        & likelihood ratio                    \\
+group id                              &        & id of the group the pair belongs to \\
+\hline
+\multicolumn{3}{c}{Table: Group (4,555 rows)}                                         \\
+\hline
+id                                    &        & unique group id                     \\
+size                                  &        & number of stars in a group          \\
+                                      &        &                                     \\
+\hline\hline
+\end{tabular}
+\end{table}

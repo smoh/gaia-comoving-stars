@@ -1,0 +1,118 @@
+
+\usetikzlibrary{shapes.multipart}
+\usetikzlibrary{matrix}
+\usetikzlibrary{positioning}
+\usetikzlibrary{shadows}
+\usetikzlibrary{calc}
+
+\makeatletter
+\pgfarrowsdeclare{crow's foot}{crow's foot}
+{
+  \pgfarrowsleftextend{+-.5\pgflinewidth}%
+  \pgfarrowsrightextend{+.5\pgflinewidth}%
+}
+{
+  \pgfutil@tempdima=0.5pt%
+  \advance\pgfutil@tempdima by.25\pgflinewidth%
+  \pgfsetdash{}{+0pt}%
+  \pgfsetmiterjoin%
+  \pgfpathmoveto{\pgfqpoint{0pt}{-6\pgfutil@tempdima}}%
+  \pgfpathlineto{\pgfqpoint{-6\pgfutil@tempdima}{0pt}}%
+  \pgfpathlineto{\pgfqpoint{0pt}{6\pgfutil@tempdima}}%
+  \pgfusepathqstroke%
+}
+
+
+\tikzset{
+    entity/.code={
+        \tikzset{
+            label=above:#1,
+            name=#1,
+            inner sep=0pt,
+            every entity/.try,
+            fill=white,
+            general shadow={
+                shadow xshift=0.0625in,
+                shadow yshift=-0.0625in,
+                opacity=0.5,
+                fill=black!50
+            }
+        }%
+        \def\entityname{#1}%
+    },
+    entity anchor/.style={matrix anchor=#1.center},
+    every entity/.style={
+            draw,
+    },
+    every property/.style={
+        inner xsep=0.25cm, inner ysep=0.125cm, anchor=west, text width=1in
+    },
+    zig zag to/.style={
+        to path={(\tikztostart) -| ($(\tikztostart)!#1!(\tikztotarget)$) |- (\tikztotarget)}
+    },
+    zig zag to/.default=0.5,
+    one to many/.style={
+        -crow's foot, zig zag to
+    },
+    many to one/.style={
+        crow's foot-, zig zag to
+    },
+    many to many/.style={
+        crow's foot-crow's foot, zig zag to
+    }
+}
+\def\property#1{\node[name=\entityname-#1, every property/.try]{#1};}
+\def\properties{\begingroup\catcode`\_=11\relax\processproperties}
+\def\processproperties#1{\endgroup%
+    \def\propertycode{}%
+    \foreach \p in {#1}{%
+        \expandafter\expandafter\expandafter\gdef\expandafter\expandafter\expandafter\propertycode%
+            \expandafter\expandafter\expandafter{\expandafter\propertycode\expandafter\property\expandafter{\p}\\}%
+    }%
+    \propertycode%
+}
+
+
+
+\begin{tikzpicture}[every node/.style={}, node distance=1.25in]
+\matrix [entity=Star] at (0,0) {
+    \properties{
+        row id,
+        TGAS source id, 
+        RA,
+        DEC,
+        parallax,
+        distance,
+        magnitudes,
+        RAVE match,
+        group id,
+    }
+};
+
+\matrix [entity=Pair, entity anchor=Pair-separation] at (4,1) {
+    \properties{
+        star 1,
+        star 2,
+        angsep,
+        separation,
+        ln(L1/L2),
+        group id
+    }
+};
+
+\matrix  [entity=Group] at (4,-2) {
+    \properties{
+        id,
+        size,
+        mean position
+    }
+};
+
+% \draw [help lines, dashed] (-10,-10) grid(10,10);
+
+\draw [line width=0.1mm, many to one] (Star-row id) to (Pair-star 1);
+\draw [line width=0.1mm, many to one] (Star-row id) to (Pair-star 2);
+\draw [line width=0.1mm, many to one] (Star-group id)  to (Group-id);
+\draw  [line width=0.1mm, crow's foot-](Pair-group id)  -| ($(Pair-group id)+ (2, -1)$) |- (Group-id);
+
+\end{tikzpicture}

@@ -43,11 +43,14 @@ Fixed.
     different meanings for "d"; maybe the distance should be called
     "r" or "D"
 
-SMOH TODO swap d to r?
+We changed the distance symbol throughout the document from "d" to "r".
 
     - p.6: after eq.(11): it is not clear where those numbers for
     velocity dispersion and weights are coming from - any reference?
     maybe add some more comment why these have been adopted
+
+These numbers are empirically chosen to account for the distribution of one
+component velocities of the TGAS stars.
 
     - p.8: Fig.2 lower pannel: shouldn't the color bar go the
     other direction on the left hand side diagram? stars with
@@ -83,10 +86,25 @@ We added Kunder et al. 2016.
 
     - similarly: how about adding an angular separation column?
 
+Following the referee's suggestion, we augmented our catalog with additional
+information.
+
+- We first note that the columns missing from
+the previous version of the manuscript ("Ncc", "IDcc", "index of the closest cluster")
+were simply omitted due to the limiting width of the table, and were included
+in the machine-readable table.
+
+- We have re-organized the catalog into three tables of stars, pairs, and groups.
+
+- We added more useful columns to the star table, including all information
+that was used to make figures in this paper. 
+
     - p.16: par. above summary: would it be worth looking for those
     potentially missing pairs in a set of lower L1/L2 cut data?
 
     - p.18: 3rd line from top: "... at git commit ( )."
     what are the empty parantheses - something missing here?
+
+
 
 ========= end of report
