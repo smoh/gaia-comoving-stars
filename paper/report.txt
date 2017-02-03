@@ -70,7 +70,8 @@ SMOH: add a sentence or two to connect back to sec 2?
     frankly I can see only sort of grey star cluster symbols,
     nothing light blue
 
-SMOH TODO select better colors
+We changed the transparency for light blue circles (star clusters) and
+color and symbol for OB Association stars.
 
     - p.11: provide reference to RAVE project
 

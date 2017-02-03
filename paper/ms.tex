@@ -184,7 +184,8 @@ complex because of the existence of other perturbers in the disk.
 
 To date, thousands of candidate co-moving star pairs have been identified by
 searching for stars with common proper motions
-(\citealt{Poveda:1994aa,Allen:2000aa,Chaname:2004aa,Lepine:2007aa,Alonso-Floriano:2015aa}).
+(\citealt{Poveda:1994aa,Allen:2000aa,Chaname:2004aa,
+Lepine:2007aa,Shaya:2011aa,Alonso-Floriano:2015aa}).
 Here, we use the recent first data release of \gaia\ which includes precise distances,
 enabling us to ask whether two stars share the same \emph{physical (3D) velocity} rather than
 just the projections in the proper motion space.
@@ -520,17 +521,15 @@ satisfy this condition.
     \includegraphics[width=\textwidth]{glon_d_pie.pdf}
   \end{center}
   \caption{%
-    Panoramic view of co-moving pairs of stars. This is a cylindrical
-    projection of onto the Galactic plane. The angle is the Galactic
-    longitude, and the radius is $\hat d\cos b$ in pc where $\hat d$ is the point-estimate
-    of distance using \eqname~\ref{eq:dist}.
+    Panoramic view of co-moving pairs of stars around the Sun. This is a cylindrical
+    projection of onto the Galactic plane with the Sun at the origin.
     Pairs in connected components of sizes less than 5 are connected by gray lines.
     Pair in connected components of size $\geq 5$ are plotted with a unique random color,
     and their nodes (stars) are highlighted with small black circles.
     We also show the positions of known Milky Way star clusters
-    from \citet{Kharchenko:2016aa} as light blue circles,
+    from \citet{Kharchenko:2016aa} as light blue circles of $10$~pc radius,
     and stars in OB associations from \citet{de-Zeeuw:1999aa} as
-    gray circles.
+    blue crosses.
     Some of the larger connected components are clearly associated with known
     clusters, but we also discover quite a few new co-moving groups.
     \label{fig:glon_d_pairlines}}
@@ -731,7 +730,7 @@ the relationships between the tables in Figure~\ref{fig:schema}.
 The star table contains all 10,606 stars that has at least one co-moving neighbor
 by our selection. We provide the TGAS source id, which may be used to easily
 retrieve cross matches of \gaia\ with other surveys
-using the \gaia\ data archive (\todo{cite}).
+using the \gaia\ data archive.
 For each star, we also include the positional measurements from \tgas,
 \gaia\ $G$-band and \tmass\ $J$, $H$-band magnitudes as well as
 \rave\ radial velocities.
