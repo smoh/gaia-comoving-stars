@@ -236,7 +236,9 @@ then,
 \begin{equation}
   \absdvtan = |\hat{r}_1 \vec\mu_1 - \hat{r}_2 \vec\mu_2|
 \end{equation}
-where $\vec\mu = (\mu_\alpha, \mu_\delta)$.
+where $\vec\mu = (\mu_{\alpha^*}, \mu_\delta)$.
+\footnote{$\mu_{\alpha^*}$ is proper motion
+in right ascension direction, $\mu_{\alpha^*} = \mu_\alpha \cos\delta$}
 
 Figure~\ref{fig:dv-sep} shows \absdvtan\ against the physical separation
 for the resulting 271,232 unique pairs in the initial sample.
@@ -310,7 +312,7 @@ statistical model (a likelihood function with explicit priors on our
 parameters):
 \begin{itemize}
   \item We assume that the uncertainties in the data---parallax, $\varpi$, and
-    two proper motion components, $\propm = (\begin{array}[t]{c c} \mu_\alpha &
+    two proper motion components, $\propm = (\begin{array}[t]{c c} \mu_{\alpha^*} &
     \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances
     $\mat{C}$. The values of covariances are provided as part of the \gaia\ data
     \citep{Lindegren:2012aa,Lindegren:2016aa}.

@@ -21,19 +21,17 @@ It has been de-italicized.
     is this correct? does this directly come out of the Lutz-Kelker
     bias or are more comments in order here?
 
-It is correct. The distance estimator including the Lutz-Kelker bias is
-the maximum of the posterior distribution assuming a prior proportional to parallax^-4
-(constant density without normalization).
-If the parallax S/N is less than 4, the posterior of distance does not have a
-maximum.
+It is correct. The distance estimator including the Lutz-Kelker bias is the
+peak of the posterior distribution of distance assuming a prior proportional
+to parallax^-4 (constant density without normalization) and a Gaussian noise
+in parallax. If the parallax S/N is less than 4, the posterior distribution of
+distance does not have a maximum at positive distances.
 
     - p.3: line below eq.(2): I assume you mean proper motion RA*cos(Dec)
     here instead of just mu_alpha, right?
 
-The symbol mu_alpha indeed refers to $\dot\alpha \cos(\delta)$ insead of just
-$\dot\alpha$.
-
-SMOH: hmm.. is $\mu_\alpha$ symbol incorrect?
+That is correct. We added a star sign to mu_alpha to distinguish
+with mu_alpha=d(alpha)/dt, and added an explicit note on this.
 
     - p.6: eq.(7): might want to mention what "I" is (unit matrix)
 
@@ -57,6 +55,16 @@ component velocities of the TGAS stars.
     small L1/L2 ratios are on the left in the left hand side
     diagram but are on the right on the separation plot (dark
     blue color)
+
+The direction of the colorbar is correct. Larger L1/L2 pairs
+(darker blue points on the right panel of the bottom row) do occupy
+the lower right corner on the separation vs dv_tan plane,
+and are the co-moving pairs by our selection.
+This should be contrasted with smaller L1/L2 pairs (lighter blue points)
+more and more dominanting as you go up in dv_tan (right upper corner),
+which are not co-moving.
+
+SMOH: add a sentence or two to connect back to sec 2?
 
     - p.10: Fig.5: light blue vs. grey are not well distinguished,
     frankly I can see only sort of grey star cluster symbols,
