@@ -12,6 +12,7 @@ dependencies:
   - scikit-learn
   - h5py
   - pip
+  - jupyter
   - pip:
     - six
     - schwimmbad

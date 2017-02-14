@@ -4,7 +4,6 @@
 """
 File: make-catalog.py
 Author: Semyeong Oh
-Github: https://github.com/smoh
 Description: Make the final catalog of co-moving pairs
 """
 
@@ -18,126 +17,96 @@ import astropy.units as u
 
 import gwb
 
-tgas = gwb.TGASData('data/stacked_tgas.fits')
-pairidx = fits.getdata('output/23560/snr8_r10_dv10.fits')
-with h5py.File("output/23560/snr8_r10_dv10_vscatter0-lratio.h5") as f:
-    lnH1 = f['lnH1'].value
-    lnH2 = f['lnH2'].value
-    llr = lnH1 - lnH2
-print('number of pairs', pairidx.size)
+if 'data_loaded' not in dir():
+    data_loaded = True
+    tgas = gwb.TGASData('data/stacked_tgas.fits')
+    pairidx = fits.getdata('output/23560/snr8_r10_dv10.fits')
+    with h5py.File("output/23560/snr8_r10_dv10_vscatter0-lratio.h5") as f:
+        lnH1 = f['lnH1'].value
+        lnH2 = f['lnH2'].value
+        llr = lnH1 - lnH2
+    print('number of pairs', pairidx.size)
 
-parallax_snr = tgas.parallax_snr
-vtan = tgas.get_vtan().value
-c = tgas.get_coord()
-d = tgas.get_distance().value
+    parallax_snr = tgas.parallax_snr
+    vtan = tgas.get_vtan().value
+    tgas_c = tgas.get_coord()
+    tgas_d = tgas.get_distance().to(u.pc).value
 
-star1, star2 = pairidx['star1'], pairidx['star2']
-min_snr = np.min(np.vstack((parallax_snr[star1], parallax_snr[star2])), axis=0)
-dvtan = np.linalg.norm(vtan[star1]-vtan[star2], axis=1)
-vtanmean = (vtan[star1] + vtan[star2])*0.5
-sep = c[star1].separation_3d(c[star2]).value
-sep_sky = c[star1].separation(c[star2])
+    cond_lr_cut = llr>6
+    print('number of pairs ln(L1/L2)>6 = %i' % (cond_lr_cut.sum()))
+    cmpairs = pairidx[cond_lr_cut]
 
-c1 = c[star1]
-c2 = c[star2]
-ra1, dec1 = c1.ra.value, c1.dec.value
-ra2, dec2 = c2.ra.value, c2.dec.value
-l1, b1 = c1.transform_to(coords.Galactic).l.value, c1.transform_to(coords.Galactic).b.value
-l2, b2 = c2.transform_to(coords.Galactic).l.value, c2.transform_to(coords.Galactic).b.value
-d1 = d[star1]
-d2 = d[star2]
-dmean = (d1+d2)*0.5
+    # make graph with edge attribute for ln(L1/L2)
+    graph = nx.Graph()
+    graph.add_edges_from(
+        [(i,j, {'lnL1/L2':ll}) for (i,j,dvtan,s), ll in zip(cmpairs, llr[llr>6])])
 
-cond_lr_cut = llr>6
-print('number of pairs ln(L1/L2)>6 = %i' % (cond_lr_cut.sum()))
-print('number of pairs ln(L1/L2)>6 + sep<1pc = %i' % (sum((sep<1)&cond_lr_cut)))
-cmpairs = pairidx[cond_lr_cut]
+    # assign id to connected components in descending order of size
+    # and set node attribute
+    components = sorted(nx.connected_component_subgraphs(graph), key=len, reverse=True)
+    comp_dict = {idx: comp.nodes() for idx, comp in enumerate(components)}
+    attr = {n: comp_id for comp_id, nodes in comp_dict.items() for n in nodes}
+    nx.set_node_attributes(graph, "group_id", attr)
 
-# sorted list of subgraphs from largest to smallest
-graph = nx.from_edgelist(
-    [(i,j) for i,j in zip(cmpairs['star1'],cmpairs['star2'])])
-Gc = np.array(sorted(nx.connected_component_subgraphs(graph), key=len, reverse=True))
-sizes = np.array([len(g) for g in Gc])
-nsize = np.array([len(nx.node_connected_component(graph, s1)) for s1 in cmpairs['star1']])
+    # 2mass
+    tmass = fits.getdata('data/tgas_tmassj.fits', ext=1)
+    jhk = table.Table.read('notebooks/result.vot', format='votable')
 
-# get group index for each star1
-gid = []
-def get_nid(node):
-    out = []
-    for i, g in enumerate(Gc):
-        if node in g:
-            out.append(i)
-    if len(out)>1:
-        raise ValueError('This cannot happen.')
-    return out[0]
-gid = [get_nid(i) for i in cmpairs['star1']]
+    # RAVE
+    rave = table.Table.read('data/tgas_rave_RV.fits')
+    tgas_has_rave = ~rave['row_id'].mask
+    tgas_rave_obs_id = rave['RAVE_OBS_ID']
+    tgas_rave_hrv = rave['HRV']
+    tgas_rave_ehrv = rave['eHRV']
 
-tt = table.Table()
-# tt['star1'] = cmpairs['star1']
-# tt['star2'] = cmpairs['star2']
-tt['star1 source id'] = tgas.source_id[cmpairs['star1']]
-tt['star1 source id'].unit = '--'
-tt['star2 source id'] = tgas.source_id[cmpairs['star2']]
-tt['star2 source id'].unit = '--'
-tt['Sep'] = cmpairs['sep']
-tt['Sep'].format='%9.1f'
-tt['Sep'].unit = 'pc'
-tt['lnL1/L2'] = llr[cond_lr_cut]
-tt['lnL1/L2'].format='%9.1f'
-tt['lnL1/L2'].unit='--'
-tt['N_CC'] = nsize
-tt['ID_CC'] = gid
-# tt['RAVE_OBS_ID1'] = rave['RAVE_OBS_ID'][cmpairs['star1']]
-# tt['RAVE_OBS_ID2'] = rave['RAVE_OBS_ID'][cmpairs['star2']]
+tStar = table.Table()
+tStar['tgas_row'] = graph.nodes()
+tStar['tgas_source_id'] = tgas.source_id[tStar['tgas_row']]
+tStar['tgas_ra'] = tgas.ra.value[tStar['tgas_row']]
+tStar['tgas_dec'] = tgas.dec.value[tStar['tgas_row']]
+tStar['tgas_parallax'] = tgas.parallax.value[tStar['tgas_row']]
+tStar['tgas_distance'] = tgas_d[tStar['tgas_row']]
+tStar['tgas_gmag'] = tgas._data['phot_g_mean_mag'][tStar['tgas_row']]
+tStar['tmass_jmag'] = tmass['j_m'][tStar['tgas_row']]
+tStar['rave_obs_id'] = tgas_rave_obs_id[tStar['tgas_row']]
+tStar['rave_hrv'] = tgas_rave_hrv[tStar['tgas_row']]
+tStar['rave_ehrv'] = tgas_rave_ehrv[tStar['tgas_row']]
+tStar['group_id'] =[graph.node.get(n)['group_id'] for n in tStar['tgas_row']]
+tStar['group_size'] = [len(nx.node_connected_component(graph, node)) for node in tStar['tgas_row']]
 
+star_c = tgas_c[tStar['tgas_row']]
 
-# Add information of closest MWSC
-mwsc = table.Table.read('data/J_A+A_585_A101/catalog.dat', readme='data/J_A+A_585_A101/ReadMe',
-                  format='ascii.cds')
-print('total number of mwsc', len(mwsc))
-print('number of mwsc d<600 pc', (mwsc['d']<600).sum())
-ccm1 = c[cmpairs['star1']]
-c_mwsc = coords.SkyCoord(mwsc['GLON'], mwsc['GLAT'], mwsc['d'], frame=coords.Galactic)
-idx_mwsc, sep2d_mwsc, dist3d_mwsc = ccm1.match_to_catalog_3d(c_mwsc)
-tt['ID_MWSC_closest'] = idx_mwsc
-tt['d_MWSC_closest'] = dist3d_mwsc
-tt['d_MWSC_closest'].format='%9.1f'
+tPair = table.Table()
+edge_tgas_row = np.array(graph.edges())
+edge_star_row = array([list(map(lambda node: where(tStar['tgas_row'] == node)[0][0], [star1, star2])) for star1, star2 in edge_tgas_row])
+tPair['tgas_row1'] = edge_tgas_row[:,0]
+tPair['tgas_row2'] = edge_tgas_row[:,1]
+tPair['star_row1'] = edge_star_row[:,0]
+tPair['star_row2'] = edge_star_row[:,1]
+tPair['angsep'] = star_c[tPair['star_row1']].separation(star_c[tPair['star_row2']]).to(u.arcmin).value
+tPair['separation'] = star_c[tPair['star_row1']].separation_3d(star_c[tPair['star_row2']]).to(u.pc).value
+tPair['lnL1/L2'] = np.array([graph.get_edge_data(i,j)['lnL1/L2'] for i,j in edge_tgas_row])
 
-# Match to de Zeeuw by HIP id
-obass = table.Table.read('data/J_AJ_117_354/tablec1.dat', readme='data/J_AJ_117_354/ReadMe',
-                    format='ascii.cds')
-print('number of OB association stars', len(obass))
+tPair['group_id'] = tStar['group_id'][tPair['star_row1']]
+tPair['group_size'] = tStar['group_size'][tPair['star_row1']]
 
-# query simbad on HIP id's to get coordinates
-from astroquery.simbad import Simbad
-customSimbad = Simbad()
-customSimbad.add_votable_fields('sptype', 'parallax')
-result = customSimbad.query_objects(['HIP %i' % hip for hip in obass['HIP']])
-print( np.unique([s.decode("utf-8")[0] if len(s)>0 else '?' for s in result['SP_TYPE']]) )
+tGroup = table.Table()
+tGroup['id'] = np.array([i for i in comp_dict.keys()])
+tGroup['size'] = np.array([len(comp_dict[i]) for i in tGroup['id']])
+tGroup['mean_ra'] = np.array([ np.mean(tStar['tgas_ra'][tStar['group_id']==i]) for i in tGroup['id']])
+tGroup['mean_dec'] = np.array([ np.mean(tStar['tgas_dec'][tStar['group_id']==i]) for i in tGroup['id']])
+tGroup['mean_dist'] = np.array([ np.mean(tStar['tgas_distance'][tStar['group_id']==i]) for i in tGroup['id']])
 
-def get_distance(parallax, parallax_error):
-    """
-    Return the distance [kpc] point estimate with the Lutz-Kelker correction
-    
-    parallax : float, in mas
-    parallax_error : float, in mas
-    """
-    snr = parallax / parallax_error
-    pnew = parallax * (0.5 + 0.5*np.sqrt(1 - 16./snr**2))
-    # if snr<4, the value will be maksed
-    return 1./pnew
+# mwsc = table.Table.read('data/J_A+A_585_A101/catalog.dat', readme='data/J_A+A_585_A101/ReadMe',
+#                  format='ascii.cds')
+# print('total number of mwsc', len(mwsc))
+# print('number of mwsc d<600 pc', (mwsc['d']<600).sum())
 
-obass_dist = get_distance(result['PLX_VALUE'], result['PLX_ERROR'])
-obass_c = coords.SkyCoord(result['RA'], result['DEC'], unit=(u.hourangle, u.deg),
-                          distance=obass_dist*u.kpc)
-obass_cg = obass_c.transform_to(coords.Galactic)
+# group_c = coords.SkyCoord(group_mean_ra*u.deg, group_mean_dec*u.deg, group_mean_dist*u.pc)
+# mwsc_c = coords.SkyCoord(mwsc['GLON'], mwsc['GLAT'], distance=mwsc['d'].to(u.pc), frame=coords.Galactic,) 
 
-t1 = table.Table([tgas.hip[cmpairs['star1']]], names=['HIP'])
-t1_obass = table.join(obass['OBAss','HIP'], t1, keys='HIP', join_type='right')
-t2 = table.Table([tgas.hip[cmpairs['star2']]], names=['HIP'])
-t2_obass = table.join(obass['OBAss','HIP'], t1, keys='HIP', join_type='right')
+# group_mwsc_match = group_c.match_to_catalog_3d(mwsc_c,)
 
-tt['star1 OB Assc.'] = t1_obass['OBAss']
-tt['star2 OB Assc.'] = t2_obass['OBAss']
-
-tt.write('catalog.csv', format='ascii.no_header', delimiter=',')
+tStar.write('table_star.csv', format='ascii.csv')
+tPair.write('table_pair.csv', format='ascii.csv')
+tGroup.write('table_group.csv', format='ascii.csv')

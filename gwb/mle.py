@@ -1,4 +1,4 @@
-"""codes related to maximum likelihood esimation"""
+"""codes related to maximum likelihood estimation"""
 import numpy as np
 from numpy import pi, log, deg2rad, rad2deg
 from astropy import units as u
@@ -156,13 +156,15 @@ class FitMCMC_samev(object):
         self.samples_d1 = np.vstack([
             1./d1,
             vra1/d1/4.74,
-            vdec1/d1/4.74]).T
+            vdec1/d1/4.74,
+            vr1]).T
         A2 = get_A(star2)
         vra2, vdec2, vr2 = A2.dot(samples[:,2:].T)
         self.samples_d2 = np.vstack([
             1./d2,
             vra2/d2/4.74,
-            vdec2/d2/4.74]).T
+            vdec2/d2/4.74,
+            vr2]).T
 
 class FitMCMCn_samev(object):
     ndim = None

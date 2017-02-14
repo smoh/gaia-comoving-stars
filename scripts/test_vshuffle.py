@@ -60,6 +60,22 @@ def prepare(tgasfile, outname, snr_cut, radius_cut, radius_cut_vshuf, dvtan_cut)
     vtan = tgas.get_vtan().value
 
     tree = KDTree(xyz)
+
+    Ntarget = 100000
+    batchsize = 100000
+    
+    pairi = np.random.randint(high=len(tgas), size=Ntarget)
+    pairjk = []
+    for i  in pairi:
+        treei = tree.query_radius([xyz[i]], 100)[0]
+        j = np.random.choice(treei)
+        k = np.random.choice(treei)
+        pairjk.append((j,k))
+
+        
+        
+
+
     treei = tree.query_radius(xyz, radius_cut)
     sizes = np.array([x.size for x in treei])
     logger.info("total number of pairs for r<%.1f = %i" % (radius_cut, sizes.sum()))
