@@ -45,7 +45,7 @@
             draw,
     },
     every property/.style={
-        inner xsep=0.25cm, inner ysep=0.125cm, anchor=west, text width=1in
+        inner xsep=0.25cm, inner ysep=0.125cm, anchor=west, text width=1.2in
     },
     zig zag to/.style={
         to path={(\tikztostart) -| ($(\tikztostart)!#1!(\tikztotarget)$) |- (\tikztotarget)}
@@ -74,7 +74,7 @@
 
 
 
-\begin{tikzpicture}[every node/.style={}, node distance=1.25in]
+\begin{tikzpicture}[every node/.style={text width=1.5in}, node distance=1.25in]
 \matrix [entity=Star] at (0,0) {
     \properties{
         row id,
@@ -89,7 +89,7 @@
     }
 };
 
-\matrix [entity=Pair, entity anchor=Pair-separation] at (4,1) {
+\matrix [entity=Pair, entity anchor=Pair-separation] at (4.5,1) {
     \properties{
         star 1,
         star 2,
@@ -100,7 +100,7 @@
     }
 };
 
-\matrix  [entity=Group] at (4,-2) {
+\matrix  [entity=Group] at (4.5,-2) {
     \properties{
         id,
         size,

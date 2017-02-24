@@ -451,8 +451,8 @@ for this quantity to select co-moving pairs from the initial sample.
     On the bottom row, we show how the distribution of pairs on \absdvtan\ vs. separation changes (right)
     in slices of $\ln \mathcal{L}_1 /\mathcal{L}_2$ (sequentially color-coded in blue on the left).
     The black dots in the upper right panel and
-    the black line in the lower lef panel correspond to the entire initial sample of pairs.
-    For comparision, we also present the likelihood ratio distribution of random pairs
+    the black line in the lower left panel correspond to the entire initial sample of pairs.
+    For comparison, we also present the likelihood ratio distribution of random pairs
     of stars in the \tgas\ with parallax $S/N>8$ in gray filled histogram.
     Based on this, we choose $\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as our high-confidence
     candidate co-moving pairs.
@@ -721,6 +721,17 @@ which will be valuable to anchoring stellar atmospheric models together.
 \end{figure*}
 
 \subsection{Catalog of candidate co-moving pairs}
+\label{sub:catalog}
+
+\input{table_meta}
+
+\begin{figure}[htbp]
+  \centering
+  \input{schema.tex}
+  \caption{Schematic diagram of the relationship between the tables.
+    See \sectionname~\ref{sub:catalog} and Table~\ref{tab:table_meta} for details.
+    \label{fig:schema}}
+\end{figure}
 
 In this section, we describe our catalog of candidate co-moving pairs of stars.
 For 13,058 pairs (10,606 unique stars) found in this work.
@@ -732,7 +743,7 @@ by our selection. We provide the TGAS source id, which may be used to easily
 retrieve cross matches of \gaia\ with other surveys
 using the \gaia\ data archive.
 For each star, we also include the positional measurements from \tgas,
-\gaia\ $G$-band and \tmass\ $J$, $H$-band magnitudes as well as
+\gaia\ $G$-band and \tmass\ $J$-band magnitudes as well as
 \rave\ radial velocities.
 The co-moving relationship between the stars is described in the pair table.
 We also list the angular and physical separation of pairs, and the likelihood ratio,
@@ -740,30 +751,11 @@ $\ln \mathcal{L}_1 /\mathcal{L}_2>6$ (see \eqname~\ref{eq:hyp1} and \ref{eq:hyp2
 computed in this work.
 
 Finally, the information about the connected components found in these co-moving
-star graph is in the group table. We assign a unique index to each group
+star pairs is in the group table. We assign a unique index to each group
 in descending order of its size. Thus, group 0 is the largest group
 that contains 151 stars.
 Each star or pair is associated with a group that it is a member of, listed
 in the group id column of the star and pair table.
-Additionally, given the strong correlation between the larger connected 
-components of co-moving pairs and the known star clusters,
-we provided
-%
-\begin{itemize}
-  \item index and name of the closest cluster in the Milky Way Star Cluster catalog of
-  \citet{Kharchenko:2016aa} using 3D separation
-  \item distance to the closest cluster in pc
-  % \item ID of the OB association (A-L) if the star is in the catalog of
-  % stars in the known OB associations by \citet{de-Zeeuw:1999aa}
-\end{itemize}
-
-
-
-% The distances and physical separations are calculated using the point-estimate
-% of distances (\eqname~\ref{eq:dist}).
-
-% \input{stub}
-\input{table_meta}
 
 We note a caveat on the completeness of a connected component of co-moving
 pairs found in our catalog. Because we applied a simple cut in the likelihood
@@ -830,12 +822,6 @@ community.
 What we find using the \tgas\ is only a taste of what we will discover with
 the future releases of the \gaia\ mission.
 
-\begin{figure}[htb]
-  \centering
-  \input{schema.tex}
-  \caption{Schematic diagram of the relationship between the tables.}
-  \label{fig:schema}
-\end{figure}
 
 \acknowledgements
 

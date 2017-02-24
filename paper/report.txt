@@ -1,99 +1,100 @@
-Referee Report
+# Response to the referee report
 
-    Reviewer's Comments:
-    This is a well written paper with significant new science
-    worth for publication. A statistical rigorous approach
-    has been taken in analysing the Gaia TGAS data for possible
-    co-moving stars, calculating the real 3-D separations of
-    candidates.
-    I have only a few comments for potential improvement of
-    this manuscript. These are a mix of some trivial editorial
-    items and a few content related items, sorted by following
-    along the manuscript:
+  >  Reviewer's Comments:
+  >  This is a well written paper with significant new science
+  >  worth for publication. A statistical rigorous approach
+  >  has been taken in analysing the Gaia TGAS data for possible
+  >  co-moving stars, calculating the real 3-D separations of
+  >  candidates.
+  >  I have only a few comments for potential improvement of
+  >  this manuscript. These are a mix of some trivial editorial
+  >  items and a few content related items, sorted by following
+  >  along the manuscript:
 
 We thank the referee for his/her comments, and detail our response to each item below.
 
-    - p.3: begin of section 2: does "Article" need to be in italic?
+  > - p.3: begin of section 2: does "Article" need to be in italic?
 
 It has been de-italicized.
 
-    - p.3: eq.(1): if S/N gets below 4 the sqrt becomes imaginary,
-    is this correct? does this directly come out of the Lutz-Kelker
-    bias or are more comments in order here?
+  > - p.3: eq.(1): if S/N gets below 4 the sqrt becomes imaginary,
+  > is this correct? does this directly come out of the Lutz-Kelker
+  > bias or are more comments in order here?
 
 It is correct. The distance estimator including the Lutz-Kelker bias is the
-peak of the posterior distribution of distance assuming a prior proportional
-to parallax^-4 (constant density without normalization) and a Gaussian noise
-in parallax. If the parallax S/N is less than 4, the posterior distribution of
-distance does not have a maximum at positive distances.
+peak of the posterior distribution of distance assuming a prior proportional to
+$\varpi^{-4}$, or equivalently $d^{2}$ (constant density without normalization)
+and a Gaussian noise in parallax ($\varpi$). If the parallax S/N is less than 4,
+the posterior distribution of distance does not have a maximum at positive
+distances.
 
-    - p.3: line below eq.(2): I assume you mean proper motion RA*cos(Dec)
-    here instead of just mu_alpha, right?
+  > - p.3: line below eq.(2): I assume you mean proper motion RA*cos(Dec)
+  > here instead of just mu_alpha, right?
 
-That is correct. We added a star sign to mu_alpha to distinguish
-with mu_alpha=d(alpha)/dt, and added an explicit note on this.
+That is correct. We changed the symbol to $\mu_{\alpha}^*$ to distinguish
+with $\mu_\alpha=d(\alpha)/dt$, and added an explicit note on this.
 
-    - p.6: eq.(7): might want to mention what "I" is (unit matrix)
+  > - p.6: eq.(7): might want to mention what "I" is (unit matrix)
 
 Fixed.
 
-    - p.6: eq.(8): it is a bit unfortunate that we have so many
-    different meanings for "d"; maybe the distance should be called
-    "r" or "D"
+  > - p.6: eq.(8): it is a bit unfortunate that we have so many
+  > different meanings for "d"; maybe the distance should be called
+  > "r" or "D"
 
-We changed the distance symbol throughout the document from "d" to "r".
+We changed the distance symbol throughout the document from "$d$" to "$r$".
 
-    - p.6: after eq.(11): it is not clear where those numbers for
-    velocity dispersion and weights are coming from - any reference?
-    maybe add some more comment why these have been adopted
+  > - p.6: after eq.(11): it is not clear where those numbers for
+  > velocity dispersion and weights are coming from - any reference?
+  > maybe add some more comment why these have been adopted
 
 These numbers are empirically chosen to account for the distribution of one
 component velocities of the TGAS stars.
 
-    - p.8: Fig.2 lower pannel: shouldn't the color bar go the
-    other direction on the left hand side diagram? stars with
-    small L1/L2 ratios are on the left in the left hand side
-    diagram but are on the right on the separation plot (dark
-    blue color)
+  > - p.8: Fig.2 lower panel: shouldn't the color bar go the
+  > other direction on the left hand side diagram? stars with
+  > small L1/L2 ratios are on the left in the left hand side
+  > diagram but are on the right on the separation plot (dark
+  > blue color)
 
 The direction of the colorbar is correct. Larger L1/L2 pairs
 (darker blue points on the right panel of the bottom row) do occupy
 the lower right corner on the separation vs dv_tan plane,
 and are the co-moving pairs by our selection.
 This should be contrasted with smaller L1/L2 pairs (lighter blue points)
-more and more dominanting as you go up in dv_tan (right upper corner),
+more and more dominating as you go up in dv_tan (right upper corner),
 which are not co-moving.
 
 SMOH: add a sentence or two to connect back to sec 2?
 
-    - p.10: Fig.5: light blue vs. grey are not well distinguished,
-    frankly I can see only sort of grey star cluster symbols,
-    nothing light blue
+  > - p.10: Fig.5: light blue vs. grey are not well distinguished,
+  > frankly I can see only sort of grey star cluster symbols,
+  > nothing light blue
 
 We changed the transparency for light blue circles (star clusters) and
 color and symbol for OB Association stars.
 
-    - p.11: provide reference to RAVE project
+  > - p.11: provide reference to RAVE project
 
 We added Kunder et al. 2016.
 
-    - p.14: section 4.3: mention the headings of columns in Table 1
-    explicitly in the description of that table in the text,
-    e.g. missing "Ncc" and "IDcc"
+  > - p.14: section 4.3: mention the headings of columns in Table 1
+  > explicitly in the description of that table in the text,
+  > e.g. missing "Ncc" and "IDcc"
 
-    - p.15: items like index of the closest cluster, etc.: I can't
-    see these in the sample Table 1
+  > - p.15: items like index of the closest cluster, etc.: I can't
+  > see these in the sample Table 1
 
-    - p.15/16: the table is already electronic (does not take up
-    much space in the paper), and it is reasonably small by today's
-    standard (order MB), so why not add some columns which would
-    be very useful for the user, like approx. RA, Dec, G magnitude,
-    G-J color, distance? these would help the user to recreate some
-    of the figures in the text and do other similar plots for eg subsets
-    of the data without resorting to getting the needed info via index
-    to large on-line database systems
+  > - p.15/16: the table is already electronic (does not take up
+  > much space in the paper), and it is reasonably small by today's
+  > standard (order MB), so why not add some columns which would
+  > be very useful for the user, like approx. RA, Dec, G magnitude,
+  > G-J color, distance? these would help the user to recreate some
+  > of the figures in the text and do other similar plots for eg subsets
+  > of the data without resorting to getting the needed info via index
+  > to large on-line database systems
 
-    - similarly: how about adding an angular separation column?
+  > - similarly: how about adding an angular separation column?
 
 Following the referee's suggestion, we augmented our catalog with additional
 information.
@@ -108,12 +109,13 @@ in the machine-readable table.
 - We added more useful columns to the star table, including all information
 that was used to make figures in this paper. 
 
+- We decided to remove the closest cluster information as verifying the match between
+each connected component and known clusters is not a trivial task, and it may
+mislead the readers.
+
     - p.16: par. above summary: would it be worth looking for those
     potentially missing pairs in a set of lower L1/L2 cut data?
 
     - p.18: 3rd line from top: "... at git commit ( )."
-    what are the empty parantheses - something missing here?
+    what are the empty parentheses - something missing here?
 
-
-
-========= end of report

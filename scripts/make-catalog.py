@@ -59,8 +59,9 @@ if 'data_loaded' not in dir():
     tgas_rave_hrv = rave['HRV']
     tgas_rave_ehrv = rave['eHRV']
 
-tStar = table.Table()
+tStar = table.Table(masked=True)
 tStar['tgas_row'] = graph.nodes()
+tStar['row_id'] = np.arange(len(tStar))
 tStar['tgas_source_id'] = tgas.source_id[tStar['tgas_row']]
 tStar['tgas_ra'] = tgas.ra.value[tStar['tgas_row']]
 tStar['tgas_dec'] = tgas.dec.value[tStar['tgas_row']]
@@ -70,43 +71,73 @@ tStar['tgas_gmag'] = tgas._data['phot_g_mean_mag'][tStar['tgas_row']]
 tStar['tmass_jmag'] = tmass['j_m'][tStar['tgas_row']]
 tStar['rave_obs_id'] = tgas_rave_obs_id[tStar['tgas_row']]
 tStar['rave_hrv'] = tgas_rave_hrv[tStar['tgas_row']]
+tStar['rave_hrv'].mask = np.isnan(tStar['rave_hrv'])
 tStar['rave_ehrv'] = tgas_rave_ehrv[tStar['tgas_row']]
-tStar['group_id'] =[graph.node.get(n)['group_id'] for n in tStar['tgas_row']]
+tStar['rave_ehrv'].mask = np.isnan(tStar['rave_ehrv'])
+tStar['group_id'] = [graph.node.get(n)['group_id'] for n in tStar['tgas_row']]
 tStar['group_size'] = [len(nx.node_connected_component(graph, node)) for node in tStar['tgas_row']]
 
 star_c = tgas_c[tStar['tgas_row']]
 
 tPair = table.Table()
 edge_tgas_row = np.array(graph.edges())
-edge_star_row = array([list(map(lambda node: where(tStar['tgas_row'] == node)[0][0], [star1, star2])) for star1, star2 in edge_tgas_row])
+edge_star_row = np.array([list(map(lambda node: np.where(tStar['tgas_row'] == node)[0][0], [star1, star2])) for star1, star2 in edge_tgas_row])
 tPair['tgas_row1'] = edge_tgas_row[:,0]
 tPair['tgas_row2'] = edge_tgas_row[:,1]
-tPair['star_row1'] = edge_star_row[:,0]
-tPair['star_row2'] = edge_star_row[:,1]
-tPair['angsep'] = star_c[tPair['star_row1']].separation(star_c[tPair['star_row2']]).to(u.arcmin).value
-tPair['separation'] = star_c[tPair['star_row1']].separation_3d(star_c[tPair['star_row2']]).to(u.pc).value
+tPair['star1'] = edge_star_row[:,0]
+tPair['star2'] = edge_star_row[:,1]
+tPair['angsep'] = star_c[tPair['star1']].separation(star_c[tPair['star2']]).to(u.arcmin).value
+tPair['separation'] = star_c[tPair['star1']].separation_3d(star_c[tPair['star2']]).to(u.pc).value
 tPair['lnL1/L2'] = np.array([graph.get_edge_data(i,j)['lnL1/L2'] for i,j in edge_tgas_row])
 
-tPair['group_id'] = tStar['group_id'][tPair['star_row1']]
-tPair['group_size'] = tStar['group_size'][tPair['star_row1']]
+tPair['group_id'] = tStar['group_id'][tPair['star1']]
+tPair['group_size'] = tStar['group_size'][tPair['star1']]
 
 tGroup = table.Table()
 tGroup['id'] = np.array([i for i in comp_dict.keys()])
 tGroup['size'] = np.array([len(comp_dict[i]) for i in tGroup['id']])
 tGroup['mean_ra'] = np.array([ np.mean(tStar['tgas_ra'][tStar['group_id']==i]) for i in tGroup['id']])
 tGroup['mean_dec'] = np.array([ np.mean(tStar['tgas_dec'][tStar['group_id']==i]) for i in tGroup['id']])
-tGroup['mean_dist'] = np.array([ np.mean(tStar['tgas_distance'][tStar['group_id']==i]) for i in tGroup['id']])
+tGroup['mean_distance'] = np.array([ np.mean(tStar['tgas_distance'][tStar['group_id']==i]) for i in tGroup['id']])
+
+# group_c = coords.SkyCoord(tGroup['mean_ra']*u.deg, tGroup['mean_dec']*u.deg, tGroup['mean_dist']*u.pc)
 
 # mwsc = table.Table.read('data/J_A+A_585_A101/catalog.dat', readme='data/J_A+A_585_A101/ReadMe',
 #                  format='ascii.cds')
 # print('total number of mwsc', len(mwsc))
 # print('number of mwsc d<600 pc', (mwsc['d']<600).sum())
-
-# group_c = coords.SkyCoord(group_mean_ra*u.deg, group_mean_dec*u.deg, group_mean_dist*u.pc)
 # mwsc_c = coords.SkyCoord(mwsc['GLON'], mwsc['GLAT'], distance=mwsc['d'].to(u.pc), frame=coords.Galactic,) 
 
 # group_mwsc_match = group_c.match_to_catalog_3d(mwsc_c,)
 
-tStar.write('table_star.csv', format='ascii.csv')
-tPair.write('table_pair.csv', format='ascii.csv')
-tGroup.write('table_group.csv', format='ascii.csv')
+tStar.write(
+    'paper/t1-1-star.txt', format='ascii.csv',
+    formats={
+        'tgas_ra': '%.6f',
+        'tgas_dec': '%.6f',
+        'tgas_parallax': '%.4f',
+        'tgas_distance': '%.3f',
+        'tgas_gmag': '%.3f',
+        'tmass_jmag': '%.3f'
+        },
+    exclude_names=['tgas_row']
+    )
+
+tPair.write(
+    'paper/t1-2-pair.txt', format='ascii.csv',
+    formats={
+        'angsep': '%.3f',
+        'separation': '%.3f',
+        'lnL1/L2': '%.2f'
+        },
+    exclude_names=['tgas_row1', 'tgas_row2']
+    )
+
+tGroup.write(
+    'paper/t1-3-group.txt', format='ascii.csv',
+    formats={
+        'mean_ra': '%.6f',
+        'mean_dec': '%.6f',
+        'mean_distance': '%.3f'
+        }
+    )

@@ -7,32 +7,35 @@ Column Name    & Unit & Description                         \\
 \hline
 \multicolumn{3}{c}{Table: Star (10,606 rows)}                                         \\
 \hline
-row id         &      & zero-based row index                      \\
-TGAS source id &      & unique source id from \tgas               \\
-RA             & deg  & right ascension from \tgas                \\
-DEC            & deg  & declination from \tgas                    \\
-parallax       & mas  & unique source id from \tgas               \\
-distance       & pc   & unique source id from \tgas               \\
+row id         &      & Zero-based row index                      \\
+TGAS source id &      & Unique source id from \tgas               \\
+RA             & deg  & Right ascension from \tgas                \\
+DEC            & deg  & Declination from \tgas                    \\
+parallax       & mas  & Unique source id from \tgas               \\
+distance       & pc   & Unique source id from \tgas               \\
 $G$            & mag  & \gaia\ $G$-band magnitudes                \\
 $J$            & mag  & \tmass\ $J$-band magnitudes               \\
-$H$            & mag  & \tmass\ $H$-band magnitudes               \\
-RAVE OBS ID    &      & unique id of the \rave\ match             \\
-RV             & \kms & radial velocity from \rave\               \\
-eRV            & \kms & uncertainty of radial velocity from \rave \\
+RAVE OBS ID    &      & Unique id of the \rave\ match             \\
+RV             & \kms & Radial velocity from \rave\               \\
+eRV            & \kms & Uncertainty of radial velocity from \rave \\
 group id       &      & Id of the group this star belongs to      \\
 \hline
 \multicolumn{3}{c}{Table: Pair (13,058 rows)}                                            \\
 \hline
-angsep                           & arcmin & angular separation                  \\
-separation                       & pc     & physical separation                 \\
-$\ln\mathcal{L}_1/\mathcal{L}_2$ &        & likelihood ratio                    \\
-group id                         &        & id of the group the pair belongs to \\
+star 1                           &        & Index of star 1 in the star table   \\
+star 2                           &        & Index of star 2 in the star table   \\
+angsep                           & arcmin & Angular separation                  \\
+separation                       & pc     & Physical separation                 \\
+$\ln\mathcal{L}_1/\mathcal{L}_2$ &        & Likelihood ratio                    \\
+group id                         &        & Id of the group the pair belongs to \\
 \hline
 \multicolumn{3}{c}{Table: Group (4,555 rows)}                                         \\
 \hline
-id     &        & unique group id                     \\
-size   &        & number of stars in a group          \\
-       &        &                                     \\
+id            &        & Unique group id                     \\
+size          &        & Number of stars in a group          \\
+mean RA       &  deg   & Mean right ascension of members     \\
+mean DEC      &  deg   & Mean declination of members     \\
+mean distance &  pc    & Mean distance of members     \\
 \hline\hline
 \end{tabular}
 \end{table}
