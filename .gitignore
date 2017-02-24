@@ -1,5 +1,7 @@
 build
 dist
 .cache
-plots
 data
+
+plots
+talkfigures
