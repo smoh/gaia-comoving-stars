@@ -31,7 +31,7 @@ distances.
   > - p.3: line below eq.(2): I assume you mean proper motion RA*cos(Dec)
   > here instead of just mu_alpha, right?
 
-That is correct. We changed the symbol to $\mu_{\alpha}^*$ to distinguish
+Yes, we changed the symbol to $\mu_{\alpha}^*$ to distinguish
 with $\mu_\alpha=d(\alpha)/dt$, and added an explicit note on this.
 
   > - p.6: eq.(7): might want to mention what "I" is (unit matrix)
@@ -64,8 +64,6 @@ and are the co-moving pairs by our selection.
 This should be contrasted with smaller L1/L2 pairs (lighter blue points)
 more and more dominating as you go up in dv_tan (right upper corner),
 which are not co-moving.
-
-SMOH: add a sentence or two to connect back to sec 2?
 
   > - p.10: Fig.5: light blue vs. grey are not well distinguished,
   > frankly I can see only sort of grey star cluster symbols,
@@ -109,13 +107,18 @@ in the machine-readable table.
 - We added more useful columns to the star table, including all information
 that was used to make figures in this paper. 
 
-- We decided to remove the closest cluster information as verifying the match between
-each connected component and known clusters is not a trivial task, and it may
-mislead the readers.
+- We decided to remove the closest cluster information as verifying the match
+  between each connected component in this study and known clusters is not a
+  trivial task, and it may mislead the readers.
 
-    - p.16: par. above summary: would it be worth looking for those
-    potentially missing pairs in a set of lower L1/L2 cut data?
+  > - p.16: par. above summary: would it be worth looking for those
+  > potentially missing pairs in a set of lower L1/L2 cut data?
 
-    - p.18: 3rd line from top: "... at git commit ( )."
-    what are the empty parentheses - something missing here?
+Yes, we think there may be better algorithms to do clustering on the whole graph of
+$\sim 270k$ pairs, but are yet to apply to the dataset.
 
+  > - p.18: 3rd line from top: "... at git commit ( )."
+  > what are the empty parentheses - something missing here?
+
+Fixed. The hash (identifier) of the last Git commit before submission was
+mistakenly omitted. We decided to make this information available on the webpage.
