@@ -33,3 +33,12 @@ submit: ${NAME}.pdf
 
 report.pdf: report.txt
 	pandoc -V geometry:margin=1in -V fontsize:12pt -o report.pdf report.txt
+
+
+diff.pdf: ms.pdf archive/ms.tex
+	latexdiff --disable-citation-markup archive/ms.tex ms.tex > diff.tex
+	${LATEX} diff
+	bibtex diff
+	${LATEX} diff
+	( grep "Rerun to get" diff.log && ${LATEX} diff ) || echo "Done."
+	( grep "Rerun to get" diff.log && ${LATEX} diff ) || echo "Done."

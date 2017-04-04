@@ -267,12 +267,12 @@ A few key observations can be made:
     This indeed can be seen in Figure~\ref{fig:dv-sep} as an over-density
     in the lower right corner that gets thinner as \absdvtan\ increases.
 
-  \item Finally, there is a population of “random” pairs of field stars
+  \item Finally, there is a population of ``random'' pairs of field stars
     that are not co-moving, but still have $\absdvtan < 10$~\kms\
     by chance.
     As \absdvtan\ increases, this population will dominate.
     Figure~\ref{fig:dv-sep} shows that there is an overlap between
-    genuine co-moving pairs and “random” pairs.
+    genuine co-moving pairs and ``random'' pairs.
 \end{itemize}
 
 In the following section, we construct a statistical model that propagates
@@ -312,8 +312,8 @@ statistical model (a likelihood function with explicit priors on our
 parameters):
 \begin{itemize}
   \item We assume that the uncertainties in the data---parallax, $\varpi$, and
-    two proper motion components, $\propm = (\begin{array}[t]{c c} \mu_{\alpha^*} &
-    \mu_\delta\end{array})^\mathsf{T}$---are Gaussian with known covariances
+    two proper motion components, $\propm = \transp{(\mu_{\alpha^*}\, \mu_\delta)}$
+    ---are Gaussian with known covariances
     $\mat{C}$. The values of covariances are provided as part of the \gaia\ data
     \citep{Lindegren:2012aa,Lindegren:2016aa}.
   \item We assume that the 3D velocities of stars in a given pair
@@ -749,7 +749,7 @@ For each star, we also include the positional measurements from \tgas,
 \rave\ radial velocities.
 The co-moving relationship between the stars is described in the pair table.
 We also list the angular and physical separation of pairs, and the likelihood ratio,
-$\ln \mathcal{L}_1 /\mathcal{L}_2>6$ (see \eqname~\ref{eq:hyp1} and \ref{eq:hyp2})
+$\ln \mathcal{L}_1 /\mathcal{L}_2(>6)$ (see \eqname~\ref{eq:hyp1} and \ref{eq:hyp2})
 computed in this work.
 
 Finally, the information about the connected components found in these co-moving
