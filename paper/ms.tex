@@ -395,8 +395,8 @@ We use a mixture of three isotropic, zero-mean Gaussian distributions
 with velocity dispersions $(\sigma_{v,1}, \sigma_{v,2}, \sigma_{v,3}) = (15, 30, 50)
 ~\kms$ and weights $(w_1,w_2,w_3) = (0.3, 0.55, 0.15)$
 meant to encompass young thin disk stars to halo stars.
-These numbers are empirically chosen to account for the distribution of one
-component velocities of the \tgas\ stars.
+These numbers are empirically chosen to account for the distribution of
+velocities of the \tgas\ stars.
 We derive the relevant expressions in Appendix~\ref{sec:appendix}.
 After marginalizing over velocity, the likelihood integrands only depend on
 distance; we numerically compute the integrals over the true distances of each
@@ -590,7 +590,7 @@ This is primarily because of the non-uniform coverage and magnitude limit of the
 Ultimately, any candidate co-moving pair found in this work
 needs to be verified using radial velocities.
 Here, we use 210,368 cross-matches of the \tgas\ with
-Radial Velocity Experiment fifth data release (\rave\ DR~5; \citealt{2016arXiv160903210K}) to
+Radial Velocity Experiment fifth data release (\rave\ DR~5; \citealt{2017AJ....153...75K}) to
 assess the false-positive rates of our selection.
 We have 283 pairs with both stars matched with \rave.
 Figure~\ref{fig:raverv} shows the difference in radial velocities
@@ -615,6 +615,8 @@ size 2), and those in a larger group.
 We indeed find that many pairs in larger groups are at $>1$~pc, yet
 the fraction of pairs that have identical radial velocities within $3\sigma$ is
 higher than the mutually exclusive pairs, and remains high ($>80\%$) to $\sim 10$~pc.
+Finally, we note that the false-positive rate for mutually exclusive pairs
+with large angular separation may have been over-estimated due to projection.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -789,10 +791,15 @@ naturally correspond to some of the known co-moving structures
 such as open clusters and stellar associations.
 Some of these co-moving groups of stars are newly discovered.
 
-We have also found a surprisingly large number of very wide separation ($>1$~pc)
+We have also found a large number of very wide separation ($>1$~pc)
 mutually exclusive co-moving pairs, in which the stars are the only co-moving neighbor
 of each other and not part of large connected components.
-These are most likely remnants of dissolving wide binaries.
+These are most likely remnants of dissolving wide binaries (\citealt{Jiang:2010aa}).
+The abundance of highly probable wide separation co-moving pairs
+conclusively shows that there is no strict cut-off semi-major axis for wide binary systems
+(\citealt{Wasserman:1987aa}).
+The presence of these pairs and similar separation distribution have already
+been noticed by \citealt{Shaya:2011aa} using the \project{Hipparcos} data.
 If confirmed with radial velocity measurements, this population should still be
 relatively young compared to the general disk field population.
 Modeling the color-magnitude diagram distribution of these stars can shed some
@@ -816,7 +823,7 @@ on the \emph{3D velocities} of the two stars in a pair, and that we
 marginalize over the (unknown) true distances and velocities of the stars
 in contrast to just applying a cut in the proper motion space.
 
-Finally, we make our catalog of 13,058 candidate co-moving pair available to the
+Finally, we make our catalog of 13,058 candidate co-moving pairs available to the
 community.
 What we find using the \tgas\ is only a taste of what we will discover with
 the future releases of the \gaia\ mission.
@@ -824,15 +831,17 @@ the future releases of the \gaia\ mission.
 
 \acknowledgements
 
+We thank Scott Tremaine for useful discussions.
+This project was developed in part at the 2016 NYC Gaia Sprint, hosted by the Center for
+Computational Astrophysics at the Flatiron Institute in New York City. The
+Flatiron Institute is supported by the Simons Foundation.
+
 This work has made use of data from the European Space Agency (ESA) mission
 {\it Gaia} (\url{http://www.cosmos.esa.int/gaia}), processed by the {\it Gaia}
 Data Processing and Analysis Consortium (DPAC,
 \url{http://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
 has been provided by national institutions, in particular the institutions
-participating in the {\it Gaia} Multilateral Agreement. This project was
-developed in part at the 2016 NYC Gaia Sprint, hosted by the Center for
-Computational Astrophysics at the Flatiron Institute in New York City. The
-Flatiron Institute is supported by the Simons Foundation.
+participating in the {\it Gaia} Multilateral Agreement. 
 
 This research was partially supported by the \acronym{NSF} (grants
   \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
@@ -849,7 +858,6 @@ University.
 software license.
 This research additionally utilized:
     \texttt{Astropy} (\citealt{Astropy-Collaboration:2013}),
-    %\texttt{emcee} (\citealt{Foreman-Mackey:2013}),
     \texttt{IPython} (\citealt{Perez:2007}),
     \texttt{matplotlib} (\citealt{Hunter:2007}),
     and \texttt{numpy} (\citealt{Van-der-Walt:2011}).}
