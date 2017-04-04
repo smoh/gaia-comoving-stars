@@ -391,6 +391,7 @@ in both cases can be performed analytically:
 We use a mixture of three isotropic, zero-mean Gaussian distributions
 \begin{equation}
   p(\vec{v}) = \sum_{m=1}^3 \, w_m \, \mathcal{N}(0, \sigma_{v,m}^2)
+  \label{eq:vprior}
 \end{equation}
 with velocity dispersions $(\sigma_{v,1}, \sigma_{v,2}, \sigma_{v,3}) = (15, 30, 50)
 ~\kms$ and weights $(w_1,w_2,w_3) = (0.3, 0.55, 0.15)$
@@ -797,7 +798,7 @@ of each other and not part of large connected components.
 These are most likely remnants of dissolving wide binaries (\citealt{Jiang:2010aa}).
 The abundance of highly probable wide separation co-moving pairs
 conclusively shows that there is no strict cut-off semi-major axis for wide binary systems
-(\citealt{Wasserman:1987aa}).
+(e.g., \citealt{Wasserman:1987aa}).
 The presence of these pairs and similar separation distribution have already
 been noticed by \citealt{Shaya:2011aa} using the \project{Hipparcos} data.
 If confirmed with radial velocity measurements, this population should still be
@@ -893,11 +894,11 @@ If we equate
   &=& \frac{1}{2}\,\transp{\vec{x}}\,\inv{\mat{A}}\,\vec{x} + \transp{\vec{x}}\,\mat{B}\,\vec{b} + C
   \quad ,
 \end{eqnarray}
-where $\mat{B}\,\vec{b}$ is an $D$-vector, and $C$ is a scalar, then we find
+where $\mat{B}\,\vec{b}$ is a $D$-vector, and $C$ is a scalar, then we find
 \begin{eqnarray}
-  \vec{\nu} &=& -\mat{A}\,\mat{B}\,\vec{b}
+  \vec{\nu} &=& -\mat{A}\,\mat{B}\,\vec{b} \label{eq:convnu}
   \\
-  \Delta & = & C - \frac{1}{2}\,\transp{\vec{\nu}}\,\inv{\mat{A}}\,\vec{\nu}
+  \Delta & = & C - \frac{1}{2}\,\transp{\vec{\nu}}\,\inv{\mat{A}}\,\vec{\nu} \label{eq:convDelta}
   \quad .
 \end{eqnarray}
 We will identify terms in our likelihood functions with $\mat{A}$,
@@ -908,17 +909,12 @@ the marginalized likelihood using \eqname~\ref{eq:gauss-int}.
 
 At given distance $r$, the velocity-marginalized likelihood can be computed
 analytically using the expressions in Appendix~\ref{sec:appendixA}.
-As described above, we use an isotropic, mixture-of-Gaussians prior on velocity
-where the velocity dispersion of a given mixture component is $\sigma_{v,m}$ and
-the 3-space variance tensor is $\mat{V}_m = \sigma_{v,m}^2 \, \eye$.
-The likelihood for the data is also a Gaussian, as shown in
-\eqname~\ref{eq:likefn}.
 We will start by writing down expressions for the the likelihood multiplied by
 the prior pdf for the velocities.
-Here we slightly change the notation used in \sectionname~\ref{sec:methods} for
-simplicity.
-
-We construct a velocity-space data vector $y$ as follows:
+The likelihood for the data (proper motions of the two stars in a pair)
+is a Gaussian (\eqname~\ref{eq:likefn}).
+In order to simplify our notation, 
+we construct a velocity-space data vector $\vec{y}$ as follows:
 \begin{equation}
   \vec{y} =
     \transp{\left(
@@ -930,7 +926,7 @@ We construct a velocity-space data vector $y$ as follows:
       \end{array}
     \right)}
 \end{equation}
-where again the subscripts $i,j$ refer to the indices of each star in the pair
+where the subscripts $i,j$ refer to the indices of each star in the pair
 and we have multiplied the observables (the proper motions) by the distances
 $r_i, r_j$, which is permitted because we are conditioning on the distances.
 Fundamentally, our hypothesis 1 model (the stars have the same velocity with a
@@ -941,9 +937,10 @@ small difference) is
 where now the $4 \times 3$ transformation matrix $\mat{M}$ is a stack of the
 transformation matrices for each star computed from the pair of sky positions
 and using \eqname~\ref{eq:transformation}.
-The noise (in the $y$ vector) is drawn from a $4 \times 4$ Gaussian with
-block-diagonal covariance matrix, $\mat{\Sigma}$, constructed from the
-covariance matrix of the observables, $\mat{C}_i, \mat{C}_j$, and the distances
+The noise (in $\vec{y}$) is drawn from a $4 \times 4$ Gaussian with
+block-diagonal covariance matrix, $\mat{\Sigma}$, constructed from
+the proper motion covariance matrix of each star,
+$\mat{C}_i, \mat{C}_j$, and the distances
 $r_i, r_j$:
 \begin{equation}
   \mat{\Sigma} = \left(
@@ -954,7 +951,7 @@ $r_i, r_j$:
   \right)
 \end{equation}
 
-Given all these definitions, the likelihood function for hypothesis 1 is
+Given these definitions, the likelihood function for hypothesis 1 is
 \begin{eqnarray}
   p(\data \given \vec{v}, r_i, r_j) &=& r_i^2\,r_j^2\,
     \normal(\vec{y} \given \mat{M}\,\vec{v}, \mat{\Sigma}) \\
@@ -965,12 +962,24 @@ Given all these definitions, the likelihood function for hypothesis 1 is
       [\vec{y}-\mat{M}\,\vec{v}]
   \quad ,
 \end{eqnarray}
-where the factor of $r_i^2\,r_j^2$ converts to units of one over \gaia\ data
-from units of one over $y$, which includes the distances.
+where the factor of $r_i^2\,r_j^2$ is the Jacobian from $\vec{y}$
+to data ($\transp{(\mu_{\alpha,i}\ \,\mu_{\delta,i}\ \,\mu_{\alpha,j}\ \,\mu_{\delta,j})}$) space.
 
-Now we multiply this likelihood with the velocity prior (here shown only for one
-prior velocity mixture component) and complete the square.
-In the original parameterization, we find:
+Now we multiply this likelihood with the velocity prior.
+As described in \sectionname~\ref{sec:methods}
+we use an isotropic, mixture-of-Gaussians prior on velocity (\eqname~\ref{eq:vprior}).
+For simplicity here let us work out the marginalization for one component of
+the mixture so that $\vec{v} \sim \normal(\vec{0}, \mat{V}_m)$.
+Then,
+
+\begin{eqnarray}
+  \ln p(\vec{v}) = -\frac{1}{2}\,\ln||2\pi\,\mat{V}_m||
+  -\frac{1}{2} \transp{\vec{v}}\,\inv{\mat{V}_m}\,\vec{v}
+\end{eqnarray}
+We can identify $\mat{A}$, $\mat{B}\,\vec{b}$, and $C$ in
+$\ln p(\vec{v}) + \ln p(\data \given \vec{v}, r_i, r_j)$, and write down
+$\vec{\nu}$ and $\Delta$ using \eqname~\ref{eq:convnu} and \ref{eq:convDelta} as
+
 \begin{eqnarray}
   \mat{A} &=& \inv{[\transp{\mat{M}}\,\inv{\mat{\Sigma}}\,\mat{M}+\inv{\mat{V}_m}]}
   \\
@@ -1001,13 +1010,13 @@ each star individually, where
   \mat{\Sigma} &=& r^2 \, \mat{C}
   \\
 \end{eqnarray}
-and $\mat{M}$ is now the transformation matrix for one star. Then, again,
+and $\mat{M}$ is now the transformation matrix for one star. Then,
 \begin{eqnarray}
   \mat{A} &=& \inv{[\transp{\mat{M}}\,\inv{\mat{\Sigma}}\,\mat{M}+\inv{\mat{V}_m}]}
   \\
   \vec{\nu} &=& -\mat{A}\,\transp{\mat{M}}\,\inv{\mat{\Sigma}}\,\vec{y}
   \\
-  \Delta &=& -2\,\ln r_i -2\,\ln r_j
+  \Delta &=& -2\,\ln r
     +\frac{1}{2}\,\ln||2\pi\,\mat{\Sigma}|| +\frac{1}{2}\,\ln||2\pi\,\mat{V}_m|| \nonumber \\
     && \quad +\frac{1}{2}\,\transp{\vec{y}}\,\inv{\mat{\Sigma}}\,\vec{y} -\frac{1}{2}\,\transp{\vec{\nu}}\,\inv{\mat{A}}\,\vec{\nu}
   \quad ,
