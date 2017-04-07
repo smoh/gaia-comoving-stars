@@ -237,8 +237,8 @@ then,
   \absdvtan = |\hat{r}_1 \vec\mu_1 - \hat{r}_2 \vec\mu_2|
 \end{equation}
 where $\vec\mu = (\mu_{\alpha^*}, \mu_\delta)$.
-\footnote{$\mu_{\alpha^*}$ is proper motion
-in right ascension direction, $\mu_{\alpha^*} = \mu_\alpha \cos\delta$}
+\footnote{$\mu_{\alpha^*}$ is the proper motion component
+in the right ascension direction, $\mu_{\alpha^*} = \mu_\alpha \cos\delta$}
 
 Figure~\ref{fig:dv-sep} shows \absdvtan\ against the physical separation
 for the resulting 271,232 unique pairs in the initial sample.
@@ -740,15 +740,15 @@ For 13,058 pairs (10,606 unique stars) found in this work.
 The catalog is composed of three tables of stars, pairs, and groups.
 We summarize the content of each table in Table~\ref{tab:table_meta}, and
 the relationships between the tables in Figure~\ref{fig:schema}.
-The star table contains all 10,606 stars that has at least one co-moving neighbor
+The star table contains all 10,606 stars that have at least one co-moving neighbor
 by our selection. We provide the TGAS source id, which may be used to easily
-retrieve cross matches of \gaia\ with other surveys
+retrieve cross matches between \gaia\ and other surveys
 using the \gaia\ data archive.
 For each star, we also include the positional measurements from \tgas,
-\gaia\ $G$-band and \tmass\ $J$-band magnitudes as well as
-\rave\ radial velocities.
+\gaia\ $G$-band, \tmass\ $J$-band magnitudes, and
+\rave\ radial velocities where they exist.
 The co-moving relationship between the stars is described in the pair table.
-We also list the angular and physical separation of pairs, and the likelihood ratio,
+We also list the angular and physical separation of each pair, and the likelihood ratio,
 $\ln \mathcal{L}_1 /\mathcal{L}_2(>6)$ (see \eqname~\ref{eq:hyp1} and \ref{eq:hyp2})
 computed in this work.
 
@@ -842,7 +842,7 @@ This work has made use of data from the European Space Agency (ESA) mission
 Data Processing and Analysis Consortium (DPAC,
 \url{http://www.cosmos.esa.int/web/gaia/dpac/consortium}). Funding for the DPAC
 has been provided by national institutions, in particular the institutions
-participating in the {\it Gaia} Multilateral Agreement. 
+participating in the {\it Gaia} Multilateral Agreement.
 
 This research was partially supported by the \acronym{NSF} (grants
   \acronym{IIS-1124794}, \acronym{AST-1312863}, \acronym{AST-1517237}),
@@ -913,7 +913,7 @@ We will start by writing down expressions for the the likelihood multiplied by
 the prior pdf for the velocities.
 The likelihood for the data (proper motions of the two stars in a pair)
 is a Gaussian (\eqname~\ref{eq:likefn}).
-In order to simplify our notation, 
+In order to simplify our notation,
 we construct a velocity-space data vector $\vec{y}$ as follows:
 \begin{equation}
   \vec{y} =
@@ -962,8 +962,8 @@ Given these definitions, the likelihood function for hypothesis 1 is
       [\vec{y}-\mat{M}\,\vec{v}]
   \quad ,
 \end{eqnarray}
-where the factor of $r_i^2\,r_j^2$ is the Jacobian from $\vec{y}$
-to data ($\transp{(\mu_{\alpha,i}\ \,\mu_{\delta,i}\ \,\mu_{\alpha,j}\ \,\mu_{\delta,j})}$) space.
+where the factor of $r_i^2\,r_j^2$ is the Jacobian of the transformation from $\vec{y}$
+to the data space ($\transp{(\mu_{\alpha,i}\ \,\mu_{\delta,i}\ \,\mu_{\alpha,j}\ \,\mu_{\delta,j})}$).
 
 Now we multiply this likelihood with the velocity prior.
 As described in \sectionname~\ref{sec:methods}
@@ -1002,7 +1002,7 @@ each star individually, where
   \vec{y} &=&
     \transp{\left(
       \begin{array}{c c}
-        r\,\mu_{\alpha} &
+        r\,\mu_{\alpha} & \quad
         r\,\mu_{\delta}
       \end{array}
     \right)}
