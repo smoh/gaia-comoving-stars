@@ -5,6 +5,8 @@
 
 This repository contains code used for finding co-moving pairs of stars using the TGAS catalog. The paper is posted on [arxiv](https://arxiv.org/abs/1612.02440).
 
+An interactive web visualization is available [here](www.smoh.space/vis/gaia-comoving-stars/).
+
 ## Link to the catalog in CSV format:
 
 - [star table](https://raw.githubusercontent.com/smoh/gaia-comoving-stars/master/paper/t1-1-star.txt)
