@@ -63,17 +63,17 @@ tStar = table.Table(masked=True)
 tStar['tgas_row'] = graph.nodes()
 tStar['row_id'] = np.arange(len(tStar))
 tStar['tgas_source_id'] = tgas.source_id[tStar['tgas_row']]
-tStar['tgas_ra'] = tgas.ra.value[tStar['tgas_row']]
-tStar['tgas_dec'] = tgas.dec.value[tStar['tgas_row']]
-tStar['tgas_parallax'] = tgas.parallax.value[tStar['tgas_row']]
-tStar['tgas_distance'] = tgas_d[tStar['tgas_row']]
-tStar['tgas_gmag'] = tgas._data['phot_g_mean_mag'][tStar['tgas_row']]
-tStar['tmass_jmag'] = tmass['j_m'][tStar['tgas_row']]
+tStar['ra'] = tgas.ra.value[tStar['tgas_row']]
+tStar['dec'] = tgas.dec.value[tStar['tgas_row']]
+tStar['parallax'] = tgas.parallax.value[tStar['tgas_row']]
+tStar['distance'] = tgas_d[tStar['tgas_row']]
+tStar['G'] = tgas._data['phot_g_mean_mag'][tStar['tgas_row']]
+tStar['J'] = tmass['j_m'][tStar['tgas_row']]
 tStar['rave_obs_id'] = tgas_rave_obs_id[tStar['tgas_row']]
-tStar['rave_hrv'] = tgas_rave_hrv[tStar['tgas_row']]
-tStar['rave_hrv'].mask = np.isnan(tStar['rave_hrv'])
-tStar['rave_ehrv'] = tgas_rave_ehrv[tStar['tgas_row']]
-tStar['rave_ehrv'].mask = np.isnan(tStar['rave_ehrv'])
+tStar['rv'] = tgas_rave_hrv[tStar['tgas_row']]
+tStar['rv'].mask = np.isnan(tStar['rv'])
+tStar['erv'] = tgas_rave_ehrv[tStar['tgas_row']]
+tStar['erv'].mask = np.isnan(tStar['erv'])
 tStar['group_id'] = [graph.node.get(n)['group_id'] for n in tStar['tgas_row']]
 tStar['group_size'] = [len(nx.node_connected_component(graph, node)) for node in tStar['tgas_row']]
 
@@ -96,9 +96,9 @@ tPair['group_size'] = tStar['group_size'][tPair['star1']]
 tGroup = table.Table()
 tGroup['id'] = np.array([i for i in comp_dict.keys()])
 tGroup['size'] = np.array([len(comp_dict[i]) for i in tGroup['id']])
-tGroup['mean_ra'] = np.array([ np.mean(tStar['tgas_ra'][tStar['group_id']==i]) for i in tGroup['id']])
-tGroup['mean_dec'] = np.array([ np.mean(tStar['tgas_dec'][tStar['group_id']==i]) for i in tGroup['id']])
-tGroup['mean_distance'] = np.array([ np.mean(tStar['tgas_distance'][tStar['group_id']==i]) for i in tGroup['id']])
+tGroup['mean_ra'] = np.array([ np.mean(tStar['ra'][tStar['group_id']==i]) for i in tGroup['id']])
+tGroup['mean_dec'] = np.array([ np.mean(tStar['dec'][tStar['group_id']==i]) for i in tGroup['id']])
+tGroup['mean_distance'] = np.array([ np.mean(tStar['distance'][tStar['group_id']==i]) for i in tGroup['id']])
 
 # group_c = coords.SkyCoord(tGroup['mean_ra']*u.deg, tGroup['mean_dec']*u.deg, tGroup['mean_dist']*u.pc)
 
@@ -113,12 +113,14 @@ tGroup['mean_distance'] = np.array([ np.mean(tStar['tgas_distance'][tStar['group
 tStar.write(
     'paper/t1-1-star.txt', format='ascii.csv',
     formats={
-        'tgas_ra': '%.6f',
-        'tgas_dec': '%.6f',
-        'tgas_parallax': '%.4f',
-        'tgas_distance': '%.3f',
-        'tgas_gmag': '%.3f',
-        'tmass_jmag': '%.3f'
+        'ra': '%.6f',
+        'dec': '%.6f',
+        'parallax': '%.4f',
+        'distance': '%.3f',
+        'G': '%.3f',
+        'J': '%.3f',
+        'rv': '%.2f',
+        'erv': '%.2f'
         },
     exclude_names=['tgas_row']
     )
