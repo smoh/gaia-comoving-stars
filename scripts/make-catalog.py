@@ -63,6 +63,8 @@ tStar = table.Table(masked=True)
 tStar['tgas_row'] = graph.nodes()
 tStar['row_id'] = np.arange(len(tStar))
 tStar['tgas_source_id'] = tgas.source_id[tStar['tgas_row']]
+tStar['name'] = ['HIP {:d}'.format(hip) if hip != 999999 else 'TYC {:s}'.format(tyc)
+        for hip, tyc in zip(tgas.hip[tStar['tgas_row']], tgas.tycho2_id[tStar['tgas_row']])]
 tStar['ra'] = tgas.ra.value[tStar['tgas_row']]
 tStar['dec'] = tgas.dec.value[tStar['tgas_row']]
 tStar['parallax'] = tgas.parallax.value[tStar['tgas_row']]
