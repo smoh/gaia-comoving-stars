@@ -11,7 +11,8 @@
   >  items and a few content related items, sorted by following
   >  along the manuscript:
 
-We thank the referee for his/her comments, and detail our response to each item below.
+We thank the referee for his/her comments, and apologize for the delayed response.
+We detail our response to each item below, and enclose PDF with changes highlighted in bold (diff.pdf).
 
   > - p.3: begin of section 2: does "Article" need to be in italic?
 

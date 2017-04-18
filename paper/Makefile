@@ -23,6 +23,7 @@ ${NAME}.pdf: ${NAME}.tex *.bib aastexmods.tex schema.tex table_meta.tex
 
 clean:
 	${RM} $(foreach suff, ${TMP_SUFFS}, ${NAME}.${suff})
+	${RM} $(foreach suff, ${TMP_SUFFS}, schema.${suff})
 	${RM} aastexmods.aux
 	${RM} gitstuff.aux
 	${RM} *Notes.bib
@@ -43,3 +44,11 @@ diff.pdf: ms.pdf archive/ms.tex
 	${LATEX} diff
 	( grep "Rerun to get" diff.log && ${LATEX} diff ) || echo "Done."
 	( grep "Rerun to get" diff.log && ${LATEX} diff ) || echo "Done."
+
+resubmit: ${NAME}.pdf report.pdf diff.pdf
+	make
+	mkdir resubmit
+	cp $$(git ls-tree --name-only HEAD | grep -v ".gitignore\|Makefile\|figures\|schema.tex") resubmit/
+	cp $$(git ls-files figures/) resubmit/
+	cp schema.pdf resubmit/
+	echo "all files in resubmit/"
