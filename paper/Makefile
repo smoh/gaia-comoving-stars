@@ -37,7 +37,7 @@ report.pdf: report.txt
 
 
 diff.pdf: ms.pdf archive/ms.tex
-	latexdiff --disable-citation-markup archive/ms.tex ms.tex > diff.tex
+	latexdiff --disable-citation-markup -t BOLD archive/ms.tex ms.tex > diff.tex
 	${LATEX} diff
 	bibtex diff
 	${LATEX} diff

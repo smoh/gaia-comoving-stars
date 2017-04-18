@@ -124,3 +124,10 @@ Fixed. The hash (identifier) of the last Git commit before submission
 (in order to indicate the last history of the code relevant to the analysis
 presented here) was mistakenly omitted.
 We decided to make this information available at the url rather than here.
+
+Aside from the above, we have these minor changes in the new manuscript. We
+
+- added the reference Shaya & Olling 2011 in regards that
+there is no strict cut-off in co-moving pair separation.
+- added a note on projection in regards to comparing RVs.
+- cleaned up Appendix B.
