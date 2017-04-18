@@ -919,9 +919,9 @@ we construct a velocity-space data vector $\vec{y}$ as follows:
   \vec{y} =
     \transp{\left(
       \begin{array}{c c c c}
-        r_i\,\mu_{\alpha,i} &
+        r_i\,\mu_{\alpha,i}^* &
         r_i\,\mu_{\delta,i} &
-        r_j\,\mu_{\alpha,j} &
+        r_j\,\mu_{\alpha,j}^* &
         r_j\,\mu_{\delta,j}
       \end{array}
     \right)}
@@ -963,7 +963,7 @@ Given these definitions, the likelihood function for hypothesis 1 is
   \quad ,
 \end{eqnarray}
 where the factor of $r_i^2\,r_j^2$ is the Jacobian of the transformation from $\vec{y}$
-to the data space ($\transp{(\mu_{\alpha,i}\ \,\mu_{\delta,i}\ \,\mu_{\alpha,j}\ \,\mu_{\delta,j})}$).
+to the data space ($\transp{(\mu_{\alpha,i}^*\ \,\mu_{\delta,i}\ \,\mu_{\alpha,j}^*\ \,\mu_{\delta,j})}$).
 
 Now we multiply this likelihood with the velocity prior.
 As described in \sectionname~\ref{sec:methods}
@@ -1002,7 +1002,7 @@ each star individually, where
   \vec{y} &=&
     \transp{\left(
       \begin{array}{c c}
-        r\,\mu_{\alpha} & \quad
+        r\,\mu_{\alpha}^* & \quad
         r\,\mu_{\delta}
       \end{array}
     \right)}
