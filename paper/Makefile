@@ -14,6 +14,7 @@ gitstuff.tex: ../.git/logs/HEAD
 	git log -1 --date=short --format="format:\\newcommand{\\githash}{%h}\\newcommand{\\gitdate}{%ad}\\newcommand{\\gitauthor}{%an}" >> gitstuff.tex
 
 ${NAME}.pdf: ${NAME}.tex *.bib aastexmods.tex schema.tex table_meta.tex
+	${LATEX} schema.tex
 	${LATEX} ${NAME}
 	bibtex ${NAME}
 	${LATEX} ${NAME}

@@ -1,9 +1,13 @@
-
+\documentclass[border={0 0.4cm 0.3cm 0.2cm}]{standalone}
+\usepackage{tikz}
 \usetikzlibrary{shapes.multipart}
 \usetikzlibrary{matrix}
 \usetikzlibrary{positioning}
 \usetikzlibrary{shadows}
 \usetikzlibrary{calc}
+
+\begin{document}
+
 
 \makeatletter
 \pgfarrowsdeclare{crow's foot}{crow's foot}
@@ -79,6 +83,7 @@
     \properties{
         row id,
         TGAS source id, 
+        Name,
         RA,
         DEC,
         parallax,
@@ -86,21 +91,23 @@
         magnitudes,
         RAVE match,
         group id,
+        group size
     }
 };
 
-\matrix [entity=Pair, entity anchor=Pair-separation] at (4.5,1) {
+\matrix [entity=Pair, entity anchor=Pair-separation] at (4.5,1.5) {
     \properties{
         star 1,
         star 2,
         angsep,
         separation,
         ln(L1/L2),
-        group id
+        group id,
+        group size
     }
 };
 
-\matrix  [entity=Group] at (4.5,-2) {
+\matrix  [entity=Group] at (4.5,-2.5) {
     \properties{
         id,
         size,
@@ -113,6 +120,9 @@
 \draw [line width=0.1mm, many to one] (Star-row id) to (Pair-star 1);
 \draw [line width=0.1mm, many to one] (Star-row id) to (Pair-star 2);
 \draw [line width=0.1mm, many to one] (Star-group id)  to (Group-id);
+\draw [line width=0.1mm, many to one] (Star-group size)  to (Group-size);
 \draw  [line width=0.1mm, crow's foot-](Pair-group id)  -| ($(Pair-group id)+ (2, -1)$) |- (Group-id);
+\draw  [line width=0.1mm, crow's foot-](Pair-group size)  -| ($(Pair-group size)+ (2, -1)$) |- (Group-size);
 
 \end{tikzpicture}
+\end{document}
