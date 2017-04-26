@@ -1,5 +1,6 @@
 
 [![Build Status](https://travis-ci.com/smoh/gaia-comoving-stars.svg?token=snqHW5KtLdPNJV6qzcFr&branch=master)](https://travis-ci.com/smoh/gaia-comoving-stars)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.569334.svg)](https://doi.org/10.5281/zenodo.569334)
 
 # Co-moving stars in Gaia DR1
 
