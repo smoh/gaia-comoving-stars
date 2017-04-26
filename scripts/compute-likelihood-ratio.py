@@ -1,3 +1,4 @@
+# Script to compute the likelihood ratio given TGAS catalog and pair indices table
 # Standard library
 import os
 
