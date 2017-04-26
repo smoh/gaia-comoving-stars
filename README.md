@@ -22,6 +22,21 @@ You can download the stacked Tycho-Gaia data as a FITS file from
 wget http://s3.adrian.pw/stacked_tgas.fits
 ```
 
+## What's in the code?
+
+- README.md: this file
+- environment.yml: [conda environment](https://conda.io/docs/using/envs.html#clone-an-environment) specification.
+  `conda env create` will read this file and install necessary packages in an environment named `gwb`.
+  Do `source activate gwb` to activate the environment.
+- gwb/ : main source code
+- mpi/ : contains example job scripts for computing clusters
+- notebooks/ : contains notebooks used to analyze results
+- paper/ : paper TeX files
+- scripts/ : contains scripts used to generate pair sample, and calculate likelihood ratios
+- setup.py: python install script. In order to install the code in development mode, do `python setup.py develop`.
+  This way, changes you make in the code base is reflected immediately without the need to install again.
+
+
 ## License
 
 Copyright 2016 the Authors. Licensed under the terms of [the MIT
