@@ -16,3 +16,4 @@ dependencies:
   - pip:
     - six
     - schwimmbad
+    - networkx
