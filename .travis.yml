@@ -21,3 +21,10 @@ install:
 
 script:
     - py.test gwb
+
+# blocklist
+branches:
+  except:
+  - release
+  - exp
+
