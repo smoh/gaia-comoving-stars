@@ -27,6 +27,8 @@ def shift_tgas(tgas_path, outname, dra=0., ddec=0., dpmra=0., dpmdec=0.):
     tgas['dec'] += ddec
     tgas['pmra'] += dpmra
     tgas['pmdec'] += dpmdec
+    tgas['pmdec'][tgas['pmdec'] > 90.] -= 180.
+    tgas['pmdec'][tgas['pmdec'] < -90.] += 180.
     logger.info("writing the new tgas to %s" % (outname))
     tgas[columns].write(outname, overwrite=False)
 
