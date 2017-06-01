@@ -58,8 +58,8 @@
 
 \begin{document}\sloppy\sloppypar\raggedbottom\frenchspacing % trust me
 
-\title{Co-moving stars in \textsl{Gaia DR1}:\\
-  An abundance of very wide separation co-moving pairs}
+\title{Comoving stars in \textsl{Gaia DR1}:\\
+  An abundance of very wide separation comoving pairs}
 \author{Semyeong Oh\altaffilmark{\pu,\lead},
         Adrian M. Price-Whelan\altaffilmark{\pu},
         David W. Hogg\altaffilmark{\ccpp,\mpia,\cca},
@@ -94,23 +94,23 @@ sources with improved parallaxes and proper motions relative to the initial
 catalog.
 This increased astrometric precision presents an opportunity to find new binary
 stars and moving groups.
-We search for high-confidence co-moving pairs of stars in \tgas\ by identifying
+We search for high-confidence comoving pairs of stars in \tgas\ by identifying
 pairs of stars consistent with having the same 3D velocity using a marginalized
-likelihood ratio test to discriminate candidate co-moving pairs from the field
+likelihood ratio test to discriminate candidate comoving pairs from the field
 population.
-Although we perform some visualizations using (bias-corrected) inverse-parallax
-as a point-estimate of distance, the likelihood ratio is computed with a
-probabilistic model that includes the covariances of parallax and proper motions,
+Although we perform some visualizations using (bias-corrected) inverse parallax
+as a point estimate of distance, the likelihood ratio is computed with a
+probabilistic model that includes the covariances of parallax and proper motions
 and marginalizes the (unknown) true distances and 3D velocities of the stars.
-We find 13,085 co-moving star pairs among 10,606 unique stars with separations
+We find 13,085 comoving star pairs among 10,606 unique stars with separations
 as large as 10 pc (our search limit).
-Some of these pairs form larger groups through mutual co-moving neighbors:
+Some of these pairs form larger groups through mutual comoving neighbors:
 many of these pair networks correspond to known open clusters and OB
-associations, but we also report the discovery of several new co-moving groups.
+associations, but we also report the discovery of several new comoving groups.
 Most surprisingly, we find a large number of very wide ($>1$ pc) separation
-co-moving star pairs, the number of which increases with increasing separation
+comoving star pairs, the number of which increases with increasing separation
 and cannot be explained purely by false-positive contamination.
-Our key result is a catalog of high-confidence co-moving pairs of stars in
+Our key result is a catalog of high-confidence comoving pairs of stars in
 \tgas.
 We discuss the utility of this catalog for making dynamical inferences about the
 Galaxy, testing stellar atmosphere models, and validating chemical abundance
@@ -134,7 +134,7 @@ measurements.
 \section{Introduction} \label{sec:intro}
 
 Stars that are roughly co-located and moving with similar space velocities
-(``co-moving stars'') are of special interest in many branches of astrophysics.
+(``comoving stars'') are of special interest in many branches of astrophysics.
 
 At small separations ($0.001$--$1$~pc), they are wide binaries (and
 multiples) that are either weakly gravitationally bound or
@@ -148,7 +148,7 @@ processes (e.g., \citealt{Parker:2009aa}) and Galactic dynamics (\citealt{Heggie
 including Galactic tides and other massive perturbers such as molecular clouds
 and MACHOs \citep{Weinberg:1987aa,Jiang:2010aa,Yoo:2004aa,Allen:2014aa}.
 
-Wide binaries are also good testbeds for stellar models and age indicators:
+Wide binaries are also good test beds for stellar models and age indicators:
 the constituent stars were likely born at the same time with the same chemical
 compositions, but evolved independently because of their wide separation.
 These pairs are therefore useful for validating gyrochronology relations
@@ -156,19 +156,19 @@ These pairs are therefore useful for validating gyrochronology relations
 between stellar atmosphere models.
 Finally, calibration of stellar parameters of low-mass stars (e.g., M dwarfs),
 which dominate the stellar content of the Galaxy by number, can benefit from
-a larger sample of widely separated binaries containing a low mass star and a
+a larger sample of widely separated binaries containing a low-mass star and a
 much brighter F/G/K star whose stellar parameters are easier to measure
 \citep[e.g.,][]{Rojas-Ayala:2012aa}.
 
-At larger separations ($\gtrsim 1$~pc), co-moving stars are likely members of
+At larger separations ($\gtrsim 1$~pc), comoving stars are likely members of
 (potentially dissolving) moving groups, associations, and star clusters or
 disrupted wide binaries.
 The origin of moving groups is still under active debate (e.g., \citealt{Bovy:2010aa}):
 are they remnants of a coeval
 star formation event with similar chemical composition? Or are they formed by
-dynamical effects of non-axisymmetric features of the Galaxy such as spirals
+dynamical effects of nonaxisymmetric features of the Galaxy such as spirals
 and bars? With the recent advances in measuring chemical abundances of
-a large volume of stars using high and low resolution spectroscopy
+a large volume of stars using high- and low- resolution spectroscopy
 (e.g., \citealt{Steinmetz:2006aa,Majewski:2015aa,Gilmore:2012aa} to name a few),
 we can now start to explore these questions
 with unprecedented statistics and in unexplored detail.
@@ -182,7 +182,7 @@ Similar processes are at work with star clusters in the disk.
 However, the dynamical time is much shorter, and the dynamics will be much more
 complex because of the existence of other perturbers in the disk.
 
-To date, thousands of candidate co-moving star pairs have been identified by
+To date, thousands of candidate comoving star pairs have been identified by
 searching for stars with common proper motions
 (\citealt{Poveda:1994aa,Allen:2000aa,Chaname:2004aa,
 Lepine:2007aa,Shaya:2011aa,Alonso-Floriano:2015aa}).
@@ -194,9 +194,9 @@ This paper proceeds as follows:
 In \sectionname~\ref{sec:data}, we briefly describe the data set used in
 this work.
 In \sectionname~\ref{sec:methods}, we develop a statistical method to identify
-high-confidence co-moving pairs in this catalog.
+high-confidence comoving pairs in this catalog.
 In \sectionname~\ref{sec:results}, we present and discuss our resulting catalog
-of co-moving pairs.
+of comoving pairs.
 We summarize in \sectionname~\ref{sec:summary}.
 
 % Many searches find things close in angular separation, but need pms / distance
@@ -214,12 +214,12 @@ astrometric precision comparable to that of the \project{Hipparcos} catalog
 signal-to-noise ($\snr = \varpi/\sigma_\varpi$), the \tgas\ catalog contains
 42385 high-precision stars with $\snr > 32$.
 
-We construct an initial sample of star pairs to search for co-moving pairs as
+We construct an initial sample of star pairs to search for comoving pairs as
 follows.
 We first apply a global parallax signal-to-noise cut, $\snr > 8$,  to the \tgas,
 which leaves 619,618 stars.
 Then, for each star we establish an initial sample of possible
-co-moving partners by selecting all other stars that satisfy two criteria:
+comoving partners by selecting all other stars that satisfy two criteria:
 separation less than 10~pc and difference
 in (point-estimate) tangential velocity less than $\absdvtan < 10$~\kms.
 We ultimately build a statistical model that incorporates the covariances of the
@@ -249,13 +249,13 @@ A few key observations can be made:
   \item At small separations ($<1$~pc), there is a population of pairs with
     very small tangential velocity difference ($<2$~km/s). Given that these
     pairs are very close in both 3D position and tangential velocities, it is highly
-    probable that they are actually co-moving wide binaries.
+    probable that they are actually comoving wide binaries.
 
-  \item  A sample of co-moving stars also include stars that are part of, e.g.,
+  \item  A sample of comoving stars also include stars that are part of, e.g.,
     OB associations, moving groups, and open clusters.
-    These astrophysical objects may be detected as a network of co-moving pairs,
-    sharing some mutual co-moving neighbors.
-    As the pair separation increases, the nature of co-moving pairs
+    These astrophysical objects may be detected as a network of comoving pairs,
+    sharing some mutual comoving neighbors.
+    As the pair separation increases, the nature of comoving pairs
     will change from binaries to those related to these larger objects,
     which generally subtend a larger angle in sky.
     Since the proper motions of two stars with the same 3D velocity
@@ -263,22 +263,22 @@ A few key observations can be made:
     two different viewing angles,
     the larger the difference in viewing angles is, the larger the difference in tangential
     velocities will be.
-    Due to this projection effect, a population of genuine co-moving pairs
+    Due to this projection effect, a population of genuine comoving pairs
     will extend to larger \absdvtan\ at larger separation.
     This indeed can be seen in Figure~\ref{fig:dv-sep} as an over-density
     in the lower right corner that gets thinner as \absdvtan\ increases.
 
   \item Finally, there is a population of ``random'' pairs of field stars
-    that are not co-moving, but still have $\absdvtan < 10$~\kms\
+    that are not comoving, but still have $\absdvtan < 10$~\kms\
     by chance.
     As \absdvtan\ increases, this population will dominate.
     Figure~\ref{fig:dv-sep} shows that there is an overlap between
-    genuine co-moving pairs and ``random'' pairs.
+    genuine comoving pairs and ``random'' pairs.
 \end{itemize}
 
 In the following section, we construct a statistical model that propagates
 the non-trivial uncertainties in the data to our beliefs about the likelihood
-that a given pair of stars is co-moving.
+that a given pair of stars is comoving.
 
 \begin{figure}[htbp]
   \begin{center}
@@ -304,9 +304,9 @@ that a given pair of stars is co-moving.
 
 The abundance of pairs of stars with small velocity difference in
 \figname~\ref{fig:dv-sep} suggests that there are a
-significant number of co-moving pairs in the \tgas\ data at a range
+significant number of comoving pairs in the \tgas\ data at a range
 of separations.
-Here, we develop a method to select high-confidence co-moving
+Here, we develop a method to select high-confidence comoving
 pairs that properly incorporates the uncertainties associated with the
 \gaia\ data. We make the following assumptions in order to construct a
 statistical model (a likelihood function with explicit priors on our
@@ -359,7 +359,7 @@ The parameter $s$ is added to allow for small tolerance in velocities which we d
 For a given pair, we compute the fully marginalized likelihood (FML) for the hypotheses (1) and (2),
 $\mathcal{L}_1$ and $\mathcal{L}_2$.
 We use the FML ratio $\mathcal{L}_1/\mathcal{L}_2$ as the scalar quantity to select
-candidate co-moving pairs, as described in $\sectionname~\ref{sub:selection}$ in
+candidate comoving pairs, as described in $\sectionname~\ref{sub:selection}$ in
 more detail.
 To compute these FMLs, the likelihood functions for each star in a pair, $L_i,
 L_j$, are marginalized over the (unknown) true distance and 3D velocity for each star in
@@ -428,18 +428,18 @@ $p(\vec{v})$, it has minimal effect on the hypothesis (2) FML.
 \section{Results} \label{sec:results}
 
 This section is divided into three parts. First, we discuss and justify a cut of
-the likelihood ratio to select candidate co-moving pairs.
-Second, we present the statistics and properties of our candidate co-moving
+the likelihood ratio to select candidate comoving pairs.
+Second, we present the statistics and properties of our candidate comoving
 pairs.
-Finally, we describe our catalog of candidate co-moving pairs, the main product
+Finally, we describe our catalog of candidate comoving pairs, the main product
 of this study.
 
-\subsection{Selecting candidate co-moving pairs}
+\subsection{Selecting candidate comoving pairs}
 \label{sub:selection}
 
 In this section, we examine the distribution of (log-)likelihood ratios
 $\ln \mathcal{L}_1 /\mathcal{L}_2$, and come up with a reasonable cut
-for this quantity to select co-moving pairs from the initial sample.
+for this quantity to select comoving pairs from the initial sample.
 
 \begin{figure*}[htbp]
   \begin{center}
@@ -456,7 +456,7 @@ for this quantity to select co-moving pairs from the initial sample.
     For comparison, we also present the likelihood ratio distribution of random pairs
     of stars in the \tgas\ with parallax $S/N>8$ in gray filled histogram.
     Based on this, we choose $\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$ as our high-confidence
-    candidate co-moving pairs.
+    candidate comoving pairs.
     \label{fig:likelihoodratios}}
     \vspace{1em}
 \end{figure*}
@@ -466,10 +466,10 @@ $\sim 271$k pairs in the initial sample.
 As discussed in \sectionname~\ref{sec:data}, we expect a correlation between the likelihood
 ratios of pairs, and their distribution on \absdvtan\ vs separation plane.
 Specifically, as we sweep through from small \absdvtan\ to large, we expect
-the population of pairs to change from genuinely co-moving to random.
+the population of pairs to change from genuinely comoving to random.
 This becomes clear when we look at the distribution of the likelihood ratios of pairs
 in slices of \absdvtan\ (top row of Figure~\ref{fig:likelihoodratios}).
-Pairs with $\absdvtan \in (0,2.5)~\kms$ are most likely actual co-moving pairs, and
+Pairs with $\absdvtan \in (0,2.5)~\kms$ are most likely actual comoving pairs, and
 their likelihood ratio distribution is narrowly peaked at $\gtrsim 5$
 (darkest pink histogram in the upper left panel of Figure~\ref{fig:likelihoodratios}).
 The distribution peaks at lower values and gets broader as \absdvtan\ increases,
@@ -483,14 +483,14 @@ we compute the likelihood ratios for 200,000 random pairs of stars with the same
 parallax signal-to-noise ratio cut as the initial sample ($S/N > 8$).
 Shown as the gray filled histogram in Figure~\ref{fig:likelihoodratios},
 this distribution peaks at a much lower value ($\approx 2$),
-and is clearly separated from highly probable co-moving pairs.
+and is clearly separated from highly probable comoving pairs.
 
-Based on these comparisons, we select candidate co-moving pairs with
+Based on these comparisons, we select candidate comoving pairs with
 $\ln \mathcal{L}_1 /\mathcal{L}_2 > 6$.
 Out of 271,232 pairs in the initial sample, 13,058 pairs (4.8\%)
 satisfy this condition.
 
-\subsection{Statistics and properties of the identified co-moving pairs}
+\subsection{Statistics and properties of the identified comoving pairs}
 
 \begin{figure}[htbp]
   \begin{center}
@@ -506,9 +506,9 @@ satisfy this condition.
     \includegraphics[width=\textwidth]{graphviz_examples.pdf}
   \end{center}
   \caption{%
-    Visualizations of a few example connected components of co-moving pairs of stars.
+    Visualizations of a few example connected components of comoving pairs of stars.
     Each star (node) is marked as a red circle, and a line (edge) is drawn
-    between two stars if they are co-moving by our selection criteria
+    between two stars if they are comoving by our selection criteria
     (see \sectionname~\ref{sub:selection}). On left, we show the largest network
     found in this study corresponding to the Pleiades star cluster.
     On right, we show four examples of connected components with varying sizes.
@@ -522,7 +522,7 @@ satisfy this condition.
     \includegraphics[width=\textwidth]{glon_d_pie.pdf}
   \end{center}
   \caption{%
-    Panoramic view of co-moving pairs of stars around the Sun. This is a cylindrical
+    Panoramic view of comoving pairs of stars around the Sun. This is a cylindrical
     projection of onto the Galactic plane with the Sun at the origin.
     Pairs in connected components of sizes less than 5 are connected by gray lines.
     Pair in connected components of size $\geq 5$ are plotted with a unique random color,
@@ -532,23 +532,23 @@ satisfy this condition.
     and stars in OB associations from \citet{de-Zeeuw:1999aa} as
     blue crosses.
     Some of the larger connected components are clearly associated with known
-    clusters, but we also discover quite a few new co-moving groups.
+    clusters, but we also discover quite a few new comoving groups.
     \label{fig:glon_d_pairlines}}
 \end{figure*}
 
-Once we have identified candidate co-moving pairs from the initial
+Once we have identified candidate comoving pairs from the initial
 sample, these pairs form an undirected graph where stars are nodes, and edges
-between the nodes exist for co-moving pairs of stars.
-A star may have multiple co-moving neighbors, and two stars may either
+between the nodes exist for comoving pairs of stars.
+A star may have multiple comoving neighbors, and two stars may either
 be directly or indirectly connected by a sequence of edges (``path'').
 We divide the graph into connected components\footnote{A connected component of an undirected graph $G$
 is a subgraph of $G$ in which any two nodes are connected to each other by a path.},
 and show the distribution of their sizes in Figure~\ref{fig:hist_ccsize}.
-The most common are connected components of size 2, which mean mutually exclusive co-moving
-pairs. However, it is clear that there are many aggregates of co-moving stars
-discovered by looking for co-moving pairs.
+The most common are connected components of size 2, which mean mutually exclusive comoving
+pairs. However, it is clear that there are many aggregates of comoving stars
+discovered by looking for comoving pairs.
 These aggregates are likely moving groups, OB associations, or star clusters.
-In 13,058 co-moving pairs that we identified,
+In 13,058 comoving pairs that we identified,
 there are 4,555 connected components among 10,606 unique stars.
 The maximum size of the connected components is 151.
 We show this largest connected component along with four other
@@ -557,9 +557,9 @@ The largest connected component corresponds to the Pleiades open cluster (left p
 while the upper left panel of the right column of Figure~\ref{fig:graphviz_examples}
 is NGC~2632, another known Milky Way open cluster \citep{Kharchenko:2016aa}.
 
-We show the distribution of co-moving pairs in galactic longitude and
+We show the distribution of comoving pairs in galactic longitude and
 distance in Figure~\ref{fig:glon_d_pairlines}.
-The connection between known co-moving structures and
+The connection between known comoving structures and
 the larger connected components found in this work becomes immediately clear when
 we overplot the positions of known Milky Way star clusters \citep{Kharchenko:2016aa},
 and stars in OB associations \citep{de-Zeeuw:1999aa}.
@@ -570,7 +570,7 @@ Melotte 20 at $(l,d)\approx (147\arcdeg, 175~\textrm{pc})$,
 Melotte 25 (Hyades) at $(l,d)\approx (180\arcdeg, 50~\textrm{pc})$, and
 NGC 2632 (Beehive) at $(l,d)\approx (206\arcdeg, 187~\textrm{pc})$
 to name a few.
-Clumps of co-moving pairs at $(l,d)\approx (300-360\arcdeg, 100-200~\textrm{pc})$
+Clumps of comoving pairs at $(l,d)\approx (300-360\arcdeg, 100-200~\textrm{pc})$
 seem to strongly correlate with the locations of OB associations
 Upper Scorpius, Upper Centaurus Lupus, and Lower Centaurus Crux
 \citep{de-Zeeuw:1999aa}.
@@ -589,7 +589,7 @@ Finally, not all known star clusters are recovered in our search.
 This is primarily because of the non-uniform coverage and magnitude limit of the
 \tgas\ data.
 
-Ultimately, any candidate co-moving pair found in this work
+Ultimately, any candidate comoving pair found in this work
 needs to be verified using radial velocities.
 Here, we use 210,368 cross-matches of the \tgas\ with
 Radial Velocity Experiment fifth data release (\rave\ DR~5; \citealt{2017AJ....153...75K}) to
@@ -606,12 +606,12 @@ This, after all, is not surprising because we are only using
 However, the contamination becomes significant only at $>1$~pc
 (which depends on the local stellar number density and velocity dispersion).
 Given the excellent correspondence between
-aggregates of co-moving pairs (connected components)
-and known genuine co-moving structures (Figure~\ref{fig:glon_d_pairlines}),
+aggregates of comoving pairs (connected components)
+and known genuine comoving structures (Figure~\ref{fig:glon_d_pairlines}),
 we may expect that pairs in these larger connected components,
 which will often have separations $>1$~pc,
 to have less contamination from false-positives.
-We divide the co-moving pairs into those
+We divide the comoving pairs into those
 mutually exclusively connected (i.e., in a connected component of
 size 2), and those in a larger group.
 We indeed find that many pairs in larger groups are at $>1$~pc, yet
@@ -625,7 +625,7 @@ with large angular separation may have been over-estimated due to projection.
     \includegraphics[width=0.6\linewidth]{raverv.pdf}
   \end{center}
   \caption{%
-    Validation of candidate co-moving pairs using radial velocities from \rave.
+    Validation of candidate comoving pairs using radial velocities from \rave.
     Top: Radial velocity differences, $\Delta v_r$, of 283 pairs with \rave\ measurements.
     $\Delta v_r$ is plotted in units of $\sigma_{\Delta v_r} = \sqrt{\sigma_{v_r,1}^2 + \sigma_{v_r,2}^2}$
     as a function of physical separation.
@@ -640,11 +640,11 @@ with large angular separation may have been over-estimated due to projection.
     \label{fig:raverv}}
 \end{figure}
 
-We now examine the separation distribution of co-moving pairs in
+We now examine the separation distribution of comoving pairs in
 Figure~\ref{fig:hist_separation}.
 As expected, pairs in larger connected components are mostly
 found with separations larger than 1~pc.
-Surprisingly, however, we also find a large number of mutually exclusive co-moving
+Surprisingly, however, we also find a large number of mutually exclusive comoving
 pairs
 at $>1$~pc as well. Even if we consider the increasing false-positive rate at large
 separations, the distribution is not significantly changed as the number of pairs
@@ -667,7 +667,7 @@ to identify and study these large scale phase-space correlations.
     \includegraphics[width=\textwidth]{hist_sep.pdf}
   \end{center}
   \caption{%
-    Separation distribution of co-moving pairs of stars.
+    Separation distribution of comoving pairs of stars.
     As with Figure~\ref{fig:raverv},
     we divide the pairs into those mutually exclusively connected
     (connected component size $=2$), and those connected to larger connected components (size $>2$).
@@ -675,7 +675,7 @@ to identify and study these large scale phase-space correlations.
     }
 \end{figure*}
 
-Finally, we present the color-magnitude diagrams of co-moving pairs
+Finally, we present the color-magnitude diagrams of comoving pairs
 using the cross-matches with \tmass.
 A more detailed study of stellar parameters using photometry from various sources
 will follow. Figure~\ref{fig:cmd_large} and \ref{fig:cmd_me} shows $G-J$ vs $G$
@@ -684,7 +684,7 @@ and in mutually exclusive pairs, respectively.
 The connected components shown in Figure~\ref{fig:cmd_large}
 correspond to those visualized
 in Figure~\ref{fig:graphviz_examples}.
-For stars in larger co-moving groups, there is a noticeable
+For stars in larger comoving groups, there is a noticeable
 lack of evolved, off-main sequence
 stars, in agreement with these kinematic structures being young.
 For mutually exclusive pairs, we divide the pairs by separation at 1~pc
@@ -703,7 +703,7 @@ which will be valuable to anchoring stellar atmospheric models together.
     of stars visualized in the panel at the same position
     in Figure~\ref{fig:graphviz_examples}.
     We show a reference distribution of stars randomly drawn to have
-    a matching distribution in distance as the stars in our co-moving pairs
+    a matching distribution in distance as the stars in our comoving pairs
     in blue.
     \label{fig:cmd_large}}
 \end{figure*}
@@ -713,17 +713,17 @@ which will be valuable to anchoring stellar atmospheric models together.
     \includegraphics[width=\textwidth]{gjg_mepairs.pdf}
   \end{center}
   \caption{
-    Color-magnitude diagrams of stars in mutually exclusive co-moving pairs
+    Color-magnitude diagrams of stars in mutually exclusive comoving pairs
     in two separation bins.
     We connect each pair by a line on the left for pairs
     with separations smaller than 1~pc.
     We show a reference distribution of stars randomly drawn to have
-    a matching distribution in distance as the stars in our co-moving pairs
+    a matching distribution in distance as the stars in our comoving pairs
     in blue, same as Figure~\ref{fig:cmd_large}.
     \label{fig:cmd_me}}
 \end{figure*}
 
-\subsection{Catalog of candidate co-moving pairs}
+\subsection{Catalog of candidate comoving pairs}
 \label{sub:catalog}
 
 
@@ -737,39 +737,39 @@ which will be valuable to anchoring stellar atmospheric models together.
 
 \input{table_meta}
 
-In this section, we describe our catalog of candidate co-moving pairs of stars.
+In this section, we describe our catalog of candidate comoving pairs of stars.
 The catalog is composed of three tables of stars, pairs, and groups.
 We summarize the content of each table in Table~\ref{tab:table_meta}, and
 the relationships between the tables in Figure~\ref{fig:schema}.
-The star table contains all 10,606 stars that have at least one co-moving neighbor
+The star table contains all 10,606 stars that have at least one comoving neighbor
 by our selection. We provide the TGAS source id, which may be used to easily
 retrieve cross matches between \gaia\ and other surveys
 using the \gaia\ data archive.
 For each star, we also include the positional measurements from \tgas,
 \gaia\ $G$-band, \tmass\ $J$-band magnitudes, and
 \rave\ radial velocities where they exist.
-The co-moving relationship between the stars is described in the pair table.
+The comoving relationship between the stars is described in the pair table.
 We also list the angular and physical separation of each pair, and the likelihood ratio,
 $\ln \mathcal{L}_1 /\mathcal{L}_2(>6)$ (see \eqname~\ref{eq:hyp1} and \ref{eq:hyp2})
 computed in this work.
 
-Finally, the information about the connected components found in these co-moving
+Finally, the information about the connected components found in these comoving
 star pairs is in the group table. We assign a unique index to each group
 in descending order of its size. Thus, group 0 is the largest group
 that contains 151 stars.
 Each star or pair is associated with a group that it is a member of, listed
 in the group id column of the star and pair table.
 
-We note a caveat on the completeness of a connected component of co-moving
+We note a caveat on the completeness of a connected component of comoving
 pairs found in our catalog. Because we applied a simple cut in the likelihood
 ratio ($\ln \mathcal{L}_1 /\mathcal{L}_2>6$), there is a possibility that, for
 example, a star in a mutually exclusive pair in our catalog may still have
-another possibly co-moving companion which has been dropped because the
+another possibly comoving companion which has been dropped because the
 likelihood ratio is slightly less than 6.
 
 \section{Summary}\label{sec:summary}
 
-In this \documentname, we searched for co-moving pairs of stars in the
+In this \documentname, we searched for comoving pairs of stars in the
 \tgas\ catalog released as part of the \gaia\ DR1.
 Our method is to compare the fully marginalized likelihoods between two
 hypotheses: (1) that a pair of
@@ -777,27 +777,27 @@ stars shares the same 3D velocity, and (2) that the two stars have independent
 3D velocities, in both cases incorporating the covariances of parallax and
 proper motions.
 We argued for a reasonable cut of the likelihood ratio, and found
-13,058 candidate co-moving pairs among 10,606 stars
+13,058 candidate comoving pairs among 10,606 stars
 with separations ranging from 0.005~pc to 10~pc, the limit of our search.
 
-We found that some co-moving pairs that we have identified are connected
-by sharing a common co-moving neighbor.
-This network of co-moving pairs, which forms an undirected graph,
+We found that some comoving pairs that we have identified are connected
+by sharing a common comoving neighbor.
+This network of comoving pairs, which forms an undirected graph,
 can be decomposed into connected components in which any two stars are connected
 by a path.
-The entire 13,058 candidate co-moving pairs are grouped into 4,555 connected
+The entire 13,058 candidate comoving pairs are grouped into 4,555 connected
 components. The most common is a size-2 connected component, i.e., the two
 stars in these pairs are mutually exclusively linked.
 Many of the larger connected components
-naturally correspond to some of the known co-moving structures
+naturally correspond to some of the known comoving structures
 such as open clusters and stellar associations.
-Some of these co-moving groups of stars are newly discovered.
+Some of these comoving groups of stars are newly discovered.
 
 We have also found a large number of very wide separation ($>1$~pc)
-mutually exclusive co-moving pairs, in which the stars are the only co-moving neighbor
+mutually exclusive comoving pairs, in which the stars are the only comoving neighbor
 of each other and not part of large connected components.
 These are most likely remnants of dissolving wide binaries (\citealt{Jiang:2010aa}).
-The abundance of highly probable wide separation co-moving pairs
+The abundance of highly probable wide separation comoving pairs
 conclusively shows that there is no strict cut-off semi-major axis for wide binary systems
 (e.g., \citealt{Wasserman:1987aa}).
 The presence of these pairs and similar separation distribution have already
@@ -807,10 +807,10 @@ relatively young compared to the general disk field population.
 Modeling the color-magnitude diagram distribution of these stars can shed some
 light on this issue.
 If they are remnants of dissolving systems that were born coeval,
-the sample of very wide separation co-moving pairs can potentially be used
+the sample of very wide separation comoving pairs can potentially be used
 to measure the recent ($\lesssim 1$~Gyr)
 star formation history in the Solar neighborhood.
-Co-moving stars with separation less than 1~pc are very promising candidates
+Comoving stars with separation less than 1~pc are very promising candidates
 for wide binaries. They are found to be pairs of stars of varying stellar types.
 Some of these pairs, such as main sequence-red giant or F/G/K-M dwarfs,
 will be particularly valuable for testing theoretical
@@ -825,7 +825,7 @@ on the \emph{3D velocities} of the two stars in a pair, and that we
 marginalize over the (unknown) true distances and velocities of the stars
 in contrast to just applying a cut in the proper motion space.
 
-Finally, we make our catalog of 13,058 candidate co-moving pairs available to the
+Finally, we make our catalog of 13,058 candidate comoving pairs available to the
 community.
 What we find using the \tgas\ is only a taste of what we will discover with
 the future releases of the \gaia\ mission.
