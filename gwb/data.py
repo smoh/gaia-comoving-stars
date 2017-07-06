@@ -1,8 +1,12 @@
 from __future__ import division, print_function
 
+# Standard library
+import warnings
+
 # Third-party
 from astropy.io import fits
 import astropy.coordinates as coord
+from astropy.utils.compat.misc import override__dir__
 import astropy.units as u
 import numpy as np
 import six
@@ -121,12 +125,56 @@ class TGASData(object):
         Return an `~astropy.coordinates.SkyCoord` object to represent
         all coordinates.
         """
+        warnings.warn('Deprecated - use get_skycoord() instead.',
+                      DeprecationWarning)
         return coord.SkyCoord(ra=self.ra, dec=self.dec,
                               distance=self.get_distance(lutz_kelker=lutz_kelker))
+
+    def get_skycoord(self, lutz_kelker=True):
+        """
+        Return an `~astropy.coordinates.SkyCoord` object to represent
+        all coordinates.
+        """
+        return coord.SkyCoord(ra=self.ra, dec=self.dec,
+                              distance=self.get_distance(lutz_kelker=lutz_kelker))
+
+    def get_icrs(self, rv=None, lutz_kelker=True):
+        kw = dict()
+        if rv:
+            kw['radial_velocity'] = rv
+
+        return coord.ICRS(ra=self.ra, dec=self.dec,
+                          distance=self.get_distance(lutz_kelker),
+                          pm_ra_cosdec=self.pmra,
+                          pm_dec=self.pmdec, **kw)
+
+    def get_icrs_samples(self, size=1, rv=None, rv_err=None):
+        y = np.array([self.ra.value, self.dec.value, self.parallax.value,
+                      self.pmra.value, self.pmdec.value])
+        Cov = self.get_cov()[:5,:5]
+        samples = np.random.multivariate_normal(y, Cov, size=size)
+
+        kw = dict()
+        if rv:
+            rv_samples = np.random.normal(rv.value, rv_err.value, size=size) * rv.unit
+            kw['radial_velocity'] = rv_samples
+
+        return coord.ICRS(ra=samples[:,0]*u.deg, dec=samples[:,1]*u.deg,
+                          distance=1000./samples[:,2]*u.pc,
+                          pm_ra_cosdec=samples[:,3]*u.mas/u.yr,
+                          pm_dec=samples[:,4]*u.mas/u.yr, **kw)
 
     @property
     def parallax_snr(self):
         return self.parallax / self.parallax_error
+
+    @override__dir__
+    def __dir__(self):
+        """
+        Override the builtin `dir` behavior to include representation
+        names.
+        """
+        return self._data.dtype.names
 
 
 class TGASStar(TGASData):
