@@ -94,8 +94,8 @@ def get_Ainv_nu_Delta(d, M_dirty, Cinv_dirty, y_dirty, Vinv):
     Cinv = np.delete(Cinv, idx[noRV], axis=1)
     _,log_detCinv = np.linalg.slogdet(Cinv/(2*np.pi))
 
-    M = np.delete(M_dirty, idx, axis=0)
-    y = np.delete(y_dirty, idx, axis=0)
+    M = np.delete(M_dirty, idx[noRV], axis=0)
+    y = np.delete(y_dirty, idx[noRV], axis=0)
 
     # using ji vs. ij does the transpose of M
     Ainv = np.einsum('ji,jk,ks->is', M, Cinv, M) + Vinv
