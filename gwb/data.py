@@ -76,8 +76,8 @@ class TGASData(object):
         sliced = self._data[slc]
 
         if self._rv_err is not None:
-            rv = self._rv[slc]
-            rv_err = self._rv_err[slc]
+            rv = self._rv[slc] * u.km/u.s
+            rv_err = self._rv_err[slc] * u.km/u.s
         else:
             rv = None
             rv_err = None
