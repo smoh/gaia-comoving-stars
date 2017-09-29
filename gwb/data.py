@@ -95,6 +95,10 @@ class TGASData(object):
     def rv(self):
         return self._rv*u.km/u.s
 
+    @property
+    def rv_err(self):
+        return self._rv_err*u.km/u.s
+
     # Other convenience methods
     def get_distance(self, lutz_kelker=True):
         """
